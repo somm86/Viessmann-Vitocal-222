@@ -8,7 +8,8 @@ IPS\Kernel::reset();
 $root = dirname(__DIR__);
 $library = json_decode(file_get_contents($root . '/library.json'), true);
 $manifest = json_decode(file_get_contents($root . '/Vitocal222CTile/module.json'), true);
-IPS\ModuleLoader::loadSingleModule($root . '/Vitocal222CTile', $library['id']);
+// Load the complete library, exactly including root-directory discovery.
+IPS\ModuleLoader::loadLibrary($root . '/library.json');
 $id = IPS_CreateInstance($manifest['id']);
 $module = IPS\InstanceManager::getInstanceInterface($id);
 $checks = 0;

@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ `dist/Vitocal222C-Kachel-1.2.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.3.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Eine große Kachel zeigt das Schema übersichtlicher; kleine Kacheln können vertikal gescrollt werden. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -80,6 +80,8 @@ python3 tests/browser_test.py
 # Alternativ: CHROMIUM_PATH=/usr/bin/chromium python3 tests/browser_test.py
 python3 tests/build.py
 ```
+
+Der Build legt ZIP und SHA-256-Datei standardmäßig **außerhalb** des Repositorys im benachbarten Ordner `Viessmann-Vitocal-222-artifacts/` ab. Ein anderes externes Ziel ist mit `python3 tests/build.py --output-dir /tmp/vitocal-artifacts` möglich. Ausgaben innerhalb des Repositorys werden abgewiesen: Symcon behandelt nicht reservierte Unterordner wie `dist` als Module und verlangt dort eine `module.json`. GitHub Actions stellt die Pakete als Build-Artefakt bereit; ZIP-Dateien werden nicht im Modul-Repository abgelegt.
 
 Tests erzeugen ihre Fixtures unter `tests/output/` und aktualisieren die ausdrücklich synthetischen Vorschau-Screenshots. `tests/build.py` erstellt das ZIP und die SHA-256-Datei und prüft Manifeste, Identitäten, Dateiliste und ZIP-Integrität. [Prüfbericht und Grenzen](docs/VALIDATION.md).
 

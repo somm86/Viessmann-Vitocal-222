@@ -1,5 +1,12 @@
 # Änderungen
 
+## 1.3
+
+- Installationsfehler „ungültiges Module dist (module.json fehlt)“ behoben: Paketordner aus dem Modul-Repository entfernt.
+- Build-Ausgaben werden außerhalb des Repositorys erzeugt; interne Ausgabeziele werden abgewiesen.
+- CI-Artefakte liegen im temporären Runner-Verzeichnis.
+- Regressionstest lädt jetzt die gesamte Bibliothek einschließlich Modulverzeichnis-Erkennung.
+
 ## 1.2
 
 - Betriebsartauswahl vollständig entfernt; aktuelle Betriebsart bleibt als Status sichtbar.
