@@ -9,15 +9,16 @@ class Vitocal222CTile extends IPSModule
         'mode' => ['ModeID', 53049, 'Betriebsart Heizung'],
         'heatingPump' => ['HeatingPumpID', 20926, 'Heizkreispumpe'],
         'primaryPump' => ['PrimaryPumpID', 39794, 'Primärpumpe'],
-        'roomTarget' => ['RoomTargetID', 10939, 'Raum-Solltemperatur'],
         'return' => ['ReturnID', 21875, 'Rücklauf Sekundär'],
         'valve' => ['ValveID', 53786, 'Umschaltventil Heizung / Warmwasser'],
         'compressor' => ['CompressorID', 31722, 'Verdichter'],
         'primaryFlow' => ['PrimaryFlowID', 18104, 'Vorlauf Primärquelle'],
         'flow' => ['FlowID', 18969, 'Vorlauf Sekundär'],
-        'water' => ['WaterID', 56634, 'Warmwasser Ist'],
-        'waterTarget' => ['WaterTargetID', 27660, 'Warmwasser-Solltemperatur']
+        'water' => ['WaterID', 56634, 'Warmwasser Ist']
     ];
+
+    private const TEMPERATURES = ['primaryFlow', 'return', 'flow', 'water'];
+    private const ARCHIVE = '{43192F0B-135B-4CE7-A0A7-1475603F3060}';
 
     public function Create()
     {
@@ -25,6 +26,7 @@ class Vitocal222CTile extends IPSModule
         foreach (self::SOURCES as $source) {
             $this->RegisterPropertyInteger($source[0], $source[1]);
         }
+        $this->RegisterPropertyInteger('ArchiveID', 0);
         $this->RegisterTimer('Refresh', 0, 'V222_Refresh($_IPS["TARGET"]);');
         $this->SetVisualizationType(1);
     }
@@ -54,6 +56,8 @@ class Vitocal222CTile extends IPSModule
                 }
             }
         }
+        $archive = $this->ReadPropertyInteger('ArchiveID');
+        if ($archive > 0 && IPS_InstanceExists($archive)) { $this->RegisterReference($archive); }
         $this->SetTimerInterval('Refresh', 30000);
         if (IPS_GetKernelRunlevel() === KR_READY) {
             $this->Refresh();
@@ -75,9 +79,10 @@ class Vitocal222CTile extends IPSModule
         foreach (self::SOURCES as $source) {
             $elements[] = ['type' => 'SelectVariable', 'name' => $source[0], 'caption' => $source[2]];
         }
-        $elements[] = ['type' => 'Label', 'caption' => 'Temperaturen müssen in °C vorliegen. Sollwerte sind nur mit gültigem Profilbereich und vorhandener Aktion bedienbar.'];
+        $elements[] = ['type' => 'Label', 'caption' => 'Temperaturen in °C. Für Verläufe muss die Archivierung der vier Isttemperaturen im Archive Control aktiv sein. 0 = passendes Archiv automatisch suchen.'];
+        $elements[] = ['type' => 'SelectInstance', 'name' => 'ArchiveID', 'caption' => 'Archive Control (0 = automatisch)', 'moduleID' => self::ARCHIVE];
         return $this->encode(['elements' => $elements, 'actions' => [['type' => 'Button', 'caption' => 'Betriebsart-Diagnose anzeigen', 'onClick' => 'echo V222_GetDiagnostics($id);']], 'status' => [
-            ['code' => 102, 'icon' => 'active', 'caption' => 'Alle elf Quellvariablen verfügbar'],
+            ['code' => 102, 'icon' => 'active', 'caption' => 'Alle neun Quellvariablen verfügbar'],
             ['code' => 104, 'icon' => 'inactive', 'caption' => 'Quellvariable fehlt oder hat einen ungeeigneten Datentyp']
         ]]);
     }
@@ -104,26 +109,30 @@ class Vitocal222CTile extends IPSModule
 
     public function RequestAction($ident, $value)
     {
+        if ($ident === 'RequestHistory') {
+            $response = ['kind' => 'history', 'requestID' => '', 'error' => '', 'points' => []];
+            try {
+                if (!is_string($value) || strlen($value) > 1024) { throw new InvalidArgumentException('Ungültige Verlaufsanfrage.'); }
+                $request = json_decode($value, true, 8, JSON_THROW_ON_ERROR);
+                if (!is_array($request) || !isset($request['requestID']) || !is_string($request['requestID']) ||
+                    !preg_match('/^[A-Za-z0-9_-]{1,100}$/D', $request['requestID'])) {
+                    throw new InvalidArgumentException('Ungültige Anfragekennung.');
+                }
+                $response['requestID'] = $request['requestID'];
+                if (!isset($request['key'], $request['start'], $request['end']) || !is_string($request['key']) ||
+                    !is_int($request['start']) || !is_int($request['end'])) {
+                    throw new InvalidArgumentException('Ungültiger Temperatur- oder Zeitbereich.');
+                }
+                $response = array_merge($response, json_decode($this->GetHistory($request['key'], $request['start'], $request['end']), true, 512, JSON_THROW_ON_ERROR));
+            } catch (Throwable $e) {
+                $response['error'] = $e->getMessage();
+            }
+            // SDK requestAction is void. Correlated replies also support multiple open tiles.
+            $this->UpdateVisualizationValue($this->encode($response));
+            return;
+        }
         $this->SetBuffer('ActionError', '');
         try {
-            if (in_array($ident, ['SetRoomTarget', 'SetWaterTarget'], true)) {
-                $key = $ident === 'SetRoomTarget' ? 'roomTarget' : 'waterTarget';
-                $config = $this->temperatureConfiguration($key);
-                if (!$config['writable']) {
-                    throw new RuntimeException($config['reason']);
-                }
-                if ((!is_int($value) && !is_float($value)) || !is_finite((float) $value) ||
-                    $value < $config['min'] || $value > $config['max']) {
-                    throw new InvalidArgumentException('Solltemperatur außerhalb des gültigen Profilbereichs.');
-                }
-                $steps = ($value - $config['min']) / $config['step'];
-                if (abs($steps - round($steps)) > 0.000001 || ($config['type'] === 1 && floor($value) != $value)) {
-                    throw new InvalidArgumentException('Solltemperatur passt nicht zur Schrittweite des Quellprofils.');
-                }
-                RequestAction($config['variableID'], $config['type'] === 1 ? (int) $value : (float) $value);
-                $this->Refresh();
-                return;
-            }
             if ($ident !== 'ChangeMode') {
                 throw new InvalidArgumentException('Unbekannte Aktion.');
             }
@@ -161,7 +170,7 @@ class Vitocal222CTile extends IPSModule
 
     public function GetDiagnostics(): string
     {
-        return $this->encode(['mode' => $this->modeConfiguration(), 'roomTarget' => $this->temperatureConfiguration('roomTarget'), 'waterTarget' => $this->temperatureConfiguration('waterTarget')]);
+        return $this->encode(['mode' => $this->modeConfiguration(), 'archiveID' => $this->ReadPropertyInteger('ArchiveID')]);
     }
 
     private function sourceMessages(): array
@@ -256,35 +265,47 @@ class Vitocal222CTile extends IPSModule
         return $result;
     }
 
-    private function temperatureConfiguration(string $key): array
+    public function GetHistory(string $Key, int $Start, int $End): string
     {
-        $id = $this->ReadPropertyInteger(self::SOURCES[$key][0]);
-        $result = ['variableID' => $id, 'writable' => false, 'reason' => 'Sollwertvariable fehlt.',
-            'type' => null, 'min' => null, 'max' => null, 'step' => null, 'actionID' => 0];
-        if ($id <= 0 || !IPS_VariableExists($id)) { return $result; }
-        $v = IPS_GetVariable($id);
-        $result['type'] = $v['VariableType'];
-        $action = ($v['VariableCustomAction'] ?? 0) > 0 ? $v['VariableCustomAction'] : ($v['VariableAction'] ?? 0);
-        $result['actionID'] = $action;
-        $p = $this->profile($v, $id);
-        $min = $p['MinValue'] ?? null;
-        $max = $p['MaxValue'] ?? null;
-        $step = $p['StepSize'] ?? null;
-        if ($p !== null && ($p['ProfileType'] !== $v['VariableType'] || count($p['Associations']) > 0)) {
-            $min = $max = $step = null;
+        if (IPS_GetKernelRunlevel() !== KR_READY) { throw new RuntimeException('IP-Symcon ist noch nicht bereit.'); }
+        if (!in_array($Key, self::TEMPERATURES, true)) { throw new InvalidArgumentException('Keine freigegebene Isttemperatur.'); }
+        if ($Start < 0 || $End <= $Start || $End - $Start > 2678400 || $End > time() + 60) {
+            throw new InvalidArgumentException('Ungültiger Zeitraum (maximal 31 Tage, keine Zukunft).');
         }
-        if (!in_array($v['VariableType'], [1, 2], true)) {
-            $result['reason'] = 'Sollwert muss eine numerische Variable sein.';
-        } elseif ($action < 10000 || (!IPS_InstanceExists($action) && !IPS_ScriptExists($action))) {
-            $result['reason'] = 'Keine gültige Variablenaktion vorhanden oder Aktion deaktiviert.';
-        } elseif (!is_numeric($min) || !is_numeric($max) || !is_numeric($step) ||
-            !is_finite((float) $min) || !is_finite((float) $max) || !is_finite((float) $step) || $max <= $min || $step <= 0) {
-            $result['reason'] = 'Kein gültiger numerischer Profilbereich mit Schrittweite. Quellprofil prüfen.';
-        } else {
-            $result['min'] = $min; $result['max'] = $max; $result['step'] = $step;
-            $result['writable'] = true; $result['reason'] = '';
+        $id = $this->ReadPropertyInteger(self::SOURCES[$Key][0]);
+        if ($id <= 0 || !IPS_VariableExists($id) || !in_array(IPS_GetVariable($id)['VariableType'], [1, 2], true)) {
+            throw new RuntimeException('Temperaturvariable fehlt oder ist nicht numerisch.');
         }
-        return $result;
+        $selected = $this->ReadPropertyInteger('ArchiveID');
+        $archives = IPS_GetInstanceListByModuleID(self::ARCHIVE);
+        if ($selected > 0) {
+            if (!in_array($selected, $archives, true)) { throw new RuntimeException('Ausgewähltes Archive Control ist nicht verfügbar.'); }
+            $archives = [$selected];
+        }
+        $archive = 0;
+        foreach ($archives as $candidate) {
+            if (AC_GetLoggingStatus($candidate, $id)) { $archive = $candidate; break; }
+        }
+        if ($archive === 0) {
+            throw new RuntimeException('Keine aktive Archivierung für Variable ' . $id . '. Bitte im Archive Control aktivieren; vergangene Werte werden nicht nachträglich erzeugt.');
+        }
+        if (AC_GetAggregationType($archive, $id) !== 0) { throw new RuntimeException('Temperaturarchiv muss als Standardwert, nicht als Zähler archiviert werden.'); }
+        $hourly = $End - $Start > 172800;
+        $rows = $hourly ? AC_GetAggregatedValues($archive, $id, 0, $Start, $End, 10000) :
+            AC_GetLoggedValues($archive, $id, $Start, $End, 10000);
+        if (!is_array($rows)) { throw new RuntimeException('Archivdaten konnten nicht gelesen werden.'); }
+        if (count($rows) >= 10000) { throw new RuntimeException('Zu viele Archivwerte. Bitte einen kleineren Zeitraum auswählen.'); }
+        $points = [];
+        foreach ($rows as $row) {
+            $value = $row[$hourly ? 'Avg' : 'Value'] ?? null;
+            $stamp = $row['TimeStamp'] ?? null;
+            if (!is_int($stamp) || $stamp < $Start || $stamp > $End ||
+                (!is_int($value) && !is_float($value)) || !is_finite((float) $value)) { continue; }
+            $points[] = ['time' => $stamp, 'value' => (float) $value];
+        }
+        usort($points, function ($a, $b) { return $a['time'] <=> $b['time']; });
+        return $this->encode(['key' => $Key, 'label' => self::SOURCES[$Key][2], 'variableID' => $id,
+            'start' => $Start, 'end' => $End, 'resolution' => $hourly ? 'hourly' : 'raw', 'points' => $points]);
     }
 
     private function snapshot(): array
@@ -325,7 +346,6 @@ class Vitocal222CTile extends IPSModule
         } catch (Throwable $e) {
             $data['mode'] = ['choices' => [], 'writable' => false, 'reason' => 'Betriebsartkonfiguration nicht verfügbar.', 'type' => null];
         }
-        $data['controls'] = ['roomTarget' => $this->temperatureConfiguration('roomTarget'), 'waterTarget' => $this->temperatureConfiguration('waterTarget')];
         return $data;
     }
 

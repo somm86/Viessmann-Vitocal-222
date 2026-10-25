@@ -12,7 +12,7 @@ assert lib['id'] != mod['id']
 assert lib['id'] != '{B24E29F4-981D-4B92-842B-785D28962BD5}'
 assert mod['id'] != '{4305595E-0E5F-4124-AD59-8E11257A1E97}'
 assert mod['prefix']=='V222' and lib['compatibility']['version']=='7.1'
-files=['library.json','Vitocal222CTile/module.json','Vitocal222CTile/module.php','Vitocal222CTile/tile.html','README.md','CHANGELOG.md','docs/VALIDATION.md','docs/dashboard.png']
+files=['library.json','Vitocal222CTile/module.json','Vitocal222CTile/module.php','Vitocal222CTile/tile.html','README.md','CHANGELOG.md','docs/VALIDATION.md','docs/dashboard.png','docs/history.png']
 assert all((root/p).is_file() for p in files)
 out=root/'dist';out.mkdir(exist_ok=True)
 archive=out/f"Vitocal222C-Kachel-{lib['version']}.zip"

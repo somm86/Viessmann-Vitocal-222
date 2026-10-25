@@ -1,20 +1,21 @@
-# Prüfbericht · Version 1.0
+# Prüfbericht · Version 1.1
 
-Geprüft in der Cloud-Entwicklungsumgebung am 25.10.2026 mit PHP 8.4.24, Python 3.12, Playwright 1.62.0 und System-Chromium. PHP wurde aus über signierte Debian-Paketindizes verifizierten Paketen lokal unter `/tmp/php-local` extrahiert, da das Systemverzeichnis schreibgeschützt ist. Keine TLS- oder Paketprüfung wurde deaktiviert. Dieser Pfad ist eine lokale Testhilfe, keine Symcon-Laufzeitabhängigkeit.
+Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb3763236fcf44ea4144271fdeddfd5`), Python 3, Playwright 1.62.0 und System-Chromium. PHP wurde aus anhand signierter Debian-Indizes geprüften Paketen lokal unter `/tmp/php-local` extrahiert. Die Testlaufzeit ist keine Produktivabhängigkeit.
 
 ## Bestanden
 
 - PHP-Syntaxprüfung des Moduls.
-- **45 Modulprüfungen** mit offiziellen SymconStubs, Commit `31f2e0478eb3763236fcf44ea4144271fdeddfd5`: elf Quellen, Default-IDs, Referenzen, Live-Updates, fehlende und gelöschte Quellen, String-Betriebsart aus moderner Aufzählung, exakte Werte, entfernte Optionen, wirkliche Skript-Dispatch-Aufrufe, Raum- und Warmwasser-Sollwerte, Integer-/Float-Erhalt, Bereichs- und Schrittweitenprüfung, deaktivierte Aktionen, wiederholtes ApplyChanges und HTML-Escaping. Die Aktionsfixture verändert die Quelle absichtlich nicht, um optimistische Erfolgsmeldungen auszuschließen.
-- **27 Browserprüfungen**: später verfügbare SDK-Brücke, alle drei Steuerungen, Quellbestätigung, kein vorzeitiges Umschalten der Anzeige, Sperre paralleler Anforderungen, sichtbare PHP-Aktionsfehler, 15-Sekunden-Zeitüberschreitung, Bereichsvalidierung, sichere Textausgabe und fehlende Quellen. Kein horizontaler Überlauf bei 320, 390, 768 und 1200 Pixel Breite; keine JavaScript-Fehler.
-- Paketprüfung durch `tests/build.py`: gültige Manifeste, eigene GUIDs und Präfix, vollständige Dateiliste, ZIP-Integrität und SHA-256-Datei.
+- **61 Modulprüfungen**: neun Quellen und Referenzen, Entfernen der Sollwertkonfiguration und der beiden Schreibaktionen, bestehende Betriebsartsteuerung mit gültigen String-Auswahlwerten, abgewiesene ungültige/entfernte Optionen, Quellupdates, HTML-Escaping und wiederholtes ApplyChanges.
+- Archivintegration über das echte offizielle **ArchiveControl-Stub-Modul**: aktive/fehlende Archivierung, alle vier Temperaturzuordnungen, Rohwerte in chronologischer Reihenfolge, leere Zeitfenster ohne erfundene Ersatzwerte, Stundenmittel, automatisch und explizit ausgewählte Archive, Archivwechsel, falsche Instanz, Ablehnung von Zählerarchiven, Zeitbereichsgrenzen, Quellen-Allowlist, nichtnumerische Quellen, Erkennung des 10.000-Werte-Limits, korrelierte SDK-Antworten sowie lesbare Fehlermeldungen bei fehlerhaften Anfragen. Archivschreibaufrufe existieren ausschließlich im Test zur Fixture-Erzeugung.
+- **71 Browserprüfungen**: vier anklickbare Isttemperaturen ohne Sollwerteingaben, weiter funktionierende Betriebsart, SDK-Verfügbarkeit, Modal und Tastaturbedienung, Zeichnen von Archivdaten, Tabelle, Messpunktanzeige, alle fünf Zeitbereiche, Vor-/Zurückblättern um eine vollständige Fensterbreite, Zukunftssperre, Stundenmittel-Kennzeichnung, einzelner Messpunkt, leere Daten, Archivfehler, Zeitüberschreitung, Verwerfen verspäteter Antworten und Wechsel zwischen Temperaturen. Kein horizontaler Überlauf bei 320, 390, 768 und 1200 Pixel Breite; keine JavaScript-Fehler.
+- Paketprüfung: gültige Manifeste und unveränderte Modulidentitäten, vollständige Laufzeit-/Dokumentationsdateien, ZIP-Integrität und SHA-256-Prüfsumme.
 
-## Grenzen und Test an deiner Anlage
+## Grenzen
 
-Keine echte Symcon-Instanz oder Wärmepumpe ist mit dieser Cloud-Umgebung verbunden. Die Tests verwenden die offiziellen Stubs und eine simulierte HTML-SDK-Brücke. Gerätefunktionen wurden hier nicht geschaltet. Der Screenshot enthält synthetische Testwerte und Auswahloptionen.
+Keine echte Symcon-Instanz oder Wärmepumpe ist mit dieser Entwicklungsumgebung verbunden. Die Modultests nutzen offizielle Stubs und synthetische Archivdaten, der Browsertest eine simulierte HTML-SDK-Brücke. Die Screenshots enthalten synthetische Beispielwerte; der Verlaufs-Screenshot zeigt eine künstliche Kurve und keine Aufzeichnung der Anlage.
 
-Nach Installation die elf IDs und die vorhandenen Werte prüfen. Betriebsart `53049` benötigt ein wirksames Profil oder eine moderne Aufzählung mit realen Auswahlwerten und eine funktionierende Aktion. Die Sollwertquellen `10939` und `27660` benötigen wirksame klassische numerische Profile mit Bereich und positiver Schrittweite sowie ihre vorhandenen Aktionen. Moderne numerische Darstellungen werden derzeit bewusst nur gelesen. Bei anderen schaltbaren Quell-IDs die Instanzkonfiguration entsprechend anpassen. Keine erfundenen Aktionscodes oder Temperaturgrenzen übernehmen.
+Die vorhandenen Live-Quellwerte und Archivdaten müssen nach Installation in deiner Symcon-Instanz verglichen werden. Für Historie ist aktive Standardwert-Archivierung der vier Isttemperaturen erforderlich. Historie, Profilwerte, Aktionen und tatsächliche Geräteantworten deiner Anlage konnten hier nicht geprüft werden. Die Betriebsart verwendet weiterhin nur reale Quelloptionen; Sollwert-Schreibaktionen werden abgewiesen.
 
-Für einen Gerätetest einen laut Quellprofil zulässigen Sollwert bzw. eine angebotene Betriebsart anfordern, Quellupdate und Geräteanzeige vergleichen und bei Bedarf den ursprünglichen Wert wiederherstellen. Eine Quellbestätigung allein beweist nicht unabhängig den physischen Zustand der Anlage. Die Diagnose zeigt gesperrte oder fehlende Voraussetzungen an.
+Die Vorlagengrafik wurde als vereinfachtes eigenes SVG-Schema umgesetzt, keine hydraulische Fachplanung. Farben und Bauteilanordnung illustrieren die Kreise; aus ihnen werden keine zusätzlichen Sensorwerte oder Flussrichtungen abgeleitet.
 
-Der GitHub-Workflow wurde als Datei erstellt. Ein tatsächlicher CI-Lauf, Veröffentlichung auf GitHub und Installation auf einem Symcon-Server sind damit nicht belegt.
+Der vorhandene GitHub-Workflow führt die lokalen Prüfungen bei Push/PR aus. Ein erfolgreicher lokaler Lauf belegt keinen erfolgreichen GitHub-CI-Lauf oder eine Installation auf dem Symcon-Server.

@@ -1,69 +1,80 @@
 # Viessmann Vitocal 222-C · Kachel für IP-Symcon
 
-Eigenständiges Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**, aufgebaut auf der [Vitovent-300-F-Kachel](https://github.com/somm86/Viessmann-Vitovent-300F-Kachel-Symcon) (Referenzstand `75693d21426088d10e37771b681850b7c8e770f3`). Eigene Bibliotheks- und Modul-GUIDs erlauben die parallele Installation. Keine Lüftungsdaten, keine Viessmann-Cloud-Anmeldung, keine externen JavaScript- oder Laufzeitpakete.
+Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Das Schema orientiert sich an der bereitgestellten Anlagenvorlage mit Heizkreis, Warmwasserspeicher, Kältekreis und Erdsonde. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die bestehende Betriebsartsteuerung bleibt erhalten.
 
-![Vitocal-Kachel mit synthetischen Testdaten](docs/dashboard.png)
+![Kachel mit synthetischen Testwerten](docs/dashboard.png)
 
-Die Darstellung der Wärmepumpe ist schematisch. Screenshot und Test-Betriebsarten stammen aus synthetischen Fixtures; Auswahlwerte und Temperaturgrenzen deiner Anlage werden nicht daraus abgeleitet.
+## Installation und Update
 
-## Installation
+In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-**Lokal mit ZIP:** `dist/Vitocal222C-Kachel-1.0.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf deinem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten.
+Alternativ `dist/Vitocal222C-Kachel-1.1.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
-**Über Module Control:** In Module Control `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen. Nicht gleichzeitig lokal und über Module Control installieren.
+Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Eine große Kachel zeigt das Schema übersichtlicher; kleine Kacheln können vertikal gescrollt werden. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
-Danach:
+## Vorbelegte Quellen
 
-1. Instanz **Vitocal 222-C Kachel** erstellen.
-2. Quellvariablen prüfen und **Übernehmen** drücken. Die IDs aus deinem Screenshot sind vorbelegt und einzeln änderbar.
-3. Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Für die Übersicht eine große Kachel verwenden; bei kleinen Kacheln kann vertikal gescrollt werden.
-4. Prüfen, ob die angezeigten Quellwerte mit deiner Symcon-Konsole übereinstimmen. Die Kachel fragt die Wärmepumpe nicht selbst ab; die bestehende Geräteintegration muss die Variablen aktualisieren.
+| Wert | ID | Eigenschaft |
+|---|---:|---|
+| Betriebsart Heizung | 53049 | `ModeID` |
+| Heizkreispumpe | 20926 | `HeatingPumpID` |
+| Primärpumpe | 39794 | `PrimaryPumpID` |
+| Rücklauftemperatur Sekundär | 21875 | `ReturnID` |
+| Ventil Heizen/Warmwasser | 53786 | `ValveID` |
+| Verdichterbetrieb | 31722 | `CompressorID` |
+| Vorlauftemperatur Primärquelle | 18104 | `PrimaryFlowID` |
+| Vorlauftemperatur Sekundär | 18969 | `FlowID` |
+| Warmwasser Ist | 56634 | `WaterID` |
 
-## Deine Variablen
+Alle IDs sind in der Instanz änderbar. Die früheren Sollwertquellen `10939` und `27660` werden nicht mehr gelesen, angezeigt oder geschaltet. Eine Raum-Isttemperatur war nicht vorhanden und wird nicht aus dem Raumsollwert abgeleitet. Abluft, Fortluft, Lüftungsaußentemperatur, Lüftungsbetriebsart, Filterrestzeit und Zuluft-Volumenstrom sind ausgeschlossen.
 
-| Wert | ID | Eigenschaft | Verwendung |
-|---|---:|---|---|
-| Betriebsart Heizung | 53049 | `ModeID` | Anzeige und Auswahl |
-| Heizkreispumpe | 20926 | `HeatingPumpID` | Status |
-| Primärpumpe | 39794 | `PrimaryPumpID` | Status |
-| Raum-Solltemperatur | 10939 | `RoomTargetID` | Anzeige und Sollwertsteuerung |
-| Rücklauftemperatur Sekundär | 21875 | `ReturnID` | Temperatur |
-| Ventil Heizen/Warmwasser | 53786 | `ValveID` | Status nach Quellprofil |
-| Verdichterbetrieb | 31722 | `CompressorID` | Status |
-| Vorlauftemperatur Primärquelle | 18104 | `PrimaryFlowID` | Temperatur |
-| Vorlauftemperatur Sekundär | 18969 | `FlowID` | Temperatur |
-| Warmwasser Ist | 56634 | `WaterID` | Temperatur |
-| Warmwasser-Solltemperatur | 27660 | `WaterTargetID` | Anzeige und Sollwertsteuerung |
+Temperaturen müssen in °C vorliegen. Pumpen und Umschaltventil verwenden die formatierten Quellwerte; die Bedeutung des Ventilwerts wird nicht eigenmächtig umgedreht. Aktive Boolesche Pumpen-/Verdichtersignale werden im Schema grün hervorgehoben. Das Schema ist vereinfacht und keine Messung von Flussrichtungen oder vollständige hydraulische Installationszeichnung.
 
-Ausgeschlossen: Abluft, Fortluft, Lüftungsaußentemperatur, Lüftungsbetriebsart, Filterrestzeit und Zuluft-Volumenstrom. Eine Raum-Isttemperatur ist im Screenshot nicht enthalten. `10939` wird daher ausdrücklich als **Raum-Solltemperatur** angezeigt. Temperaturen müssen in °C vorliegen. Für Pumpen und Umschaltventil verwendet die Kachel `GetValueFormatted()`; insbesondere wird die Bedeutung des Ventilwerts nicht eigenmächtig umgedreht.
+## Temperaturverlauf
 
-## Bedienung
+Eine der vier Temperaturkarten anklicken oder per Tastatur aktivieren. Es öffnet sich ein Graph mit:
 
-Alle Änderungen laufen über **`RequestAction(QuellvariablenID, Wert)`**. Die Kachel schreibt keine Quellwerte mit `SetValue()` und verändert keine Profile. Die wirksame Aktion muss auf eine vorhandene Instanz oder ein vorhandenes Skript zeigen; benutzerdefinierte Aktion `1` deaktiviert die Bedienung. Sollwerte und Betriebsart bleiben bis zum Quellupdate beim tatsächlich gelesenen Wert. Nach 15 Sekunden ohne passenden Quellwert erscheint ein Hinweis, keine Erfolgsmeldung. Ein Quellupdate bestätigt die Variable, nicht unabhängig davon den physischen Zustand des Geräts.
+- **1 Stunde, 6 Stunden, 24 Stunden, 7 Tage oder 30 Tage** als Zeitbereich.
+- **Zurück** und **Vor**: um einen vollständigen gewählten Zeitraum blättern.
+- **Jetzt**: an die aktuelle Zeit springen und Daten neu laden; Navigation in die Zukunft ist gesperrt.
+- Zeitpunkt und Temperatur am nächstgelegenen Messpunkt per Maus/Touch sowie einer aufklappbaren Tabelle mit maximal 500 Werten.
 
-- **Betriebsart:** ausschließlich Werte des wirksamen Profils bzw. einer modernen Darstellung **Aufzählung** (Darstellungs-API ab Symcon 8.1). Der Stringtyp deiner Variable wird erhalten. Es werden keine Betriebsartcodes erfunden. Ist `53049` nur ein Anzeigetext ohne Auswahloptionen/Aktion, in der Instanz die tatsächlich schaltbare Betriebsartvariable auswählen.
-- **Raum und Warmwasser:** wirksames numerisches klassisches Quellprofil mit passendem Datentyp, gültigen Min-/Max-Werten, positiver Schrittweite und ohne Aufzählungsassoziationen erforderlich. Bereich und Schrittweite werden bei jedem Aufruf serverseitig erneut geprüft. Keine frei angenommenen Temperaturgrenzen. Moderne numerische Darstellungen sind in Version 1.0 noch nicht als Bereichsquelle implementiert; solche Sollwerte bleiben lesbar, die Eingabe bleibt mit Diagnose gesperrt. Falls deine schaltbare Sollwertvariable eine andere ID hat, diese in der Instanz auswählen.
+Die Zeiträume sind feste, rollende Dauern; 24 Stunden sind unabhängig von Sommerzeitwechseln 86.400 Sekunden. Datum und Uhrzeit verwenden die lokale Browser-Zeitzone. Die Zeitachse reicht immer über den ausgewählten Bereich, nicht nur zwischen den vorhandenen Messpunkten. Ein normaler Livewert-Refresh verschiebt ein geöffnetes historisches Fenster nicht. Zum Aktualisieren **Jetzt** drücken. Der Dialog lässt sich mit **✕** oder **Escape** schließen.
 
-Die tatsächlichen Profile, Aktionen und Geräteantworten deiner Symcon-Installation waren in dieser Entwicklungsumgebung nicht verfügbar. Öffne bei gesperrter Bedienung **Variablen- und Steuerungsdiagnose** in der Kachel oder **Betriebsart-Diagnose anzeigen** in der Instanz (enthält auch die Sollwertkonfiguration). Dort stehen erkannte IDs, Typen, Auswahlwerte und Gründe. Keine Zugangsdaten erforderlich.
+![Verlaufsdialog mit synthetischen Beispieldaten](docs/history.png)
 
-## Entwicklung und Prüfung
+### Archivierung als Voraussetzung
 
-Benötigt PHP mit `mbstring`, Python 3 und für den Browsertest Playwright/Chromium. Der produktive Symcon-Betrieb benötigt keine Testabhängigkeiten.
+Im Symcon **Archive Control** muss die Archivierung für `18104`, `18969`, `21875` und `56634` bzw. deine abweichenden Isttemperatur-IDs aktiv sein. Archivierung als **Standardwert**, nicht als Zähler konfigurieren. Die Kachel schaltet die Archivierung nicht selbst ein und verändert keine historischen Daten. Alte Werte werden durch Aktivierung nicht nachträglich erzeugt.
+
+In der Instanz kann **Archive Control** ausgewählt werden. Mit `0` sucht die Kachel für die angeklickte Temperatur automatisch das erste Archiv mit aktiver Aufzeichnung. Bei mehreren Archiven eine explizite Instanz auswählen; eine ausdrücklich gewählte Instanz wird nicht stillschweigend ersetzt. Fehlende Archivierung beeinflusst den Graphen, die aktuellen Werte bleiben nutzbar.
+
+Bis einschließlich 48 Stunden werden `AC_GetLoggedValues()`-Einzelwerte gelesen. Für 7 und 30 Tage werden über `AC_GetAggregatedValues(..., 0, ...)` Stundenmittelwerte verwendet und als solche beschriftet. Keine historischen Werte werden aus dem aktuellen Wert erfunden. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen. Fehlende Daten und Fehler erscheinen im Dialog. Wird das API-Limit von 10.000 Einträgen erreicht, wird der Graph nicht unbemerkt abgeschnitten: einen kleineren Zeitraum oder 7/30 Tage mit Stundenmitteln wählen.
+
+Die Datenübertragung läuft über die HTML-SDK-Brücke und den Visualisierungsnachrichtenkanal. Jede Anfrage hat eine eigene Kennung; verspätete Antworten aus einem anderen Zeitraum, einer anderen Temperatur, einem anderen geöffneten Client oder einem geschlossenen Dialog werden verworfen. Nach 15 Sekunden ohne Antwort wird ein Hinweis angezeigt. Keine WebHooks, CDN-, npm- oder Chartbibliotheken erforderlich.
+
+## Betriebsart
+
+Die Betriebsartsteuerung verwendet ausschließlich vorhandene Auswahlwerte im wirksamen Profil oder der modernen Darstellung **Aufzählung** (Darstellungs-API ab Symcon 8.1). Die Stringwerte von `53049` werden erhalten. Eine gültige Variablenaktion ist erforderlich; benutzerdefinierte Aktion `1` deaktiviert die Bedienung. Jeder Wert wird vor `RequestAction(QuellvariablenID, Wert)` serverseitig erneut geprüft. Das Modul schreibt keine Quellwerte mit `SetValue()` und verändert keine Profile.
+
+Die Anzeige wechselt erst beim Quellupdate. Nach 15 Sekunden ohne passenden Quellwert folgt ein Hinweis, keine Erfolgsmeldung. Eine Quellbestätigung ist kein unabhängiger Nachweis des physischen Gerätezustands. Bei fehlender Auswahl bzw. Aktion die **Variablen- und Steuerungsdiagnose** öffnen. Ist `53049` nur ein Anzeigetext, die tatsächlich schaltbare Betriebsartvariable in der Instanz auswählen.
+
+## Entwicklung und Prüfungen
+
+Benötigt PHP mit `mbstring`, Python 3 und für den Browsertest Playwright/Chromium. Produktiv werden nur die PHP-/HTML-Dateien des Moduls benötigt, keine Testpakete oder Viessmann-Zugangsdaten.
 
 ```sh
-# Im Repository-Verzeichnis:
 git clone https://github.com/symcon/SymconStubs.git /tmp/SymconStubs
 git -C /tmp/SymconStubs checkout 31f2e0478eb3763236fcf44ea4144271fdeddfd5
 php -l Vitocal222CTile/module.php
 SYMCON_STUBS=/tmp/SymconStubs php tests/module_test.php
 python3 -m pip install playwright==1.62.0
-# Ohne System-Chromium: python3 -m playwright install chromium
-CHROMIUM_PATH=/usr/bin/chromium python3 tests/browser_test.py
+python3 -m playwright install chromium
+python3 tests/browser_test.py
+# Alternativ: CHROMIUM_PATH=/usr/bin/chromium python3 tests/browser_test.py
 python3 tests/build.py
 ```
 
-`CHROMIUM_PATH` auf eine vorhandene Chromium-Datei setzen. Der Browsertest verwendet eine simulierte HTML-SDK-Brücke und synthetische Daten. Keine Verbindung zur Wärmepumpe und keine echte Schaltaktion. [Prüfbericht](docs/VALIDATION.md).
+Tests erzeugen ihre Fixtures unter `tests/output/` und aktualisieren die ausdrücklich synthetischen Vorschau-Screenshots. `tests/build.py` erstellt das ZIP und die SHA-256-Datei und prüft Manifeste, Identitäten, Dateiliste und ZIP-Integrität. [Prüfbericht und Grenzen](docs/VALIDATION.md).
 
-Das Build-Skript erstellt das ZIP und seine SHA-256-Datei, prüft Manifeste, Dateiliste und separate GUIDs und schließt Tests und Git-Daten aus. Die GitHub-Prüfung ist vorbereitet; eine Ausführung auf GitHub wird dadurch nicht behauptet.
-
-Keine offizielle Verbindung zu Viessmann oder Symcon. Die referenzierte Vorlage enthält keine Lizenzdatei; dieses Projekt erteilt keine zusätzliche Lizenz für übernommenen Code.
+Basiert auf der [Vitovent-300-F-Kachel](https://github.com/somm86/Viessmann-Vitovent-300F-Kachel-Symcon), Referenzcommit `75693d21426088d10e37771b681850b7c8e770f3`, mit eigenen GUIDs und eigenem Präfix. Keine offizielle Verbindung zu Viessmann oder Symcon. Die referenzierte Vorlage enthält keine Lizenzdatei; dieses Projekt erteilt keine zusätzliche Lizenz für übernommenen Code.
