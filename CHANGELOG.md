@@ -1,5 +1,11 @@
 # Änderungen
 
+## 1.7
+
+- Zusatzbeschriftung „Heizung & Warmwasser“ oben links entfernt.
+- Hersteller-/Gerätebeschriftung verkleinert.
+- Eigenes kompaktes SVG-Gerätesymbol für die Vitocal 222 im Kopfbereich ergänzt, ohne externe Bildabhängigkeit.
+
 ## 1.6
 
 - Quellendiagnose aus der Kachel entfernt; Instanzdiagnose bleibt verfügbar.

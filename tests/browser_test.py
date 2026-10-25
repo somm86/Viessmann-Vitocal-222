@@ -23,7 +23,7 @@ with sync_playwright() as p:
     page.set_content(html)
     page.clock.install()
     check(page.locator('input').count()==0,'no setpoint inputs')
-    check(page.locator('.plant, .plant-viewport, svg[role=img]').count()==1,'only history chart, no plant schema')
+    check(page.locator('.plant, .plant-viewport').count()==0,'no plant schema')
     check('Solltemperatur' not in page.locator('body').inner_text(),'only actual temperatures shown')
     check(page.locator('[data-history]').count()==4,'four clickable temperatures')
     check(page.locator('#water').inner_text()=='45,6 °C','water reading')
