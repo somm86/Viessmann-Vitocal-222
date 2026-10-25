@@ -2,7 +2,6 @@
 
 class Vitocal222CTile extends IPSModule
 {
-    private const ENUMERATION = '{52D9E126-D7D2-2CBB-5E62-4CF7BA7C5D82}';
     private const LEGACY = '{4153A8D4-5C33-C65F-C1F3-7B61AAF99B1C}';
 
     private const SOURCES = [
@@ -34,7 +33,6 @@ class Vitocal222CTile extends IPSModule
     public function ApplyChanges()
     {
         parent::ApplyChanges();
-        $this->SetBuffer('ActionError', '');
         $this->RegisterMessage(0, IPS_KERNELSTARTED);
         // Only remove subscriptions owned by this module; retain the kernel subscription.
         foreach ($this->GetMessageList() as $sender => $messages) {
@@ -75,13 +73,13 @@ class Vitocal222CTile extends IPSModule
 
     public function GetConfigurationForm()
     {
-        $elements = [['type' => 'Label', 'caption' => 'Vorhandene Wärmepumpenvariablen auswählen. Steuerung über vorhandene Variablenaktionen; keine direkte Geräteverbindung.']];
+        $elements = [['type' => 'Label', 'caption' => 'Vorhandene Wärmepumpenvariablen auswählen. Reine Anzeige mit Temperaturverlauf, keine Schaltaktionen.']];
         foreach (self::SOURCES as $source) {
             $elements[] = ['type' => 'SelectVariable', 'name' => $source[0], 'caption' => $source[2]];
         }
         $elements[] = ['type' => 'Label', 'caption' => 'Temperaturen in °C. Für Verläufe muss die Archivierung der vier Isttemperaturen im Archive Control aktiv sein. 0 = passendes Archiv automatisch suchen.'];
         $elements[] = ['type' => 'SelectInstance', 'name' => 'ArchiveID', 'caption' => 'Archive Control (0 = automatisch)', 'moduleID' => self::ARCHIVE];
-        return $this->encode(['elements' => $elements, 'actions' => [['type' => 'Button', 'caption' => 'Betriebsart-Diagnose anzeigen', 'onClick' => 'echo V222_GetDiagnostics($id);']], 'status' => [
+        return $this->encode(['elements' => $elements, 'actions' => [['type' => 'Button', 'caption' => 'Quellen-Diagnose anzeigen', 'onClick' => 'echo V222_GetDiagnostics($id);']], 'status' => [
             ['code' => 102, 'icon' => 'active', 'caption' => 'Alle neun Quellvariablen verfügbar'],
             ['code' => 104, 'icon' => 'inactive', 'caption' => 'Quellvariable fehlt oder hat einen ungeeigneten Datentyp']
         ]]);
@@ -131,46 +129,12 @@ class Vitocal222CTile extends IPSModule
             $this->UpdateVisualizationValue($this->encode($response));
             return;
         }
-        $this->SetBuffer('ActionError', '');
-        try {
-            if ($ident !== 'ChangeMode') {
-                throw new InvalidArgumentException('Unbekannte Aktion.');
-            }
-            if (IPS_GetKernelRunlevel() !== KR_READY) {
-                throw new RuntimeException('IP-Symcon ist noch nicht bereit.');
-            }
-            // Re-read the effective presentation/profile and action on EVERY request.
-            $mode = $this->modeConfiguration();
-            if (!$mode['writable']) {
-                throw new RuntimeException($mode['reason']);
-            }
-            $candidate = $value;
-            if ($mode['type'] === 1 && is_float($value)) {
-                $candidate = is_finite($value) && floor($value) === $value && abs($value) <= 9007199254740991 ? (int) $value : null;
-            } elseif ($mode['type'] === 2 && (is_float($value) || is_int($value))) {
-                $candidate = (float) $value;
-            }
-            foreach ($mode['choices'] as $choice) {
-                if ($candidate === $choice['value']) {
-                    // Never SetValue: use the source's effective action and original value type.
-                    RequestAction($this->ReadPropertyInteger('ModeID'), $choice['value']);
-                    $this->Refresh();
-                    return;
-                }
-            }
-            throw new InvalidArgumentException('Dieser Wert ist in der aktuellen Betriebsartauswahl nicht freigegeben.');
-        } catch (Throwable $e) {
-            // requestAction() is documented as void: PHP errors need a separate SDK push.
-            $this->SetBuffer('ActionError', $e->getMessage());
-            $this->SendDebug('Betriebsartaktion fehlgeschlagen', $e->getMessage(), 0);
-            $this->Refresh();
-            throw $e;
-        }
+        throw new InvalidArgumentException('Die Kachel ist schreibgeschützt. Nur Verlaufsanfragen sind erlaubt.');
     }
 
     public function GetDiagnostics(): string
     {
-        return $this->encode(['mode' => $this->modeConfiguration(), 'archiveID' => $this->ReadPropertyInteger('ArchiveID')]);
+        return $this->encode(['sources' => array_combine(array_keys(self::SOURCES), $this->sourceIDs()), 'archiveID' => $this->ReadPropertyInteger('ArchiveID'), 'readOnly' => true]);
     }
 
     private function sourceMessages(): array
@@ -200,69 +164,6 @@ class Vitocal222CTile extends IPSModule
             $name = ($variable['VariableCustomProfile'] ?? '') !== '' ? $variable['VariableCustomProfile'] : ($variable['VariableProfile'] ?? '');
         }
         return $name !== '' && IPS_VariableProfileExists($name) ? IPS_GetVariableProfile($name) : null;
-    }
-
-    private function modeConfiguration(): array
-    {
-        $id = $this->ReadPropertyInteger('ModeID');
-        $result = ['choices' => [], 'writable' => false, 'reason' => 'Betriebsartvariable fehlt.',
-            'type' => null, 'variableID' => $id, 'source' => '', 'actionID' => 0];
-        if ($id <= 0 || !IPS_VariableExists($id)) {
-            return $result;
-        }
-        $variable = IPS_GetVariable($id);
-        $result['type'] = $variable['VariableType'];
-        $presentation = $this->presentation($id);
-        $rawChoices = [];
-        if (($presentation['PRESENTATION'] ?? '') === self::ENUMERATION) {
-            $result['source'] = 'Aufzählung';
-            $options = json_decode($presentation['OPTIONS'] ?? '[]', true);
-            if (is_array($options)) {
-                foreach ($options as $option) {
-                    if (is_array($option) && array_key_exists('Value', $option) && isset($option['Caption'])) {
-                        $rawChoices[] = ['value' => $option['Value'], 'label' => (string) $option['Caption']];
-                    }
-                }
-            }
-        } else {
-            $profile = $this->profile($variable, $id);
-            if ($profile !== null && $profile['ProfileType'] === $result['type']) {
-                $result['source'] = 'Profil: ' . $profile['ProfileName'];
-                foreach ($profile['Associations'] as $association) {
-                    $value = $association['Value'];
-                    // Legacy boolean associations use numeric 0/1, not JSON booleans.
-                    if ($result['type'] === 0 && in_array($value, [0, 1, 0.0, 1.0], true)) {
-                        $value = (bool) $value;
-                    }
-                    $rawChoices[] = ['value' => $value, 'label' => (string) $association['Name']];
-                }
-            }
-        }
-        foreach ($rawChoices as $choice) {
-            $value = $choice['value'];
-            if ($result['type'] === 0 && is_bool($value)) {
-                $result['choices'][] = $choice;
-            } elseif ($result['type'] === 3 && is_string($value)) {
-                $result['choices'][] = $choice;
-            } elseif (in_array($result['type'], [1, 2], true) && (is_int($value) || is_float($value)) && is_finite((float) $value)) {
-                if ($result['type'] === 1 && (float) (int) $value !== (float) $value) {
-                    continue;
-                }
-                $choice['value'] = $result['type'] === 1 ? (int) $value : (float) $value;
-                $result['choices'][] = $choice;
-            }
-        }
-        $action = ($variable['VariableCustomAction'] ?? 0) > 0 ? $variable['VariableCustomAction'] : ($variable['VariableAction'] ?? 0);
-        $result['actionID'] = $action;
-        if ($action < 10000 || (!IPS_InstanceExists($action) && !IPS_ScriptExists($action))) {
-            $result['reason'] = 'Keine gültige Variablenaktion vorhanden oder Aktion deaktiviert.';
-        } elseif (count($result['choices']) === 0) {
-            $result['reason'] = 'Variable ' . $id . ': Keine Auswahlwerte im wirksamen Profil oder in der Darstellung „Aufzählung“. Bitte die Auswahl der Quellvariable in IP-Symcon prüfen.';
-        } else {
-            $result['writable'] = true;
-            $result['reason'] = '';
-        }
-        return $result;
     }
 
     public function GetHistory(string $Key, int $Start, int $End): string
@@ -310,7 +211,7 @@ class Vitocal222CTile extends IPSModule
 
     private function snapshot(): array
     {
-        $data = ['values' => [], 'missing' => [], 'actionError' => $this->GetBuffer('ActionError')];
+        $data = ['values' => [], 'missing' => []];
         foreach (self::SOURCES as $key => $source) {
             $id = $this->ReadPropertyInteger($source[0]);
             $entry = ['value' => null, 'formatted' => '—', 'updated' => 0, 'hasUnit' => false];
@@ -340,11 +241,6 @@ class Vitocal222CTile extends IPSModule
             if ($entry['value'] === null) {
                 $data['missing'][] = $source[2];
             }
-        }
-        try {
-            $data['mode'] = $this->modeConfiguration();
-        } catch (Throwable $e) {
-            $data['mode'] = ['choices' => [], 'writable' => false, 'reason' => 'Betriebsartkonfiguration nicht verfügbar.', 'type' => null];
         }
         return $data;
     }

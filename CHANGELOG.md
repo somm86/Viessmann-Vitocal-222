@@ -1,5 +1,12 @@
 # Änderungen
 
+## 1.2
+
+- Betriebsartauswahl vollständig entfernt; aktuelle Betriebsart bleibt als Status sichtbar.
+- Alle ehemaligen Schreibaktionen auch serverseitig gesperrt.
+- Anlagenschema nach der Fotovorlage neu gezeichnet: Heizkreispumpe unter dem Dreiwegeventil, getrennte Vor-/Rückläufe, Primärpumpe auf der rechten Erdsondenleitung.
+- Vorhandene Isttemperaturen, Archivverläufe und Zeitnavigation bleiben erhalten.
+
 ## 1.1
 
 - Sollwertanzeigen und Eingaben vollständig entfernt; die beiden Sollwert-Schreibaktionen werden auch serverseitig abgewiesen.

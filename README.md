@@ -1,6 +1,6 @@
 # Viessmann Vitocal 222-C · Kachel für IP-Symcon
 
-Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Das Schema orientiert sich an der bereitgestellten Anlagenvorlage mit Heizkreis, Warmwasserspeicher, Kältekreis und Erdsonde. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die bestehende Betriebsartsteuerung bleibt erhalten.
+Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Das Schema orientiert sich an der bereitgestellten Anlagenvorlage mit Heizkreis, Warmwasserspeicher, Kältekreis und Erdsonde. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
 
 ![Kachel mit synthetischen Testwerten](docs/dashboard.png)
 
@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ `dist/Vitocal222C-Kachel-1.1.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ `dist/Vitocal222C-Kachel-1.2.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Eine große Kachel zeigt das Schema übersichtlicher; kleine Kacheln können vertikal gescrollt werden. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -53,11 +53,17 @@ Bis einschließlich 48 Stunden werden `AC_GetLoggedValues()`-Einzelwerte gelesen
 
 Die Datenübertragung läuft über die HTML-SDK-Brücke und den Visualisierungsnachrichtenkanal. Jede Anfrage hat eine eigene Kennung; verspätete Antworten aus einem anderen Zeitraum, einer anderen Temperatur, einem anderen geöffneten Client oder einem geschlossenen Dialog werden verworfen. Nach 15 Sekunden ohne Antwort wird ein Hinweis angezeigt. Keine WebHooks, CDN-, npm- oder Chartbibliotheken erforderlich.
 
-## Betriebsart
+## Betriebsart: nur Status
 
-Die Betriebsartsteuerung verwendet ausschließlich vorhandene Auswahlwerte im wirksamen Profil oder der modernen Darstellung **Aufzählung** (Darstellungs-API ab Symcon 8.1). Die Stringwerte von `53049` werden erhalten. Eine gültige Variablenaktion ist erforderlich; benutzerdefinierte Aktion `1` deaktiviert die Bedienung. Jeder Wert wird vor `RequestAction(QuellvariablenID, Wert)` serverseitig erneut geprüft. Das Modul schreibt keine Quellwerte mit `SetValue()` und verändert keine Profile.
+Variable `53049` wird mit ihrem formatierten Quellwert oben in der Statusanzeige dargestellt. Es gibt keine Betriebsartauswahl und keine Schaltaktionen mehr. Eine Profil-Auswahlliste oder Variablenaktion ist für die Anzeige nicht erforderlich. Selbst direkte Aufrufe der ehemaligen Aktionen `ChangeMode`, `SetRoomTarget` und `SetWaterTarget` werden serverseitig abgewiesen. Die HTML-SDK-Aktion wird ausschließlich für lesende Archivabfragen verwendet.
 
-Die Anzeige wechselt erst beim Quellupdate. Nach 15 Sekunden ohne passenden Quellwert folgt ein Hinweis, keine Erfolgsmeldung. Eine Quellbestätigung ist kein unabhängiger Nachweis des physischen Gerätezustands. Bei fehlender Auswahl bzw. Aktion die **Variablen- und Steuerungsdiagnose** öffnen. Ist `53049` nur ein Anzeigetext, die tatsächlich schaltbare Betriebsartvariable in der Instanz auswählen.
+**Quellendiagnose** zeigt die gelesenen Werte und den Schreibschutz. Die Instanz bietet zusätzlich **Quellen-Diagnose anzeigen** mit den konfigurierten Quell-IDs und dem Archiv.
+
+## Korrigiertes Anlagenschema
+
+Das Schema ist nach der Fotovorlage neu gezeichnet: Die Heizkreispumpe sitzt im senkrechten gemeinsamen Vorlauf unter dem Dreiwegeventil. Vom Ventil gehen getrennte Leitungen zur linken Heizschleife und zur Speicherwendel rechts. Deren Rückläufe werden links zusammengeführt; die gezeichnete Kreuzung zum heißen Vorlauf ist keine hydraulische Verbindung. Der getrennte Kältekreis liegt zwischen Verflüssiger, Verdichter rechts, Verdampfer und Expansionsorgan links. Die Primärpumpe sitzt wie auf der Vorlage auf der rechten Leitung zwischen Verdampfer und Erdsonde.
+
+Die Grafik bildet die sichtbare Anordnung der bereitgestellten Vorlage schematisch ab. Sie ersetzt keinen hydraulischen Bestandsplan der tatsächlichen Installation. Temperaturen und Betriebszustände kommen ausschließlich aus den konfigurierten Variablen.
 
 ## Entwicklung und Prüfungen
 

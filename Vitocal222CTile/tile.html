@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vitocal 222-C</title>
 <style>
-:root{color-scheme:dark;--bg:#061522;--panel:#0b2234;--line:#20455c;--text:#ecf5fb;--muted:#9cbace;--blue:#51c7ff;--warm:#ffbc70;--green:#57e2af}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#11334a,var(--bg) 70%);color:var(--text);font:15px/1.4 system-ui,sans-serif}main{max-width:1200px;padding:22px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}h1{margin:0;font-size:clamp(25px,4vw,42px);letter-spacing:-1px}h2{font-size:18px;margin:0 0 15px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted)}.subtitle{color:var(--muted)}.badge{border:1px solid var(--line);border-radius:24px;padding:9px 15px;color:var(--green);max-width:45%;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);background:linear-gradient(140deg,#0d293e,#081b2b);border-radius:18px;padding:20px;min-width:0}.wide{grid-column:1/-1}.reading{background:#071927;border:1px solid var(--line);border-radius:12px;padding:16px}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(24px,4vw,38px);font-weight:600;letter-spacing:-1px;overflow-wrap:anywhere}.warm{color:var(--warm)}.cold{color:var(--blue)}.diagram-note{font-size:10px;color:var(--muted);text-align:center}.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.status{background:#071927;border-radius:12px;padding:14px;border:1px solid var(--line)}.status strong{display:block;font-size:19px;margin-top:6px}.status[data-active="true"]{border-color:#287c63}.status[data-active="true"] strong{color:var(--green)}button{font:inherit;border-radius:9px;border:1px solid #376079;padding:10px 12px;background:#0d3047;color:var(--text);cursor:pointer;min-height:42px}button:disabled{opacity:.45;cursor:default}button[aria-pressed="true"]{border-color:var(--green);background:#124b40;color:#a8ffdc}button:hover:enabled{border-color:var(--blue)}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px}.modes{display:flex;flex-wrap:wrap;gap:10px}.reason,.hint{font-size:12px;color:var(--muted);margin-top:10px}.feedback{font-size:13px;color:#ffd399;min-height:20px;margin:12px 0}footer{color:var(--muted);font-size:11px;margin-top:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}details{margin-top:15px;color:var(--muted);font-size:12px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}.unavailable{color:#ffd399} @media(max-width:650px){main{padding:12px}.grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr 1fr}.reading{padding:10px}.panel{padding:15px}.value{font-size:25px}.label{font-size:11px}.badge{font-size:12px}header{align-items:flex-start}.diagram-note{font-size:9px}}
+:root{color-scheme:dark;--bg:#061522;--panel:#0b2234;--line:#20455c;--text:#ecf5fb;--muted:#9cbace;--blue:#51c7ff;--warm:#ffbc70;--green:#57e2af}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#11334a,var(--bg) 70%);color:var(--text);font:15px/1.4 system-ui,sans-serif}main{max-width:1200px;padding:22px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}h1{margin:0;font-size:clamp(25px,4vw,42px);letter-spacing:-1px}h2{font-size:18px;margin:0 0 15px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted)}.subtitle{color:var(--muted)}.badge{border:1px solid var(--line);border-radius:24px;padding:9px 15px;color:var(--green);max-width:45%;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);background:linear-gradient(140deg,#0d293e,#081b2b);border-radius:18px;padding:20px;min-width:0}.wide{grid-column:1/-1}.reading{background:#071927;border:1px solid var(--line);border-radius:12px;padding:16px}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(24px,4vw,38px);font-weight:600;letter-spacing:-1px;overflow-wrap:anywhere}.warm{color:var(--warm)}.cold{color:var(--blue)}.diagram-note{font-size:10px;color:var(--muted);text-align:center}.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.status{background:#071927;border-radius:12px;padding:14px;border:1px solid var(--line)}.status strong{display:block;font-size:19px;margin-top:6px}.status[data-active="true"]{border-color:#287c63}.status[data-active="true"] strong{color:var(--green)}button{font:inherit;border-radius:9px;border:1px solid #376079;padding:10px 12px;background:#0d3047;color:var(--text);cursor:pointer;min-height:42px}button:disabled{opacity:.45;cursor:default}button:hover:enabled{border-color:var(--blue)}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px}.reason,.hint{font-size:12px;color:var(--muted);margin-top:10px}.feedback{font-size:13px;color:#ffd399;min-height:20px;margin:12px 0}footer{color:var(--muted);font-size:11px;margin-top:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}details{margin-top:15px;color:var(--muted);font-size:12px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}.unavailable{color:#ffd399} @media(max-width:650px){main{padding:12px}.grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr 1fr}.reading{padding:10px}.panel{padding:15px}.value{font-size:25px}.label{font-size:11px}.badge{font-size:12px}header{align-items:flex-start}.diagram-note{font-size:9px}}
 
-.section-heading,.dialog-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.section-heading h2{margin-bottom:0}.section-heading{margin-bottom:18px}.temperature-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.reading{text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}.reading .value{font-size:clamp(22px,3vw,34px)}.chart-link{color:var(--muted);font-size:11px}.plant{display:block;width:100%;max-height:620px;margin:10px auto 0}.svg-label{font:17px system-ui;fill:#e0edf5}.svg-small{font:13px system-ui;fill:#c0d7e7}.pipe-hot,.pipe-cold{fill:none;stroke:#ef8d73;stroke-width:10;stroke-linejoin:round;stroke-linecap:round}.pipe-cold{stroke:#58b6e6}.component{fill:#14364a;stroke:#98b7c9;stroke-width:3}.component.active{fill:#1b7358;stroke:#8cf0ba}.component path{stroke-width:2}dialog{color:var(--text);background:#0a1d2c;border:1px solid #36627a;border-radius:18px;padding:22px;width:min(950px,96vw);max-width:96vw;max-height:95dvh;overflow:auto}dialog::backdrop{background:#000a}.dialog-heading h2{font-size:24px;margin:4px 0 15px}select{font:inherit;background:#102e42;border:1px solid #376079;border-radius:8px;color:var(--text);padding:9px;margin-left:6px}.history-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}.history-navigation{display:flex;gap:7px;flex-wrap:wrap}.history-dates{font-size:13px;color:var(--muted);margin:12px 0}#historyState{font-size:13px;color:#ffd399;min-height:24px}#chartWrap{position:relative}#historyChart{display:block;width:100%;height:auto;min-height:160px;touch-action:pan-y}#chartTooltip{position:absolute;left:10px;top:4px;background:#183e55;padding:8px;border-radius:7px;pointer-events:none;font-size:12px}#historySummary{margin-top:8px}.table-scroll{max-height:240px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}#historyChart text{fill:#9fbfd3;font:12px system-ui}.chart-grid{stroke:#244257;stroke-width:1}.chart-line{stroke:#ffbc70;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}.chart-point{fill:#ffbc70}
+.section-heading,.dialog-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.section-heading h2{margin-bottom:0}.section-heading{margin-bottom:18px}.temperature-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.reading{text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}.reading .value{font-size:clamp(22px,3vw,34px)}.chart-link{color:var(--muted);font-size:11px}.plant{display:block;width:100%;max-width:650px;height:auto;margin:22px auto 0}.svg-label{font:17px system-ui;fill:#e0edf5}.svg-small{font:13px system-ui;fill:#c0d7e7}.pipe-hot,.pipe-cold{fill:none;stroke:#ef8d73;stroke-width:10;stroke-linejoin:round;stroke-linecap:round}.pipe-cold{stroke:#58b6e6}.component{fill:#14364a;stroke:#98b7c9;stroke-width:3}.component.active{fill:#1b7358;stroke:#8cf0ba}.component path{stroke-width:2}dialog{color:var(--text);background:#0a1d2c;border:1px solid #36627a;border-radius:18px;padding:22px;width:min(950px,96vw);max-width:96vw;max-height:95dvh;overflow:auto}dialog::backdrop{background:#000a}.dialog-heading h2{font-size:24px;margin:4px 0 15px}select{font:inherit;background:#102e42;border:1px solid #376079;border-radius:8px;color:var(--text);padding:9px;margin-left:6px}.history-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}.history-navigation{display:flex;gap:7px;flex-wrap:wrap}.history-dates{font-size:13px;color:var(--muted);margin:12px 0}#historyState{font-size:13px;color:#ffd399;min-height:24px}#chartWrap{position:relative}#historyChart{display:block;width:100%;height:auto;min-height:160px;touch-action:pan-y}#chartTooltip{position:absolute;left:10px;top:4px;background:#183e55;padding:8px;border-radius:7px;pointer-events:none;font-size:12px}#historySummary{margin-top:8px}.table-scroll{max-height:240px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}#historyChart text{fill:#9fbfd3;font:12px system-ui}.chart-grid{stroke:#244257;stroke-width:1}.chart-line{stroke:#ffbc70;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}.chart-point{fill:#ffbc70}
 @media(max-width:650px){.temperature-cards{grid-template-columns:1fr 1fr;gap:8px}.plant{margin-top:20px}.reading .value{font-size:26px}.dialog-heading h2{font-size:20px}dialog{padding:14px}.history-navigation button{padding:8px}.section-heading .hint{margin:0}}
 </style></head><body><main>
 <header><div><div class="eyebrow">VIESSMANN · WÄRMEPUMPE</div><h1>Vitocal 222-C</h1><div class="subtitle">Heizung &amp; Warmwasser</div></div><div id="modeBadge" class="badge">—</div></header>
@@ -14,51 +14,70 @@
 <button class="reading" data-history="return"><span class="label">Rücklauf Sekundär</span><span id="return" class="value cold">—</span><span class="chart-link">Verlauf öffnen</span></button>
 <button class="reading" data-history="water"><span class="label">Warmwasser Ist</span><span id="water" class="value warm">—</span><span class="chart-link">Verlauf öffnen</span></button>
 </div>
-<svg class="plant" viewBox="0 0 900 660" role="img" aria-labelledby="plantTitle plantDesc">
-<title id="plantTitle">Vitocal 222-C: Heizung, Warmwasserspeicher und Erdsonde</title><desc id="plantDesc">Schematische Darstellung nach der Anlagenvorlage: Heizkreis links, Warmwasserspeicher rechts, Kältekreis in der Mitte und Erdsonde unten. Farben kennzeichnen die Kreise, keine gemessenen Flussrichtungen.</desc>
-<defs><linearGradient id="cabinet" x2="1" y2="1"><stop stop-color="#c4d0d6"/><stop offset="1" stop-color="#6b8799"/></linearGradient><linearGradient id="tank" x2="0" y2="1"><stop stop-color="#ef785b"/><stop offset=".5" stop-color="#c96c60"/><stop offset="1" stop-color="#3f99c7"/></linearGradient><linearGradient id="ground" x2="0" y2="1"><stop stop-color="#375044"/><stop offset=".12" stop-color="#554c3b"/><stop offset="1" stop-color="#27333b"/></linearGradient></defs>
-<rect x="284" y="40" width="330" height="458" rx="14" fill="url(#cabinet)" opacity=".26" stroke="#b7ced9"/>
-<text x="450" y="66" class="svg-label" text-anchor="middle">VITOCAL 222-C</text>
-<path d="M30 505H870V640H30Z" fill="url(#ground)" stroke="#557063"/><path d="M30 505H870" stroke="#69956d" stroke-width="7"/>
-<g fill="#8c958b" opacity=".2"><circle cx="90" cy="548" r="13"/><circle cx="170" cy="600" r="20"/><circle cx="260" cy="555" r="18"/><circle cx="590" cy="552" r="15"/><circle cx="720" cy="599" r="23"/><circle cx="800" cy="554" r="17"/></g>
-<text x="78" y="533" class="svg-label">Erdreich / Wärmequelle</text>
-<!-- Heating and hot-water secondary circuit -->
-<path class="pipe-hot" d="M495 215V110H140Q120 110 120 130V150"/>
-<path class="pipe-hot" d="M495 110H730V155"/>
-<path class="pipe-cold" d="M170 150V275H385V248M730 320H650V275H385"/>
-<rect x="79" y="150" width="130" height="85" rx="8" fill="#0a1b29" stroke="#6f9aad"/>
-<path d="M96 219V170Q96 160 106 170V216Q116 232 126 216V170Q136 155 146 170V216Q156 232 166 216V170Q176 155 186 170V219" fill="none" stroke="#e99583" stroke-width="8"/>
-<text x="144" y="255" class="svg-label" text-anchor="middle">Heizkreis</text>
-<!-- Storage vessel and heat exchanger coil -->
-<rect x="686" y="62" width="118" height="300" rx="49" fill="url(#tank)" stroke="#b4cbd7" stroke-width="3"/>
-<path d="M730 155H775Q793 160 775 168L712 182Q696 190 714 197L775 211Q793 219 775 227L714 241Q696 249 714 257L775 271Q793 279 775 287L730 300V320" fill="none" stroke="#173b50" stroke-width="6"/>
-<path d="M804 90H838M804 334H838" fill="none" stroke="#ffb28a" stroke-width="6"/>
-<text x="744" y="390" class="svg-label" text-anchor="middle">Warmwasserspeicher</text>
-<!-- Condenser, compressor, expansion and evaporator -->
-<rect x="357" y="196" width="165" height="66" rx="10" fill="#ad5a3a" stroke="#efb78c"/>
-<path d="M372 229l10-22 10 44 10-44 10 44 10-44 10 44 10-44 10 44 10-44 10 44 10-44 10 22" fill="none" stroke="#f3c5a4" stroke-width="3"/>
-<text x="440" y="185" class="svg-label" text-anchor="middle">Verflüssiger</text>
-<path d="M522 229H563V329M563 363V422H522" fill="none" stroke="#b3d5e6" stroke-width="9"/>
-<g id="compressorSymbol" class="component"><circle cx="563" cy="346" r="27"/><path d="M545 334h36l-18 30Z"/></g>
-<text x="600" y="351" class="svg-label">Verdichter</text>
-<path d="M357 229H323V422H357" fill="none" stroke="#eda97f" stroke-width="9"/>
-<path d="M309 320l28 27h-28l28-27Z" fill="#c7d8de" stroke="#547789" stroke-width="2"/>
-<text x="305" y="373" class="svg-small" text-anchor="end">Expansionsventil</text>
-<rect x="357" y="389" width="165" height="65" rx="10" fill="#1f7190" stroke="#79c7dc"/>
-<path d="M372 422l10-22 10 44 10-44 10 44 10-44 10 44 10-44 10 44 10-44 10 44 10-44 10 22" fill="none" stroke="#b2e3c8" stroke-width="3"/>
-<text x="440" y="382" class="svg-label" text-anchor="middle">Verdampfer</text>
-<!-- Ground source closed loop -->
-<path class="pipe-cold" d="M397 454V548Q397 538 387 548V602Q397 616 407 602V556Q417 542 427 556V602Q437 616 447 602V556Q457 542 467 556V602Q477 616 487 602V454"/>
-<g id="primaryPumpSymbol" class="component"><circle cx="397" cy="502" r="18"/><path d="M387 493l20 9-20 9Z"/></g>
-<g id="heatingPumpSymbol" class="component"><circle cx="441" cy="110" r="18"/><path d="M431 101l20 9-20 9Z"/></g>
-<g id="valveSymbol" class="component"><path d="M475 98l20 12-20 12ZM515 98l-20 12 20 12ZM483 130l12-20 12 20Z"/></g>
-<text x="510" y="151" class="svg-small">Umschaltventil</text>
-<text x="490" y="582" class="svg-small">Erdsonde</text>
+<svg class="plant" viewBox="0 0 650 820" role="img" aria-labelledby="plantTitle plantDesc">
+<title id="plantTitle">Anlagenschema nach der bereitgestellten Vitocal-Vorlage</title>
+<desc id="plantDesc">Heizschleife links, Speicher rechts. Der Sekundärvorlauf steigt vom oberen Wärmetauscher über die Heizkreispumpe zum Dreiwegeventil. Beide Rückläufe treffen sich links; die Kreuzung mit dem Vorlauf ist keine Verbindung. Verdichter rechts, Expansionsorgan links und Verdampfer unten bilden den getrennten Kältekreis. Die Primärpumpe liegt rechts zwischen Verdampfer und Erdsonde.</desc>
+<defs>
+<linearGradient id="plantCabinet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5dfe2"/><stop offset="1" stop-color="#78909e"/></linearGradient>
+<linearGradient id="storageHeat" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b8473d"/><stop offset=".35" stop-color="#bd655a"/><stop offset="1" stop-color="#4a9dc4"/></linearGradient>
+<linearGradient id="heatingLoopGradient" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#df7268"/><stop offset=".45" stop-color="#aa9b9e"/><stop offset="1" stop-color="#69b5e3"/></linearGradient>
+<linearGradient id="secondaryTemperature" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#69b5e3"/><stop offset="1" stop-color="#df7268"/></linearGradient>
+<linearGradient id="storageCoil" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e98d78"/><stop offset="1" stop-color="#68b7e6"/></linearGradient>
+<linearGradient id="earth" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#47563b"/><stop offset=".1" stop-color="#62503a"/><stop offset="1" stop-color="#2b3842"/></linearGradient>
+<pattern id="earthStones" width="100" height="65" patternUnits="userSpaceOnUse"><path d="M8 20l22-12 20 13-7 18-28 1ZM62 43l19-16 17 9-4 23-23 3Z" fill="#94a29c" opacity=".14"/></pattern>
+</defs>
+<rect x="16" y="16" width="618" height="788" rx="16" fill="#0b1f30" stroke="#34536a" stroke-width="3"/>
+<rect x="206" y="78" width="254" height="504" rx="5" fill="url(#plantCabinet)" opacity=".4" stroke="#c7d9e2"/>
+<text x="332" y="101" class="svg-small" text-anchor="middle">VITOCAL 222-C</text>
+<path d="M30 594H620V784H30Z" fill="url(#earth)"/><path d="M30 594H620V784H30Z" fill="url(#earthStones)"/><path d="M30 594H620" stroke="#68845d" stroke-width="7"/>
+<text x="46" y="623" class="svg-small">Erdreich</text>
+<!-- Storage body: hot water and the secondary heating coil are separate. -->
+<rect x="486" y="34" width="112" height="351" rx="32" fill="url(#storageHeat)" stroke="#bacbd3" stroke-width="4"/>
+<path d="M598 73H628" class="pipe-hot"/><path d="M598 362H628" class="pipe-cold"/>
+<text x="542" y="415" class="svg-label" text-anchor="middle">Warmwasser</text>
+<!-- Heating loop returns at x=280. It is not directly connected to the hot supply. -->
+<path id="heatingSupply" class="pipe-hot" d="M350 135H60Q45 135 45 150"/>
+<path id="heatingLoop" d="M45 150V414Q45 429 60 429Q75 429 75 414V182Q75 167 87 167Q99 167 99 182V414Q99 429 111 429Q123 429 123 414V182Q123 167 135 167Q147 167 147 182V414Q147 429 159 429Q171 429 171 414V182Q171 167 183 167H265Q280 167 280 182V350" fill="none" stroke="url(#heatingLoopGradient)" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="111" y="464" class="svg-label" text-anchor="middle">Heizkreis</text>
+<!-- Common hot secondary flow enters the bottom port of the three-way valve. -->
+<path id="secondarySupply" class="pipe-hot" d="M375 289V155"/>
+<path id="storageSupply" class="pipe-hot" d="M395 135H510V149"/>
+<path id="storageCoilPath" d="M510 149C596 157 596 165 510 173C596 181 596 189 510 197C596 205 596 213 510 221C596 229 596 237 510 245C596 253 596 261 510 269C596 277 596 285 510 293C596 301 596 309 510 317C596 325 596 333 510 341V350" fill="none" stroke="url(#storageCoil)" stroke-width="5"/>
+<!-- Underlay marks the return crossing as NOT a hydraulic junction with the supply. -->
+<path id="storageReturnUnderlay" d="M510 350H475V210H280" fill="none" stroke="#0b1f30" stroke-width="14" stroke-linejoin="round"/>
+<path id="storageReturn" class="pipe-cold" d="M510 350H475V210H280"/>
+<circle cx="280" cy="210" r="6" fill="#69b5e3"/>
+<!-- Upper heat exchanger: the blue-to-red water coil is distinct from refrigerant. -->
+<path d="M258 273H398V367H258Z" fill="#a75636" stroke="#dfab87" stroke-width="2"/>
+<path d="M280 350C284 266 292 266 296 350C300 266 308 266 312 350C316 266 324 266 328 350C332 266 340 266 344 350C348 266 356 266 360 350C364 266 372 266 375 289" fill="none" stroke="url(#secondaryTemperature)" stroke-width="5"/>
+<text x="329" y="261" class="svg-small" text-anchor="middle">Verflüssiger</text>
+<!-- Refrigerant cycle follows the reference, without connecting to either water circuit. -->
+<path id="refrigerantHigh" d="M398 320H430V374" fill="none" stroke="#da7668" stroke-width="13"/>
+<path id="refrigerantSuction" d="M430 426V495H398" fill="none" stroke="#bdd8e6" stroke-width="13" stroke-linejoin="round"/>
+<path id="refrigerantLiquid" d="M258 300H234V395" fill="none" stroke="#e8ae83" stroke-width="13" stroke-linejoin="round"/>
+<path id="refrigerantLow" d="M234 445V495H258" fill="none" stroke="#70b7df" stroke-width="13" stroke-linejoin="round"/>
+<path d="M220 395H248L234 420ZM220 445H248L234 420Z" fill="#d5c9b5" stroke="#7896a8" stroke-width="2"/>
+<text x="209" y="405" class="svg-small" text-anchor="end">Expansion</text>
+<rect x="258" y="454" width="140" height="91" fill="#246c88" stroke="#9acde1" stroke-width="2"/>
+<path d="M280 529C284 463 292 463 296 529C300 463 308 463 312 529C316 463 324 463 328 529C332 463 340 463 344 529C348 463 356 463 360 529C364 463 372 463 375 529" fill="none" stroke="#b6d8b5" stroke-width="5"/>
+<text x="329" y="444" class="svg-small" text-anchor="middle">Verdampfer</text>
+<!-- Brine: left leg to the evaporator; pump on RIGHT leg as in the supplied photo. -->
+<path id="sourceFlow" d="M280 529V708Q280 721 293 721Q306 721 306 708V665Q306 652 318 652Q330 652 330 665V708Q330 721 342 721" fill="none" stroke="#69b5e3" stroke-width="8" stroke-linecap="round"/>
+<path id="sourceReturn" d="M342 721Q354 721 354 708V665Q354 652 365 652Q375 652 375 665V529" fill="none" stroke="#b8cbd5" stroke-width="8" stroke-linecap="round"/>
+<text x="415" y="697" class="svg-label">Erdsonde</text>
+<!-- Symbols are kept in the exact branches, not on a shared tee. -->
+<g id="heatingPumpSymbol" class="component"><circle cx="375" cy="183" r="16"/><path d="M366 192l9-18 9 18Z"/></g>
+<g id="valveSymbol" class="component"><path d="M350 122l25 13-25 13ZM400 122l-25 13 25 13ZM362 160l13-25 13 25Z"/></g>
+<text x="375" y="119" class="svg-small" text-anchor="middle">Umschaltventil</text>
+<g id="compressorSymbol" class="component"><circle cx="430" cy="400" r="27"/><path d="M414 411l16-30 16 30Z"/></g>
+<text x="466" y="453" class="svg-small">Verdichter</text>
+<g id="primaryPumpSymbol" class="component"><circle cx="375" cy="601" r="16"/><path d="M366 592l9 18 9-18Z"/></g>
+<text x="405" y="608" class="svg-small">Primärpumpe</text>
 </svg>
-<div class="diagram-note">Schema nach deiner Anlagenvorlage · vereinfacht, keine Messung von Flussrichtungen</div></section>
+<div class="diagram-note">Leitungsführung nach der Fotovorlage · schematische Darstellung</div></section>
 <section class="panel wide"><h2>Anlagenstatus</h2><div id="statuses" class="status-grid"></div></section>
-<section class="panel wide"><h2>Betriebsart</h2><div id="modes" class="modes"></div><div id="modeReason" class="reason"></div></section></div>
-<div id="feedback" class="feedback" role="status" aria-live="polite"></div><footer><span id="sourceState"></span><span id="updated"></span></footer><details><summary>Variablen- und Steuerungsdiagnose</summary><pre id="diagnostics"></pre></details>
+</div>
+<div id="feedback" class="feedback" role="status" aria-live="polite"></div><footer><span id="sourceState"></span><span id="updated"></span></footer><details><summary>Quellendiagnose</summary><pre id="diagnostics"></pre></details>
 </main>
 <dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-heading"><div><div class="eyebrow">TEMPERATURVERLAUF</div><h2 id="historyTitle">Verlauf</h2></div><button id="closeHistory" aria-label="Verlauf schließen">✕</button></div>
 <div class="history-toolbar"><label>Zeitraum <select id="historyRange"><option value="3600">1 Stunde</option><option value="21600">6 Stunden</option><option value="86400" selected>24 Stunden</option><option value="604800">7 Tage</option><option value="2592000">30 Tage</option></select></label><div class="history-navigation"><button id="historyPrev" aria-label="Einen Zeitraum zurück">← Zurück</button><button id="historyNow">Jetzt</button><button id="historyNext" aria-label="Einen Zeitraum vor">Vor →</button></div></div>
@@ -69,16 +88,12 @@
 'use strict';
 const INITIAL = /*__INITIAL_DATA__*/null;
 const $ = id => document.getElementById(id);
-let current = null, pending = null, timer = null, error = '';
+
 const statusLabels = {compressor:'Verdichter',heatingPump:'Heizkreispumpe',primaryPump:'Primärpumpe',valve:'Heizung / Warmwasser'};
 const number = new Intl.NumberFormat('de-DE',{maximumFractionDigits:1});
 function temperature(entry){return entry && typeof entry.value === 'number' ? number.format(entry.value)+' °C' : '—';}
-function stopPending(message){clearTimeout(timer);pending=null;error=message;}
 function render(data){
  if(!data || !data.values) return;
- current=data;
- if(data.actionError) stopPending(data.actionError);
- else if(pending && data.values[pending.key].value === pending.value) stopPending('');
  for(const key of ['primaryFlow','return','flow','water']) $(key).textContent=temperature(data.values[key]);
  $('modeBadge').textContent=data.values.mode.formatted;
  for(const [key,id] of [['compressor','compressorSymbol'],['primaryPump','primaryPumpSymbol'],['heatingPump','heatingPumpSymbol']]) $(id).classList.toggle('active',data.values[key].value===true);
@@ -90,34 +105,11 @@ function render(data){
   const value=document.createElement('strong');value.textContent=data.values[key].formatted;
   item.append(title,value);$('statuses').append(item);
  }
- const modes=$('modes'),signature=JSON.stringify(data.mode.choices);
- if(modes.dataset.signature!==signature){
-  modes.dataset.signature=signature;modes.replaceChildren();
-  for(const choice of data.mode.choices){
-   const b=document.createElement('button');b.type='button';b.textContent=choice.label;
-   b.onclick=()=>send('ChangeMode','mode',choice.value);modes.append(b);
-  }
- }
- Array.from(modes.children).forEach((b,index)=>{
-  b.setAttribute('aria-pressed',String(data.mode.choices[index].value===data.values.mode.value));
-  b.disabled=!data.mode.writable || !!pending || typeof requestAction!=='function';
- });
- $('modeReason').textContent=data.mode.reason;
- $('feedback').textContent=error || (pending?'Anforderung gesendet · warte auf Bestätigung …':typeof requestAction!=='function'?'Steuerung ist nur in der Symcon-Kachel verfügbar.':'');
  $('sourceState').textContent=data.missing.length?'Nicht verfügbar: '+data.missing.join(', '):'IP-Symcon · 9 Quellvariablen';
  $('sourceState').classList.toggle('unavailable',!!data.missing.length);
  const stamps=Object.values(data.values).map(v=>v.updated).filter(v=>v>0);
  $('updated').textContent=stamps.length?'Letztes Quellupdate: '+new Date(Math.max(...stamps)*1000).toLocaleString('de-DE'):'Noch kein Quellzeitstempel';
- $('diagnostics').textContent=JSON.stringify({mode:data.mode,missing:data.missing},null,2);
-}
-function send(ident,key,value){
- if(!current || pending || typeof requestAction!=='function') return;
- if(key==='mode' && (!current.mode.writable || !current.mode.choices.some(c=>c.value===value))) return;
- if(key!=='mode') return;
- error='';current.actionError='';pending={key,value};render(current);
- timer=setTimeout(()=>{stopPending('Keine Bestätigung vom Quellwert. Bitte Anlage in IP-Symcon prüfen.');render(current);},15000);
- const failed=()=>{stopPending('Schalten fehlgeschlagen. Bitte Variablenaktion prüfen.');render(current);};
- try{const result=requestAction(ident,value);if(result && typeof result.catch==='function')result.catch(failed);}catch(e){failed();}
+ $('diagnostics').textContent=JSON.stringify({values:data.values,missing:data.missing,readOnly:true},null,2);
 }
 function handleMessage(message){
  try{const data=typeof message==='string'?JSON.parse(message):message;if(data.kind==='history')receiveHistory(data);else render(data);}
@@ -217,5 +209,4 @@ $('closeHistory').onclick=closeHistory;
 $('historyDialog').addEventListener('cancel',event=>{event.preventDefault();closeHistory();});
 
 render(INITIAL);
-let sdk=typeof requestAction==='function';setInterval(()=>{const available=typeof requestAction==='function';if(available!==sdk){sdk=available;render(current);}},1000);
 </script></body></html>

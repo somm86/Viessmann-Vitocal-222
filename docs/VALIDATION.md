@@ -1,21 +1,21 @@
-# Prüfbericht · Version 1.1
+# Prüfbericht · Version 1.2
 
 Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb3763236fcf44ea4144271fdeddfd5`), Python 3, Playwright 1.62.0 und System-Chromium. PHP wurde aus anhand signierter Debian-Indizes geprüften Paketen lokal unter `/tmp/php-local` extrahiert. Die Testlaufzeit ist keine Produktivabhängigkeit.
 
 ## Bestanden
 
 - PHP-Syntaxprüfung des Moduls.
-- **61 Modulprüfungen**: neun Quellen und Referenzen, Entfernen der Sollwertkonfiguration und der beiden Schreibaktionen, bestehende Betriebsartsteuerung mit gültigen String-Auswahlwerten, abgewiesene ungültige/entfernte Optionen, Quellupdates, HTML-Escaping und wiederholtes ApplyChanges.
+- **63 Modulprüfungen**: neun Quellen und Referenzen, Entfernen der Sollwertkonfiguration und der beiden Schreibaktionen, Betriebsart als reiner Status, serverseitige Ablehnung aller Betriebsart- und Sollwert-Schreibaktionen ohne Aufruf der vorhandenen Quellaktion, Quellupdates, HTML-Escaping und wiederholtes ApplyChanges.
 - Archivintegration über das echte offizielle **ArchiveControl-Stub-Modul**: aktive/fehlende Archivierung, alle vier Temperaturzuordnungen, Rohwerte in chronologischer Reihenfolge, leere Zeitfenster ohne erfundene Ersatzwerte, Stundenmittel, automatisch und explizit ausgewählte Archive, Archivwechsel, falsche Instanz, Ablehnung von Zählerarchiven, Zeitbereichsgrenzen, Quellen-Allowlist, nichtnumerische Quellen, Erkennung des 10.000-Werte-Limits, korrelierte SDK-Antworten sowie lesbare Fehlermeldungen bei fehlerhaften Anfragen. Archivschreibaufrufe existieren ausschließlich im Test zur Fixture-Erzeugung.
-- **71 Browserprüfungen**: vier anklickbare Isttemperaturen ohne Sollwerteingaben, weiter funktionierende Betriebsart, SDK-Verfügbarkeit, Modal und Tastaturbedienung, Zeichnen von Archivdaten, Tabelle, Messpunktanzeige, alle fünf Zeitbereiche, Vor-/Zurückblättern um eine vollständige Fensterbreite, Zukunftssperre, Stundenmittel-Kennzeichnung, einzelner Messpunkt, leere Daten, Archivfehler, Zeitüberschreitung, Verwerfen verspäteter Antworten und Wechsel zwischen Temperaturen. Kein horizontaler Überlauf bei 320, 390, 768 und 1200 Pixel Breite; keine JavaScript-Fehler.
+- **70 Browserprüfungen**: vier anklickbare Isttemperaturen ohne Sollwerteingaben, Betriebsart nur als Textstatus ohne Auswahl, ausschließlich lesende Browser-Anfragen, SDK-Verfügbarkeit, Modal und Tastaturbedienung, Zeichnen von Archivdaten, Tabelle, Messpunktanzeige, alle fünf Zeitbereiche, Vor-/Zurückblättern um eine vollständige Fensterbreite, Zukunftssperre, Stundenmittel-Kennzeichnung, einzelner Messpunkt, leere Daten, Archivfehler, Zeitüberschreitung, Verwerfen verspäteter Antworten und Wechsel zwischen Temperaturen. Kein horizontaler Überlauf bei 320, 390, 768 und 1200 Pixel Breite; keine JavaScript-Fehler.
 - Paketprüfung: gültige Manifeste und unveränderte Modulidentitäten, vollständige Laufzeit-/Dokumentationsdateien, ZIP-Integrität und SHA-256-Prüfsumme.
 
 ## Grenzen
 
 Keine echte Symcon-Instanz oder Wärmepumpe ist mit dieser Entwicklungsumgebung verbunden. Die Modultests nutzen offizielle Stubs und synthetische Archivdaten, der Browsertest eine simulierte HTML-SDK-Brücke. Die Screenshots enthalten synthetische Beispielwerte; der Verlaufs-Screenshot zeigt eine künstliche Kurve und keine Aufzeichnung der Anlage.
 
-Die vorhandenen Live-Quellwerte und Archivdaten müssen nach Installation in deiner Symcon-Instanz verglichen werden. Für Historie ist aktive Standardwert-Archivierung der vier Isttemperaturen erforderlich. Historie, Profilwerte, Aktionen und tatsächliche Geräteantworten deiner Anlage konnten hier nicht geprüft werden. Die Betriebsart verwendet weiterhin nur reale Quelloptionen; Sollwert-Schreibaktionen werden abgewiesen.
+Die vorhandenen Live-Quellwerte und Archivdaten müssen nach Installation in deiner Symcon-Instanz verglichen werden. Für Historie ist aktive Standardwert-Archivierung der vier Isttemperaturen erforderlich. Historie, Profilwerte, Aktionen und tatsächliche Geräteantworten deiner Anlage konnten hier nicht geprüft werden. Die Betriebsart wird ausschließlich als formatierter Quellwert angezeigt; alle früheren Schreibaktionen werden abgewiesen.
 
-Die Vorlagengrafik wurde als vereinfachtes eigenes SVG-Schema umgesetzt, keine hydraulische Fachplanung. Farben und Bauteilanordnung illustrieren die Kreise; aus ihnen werden keine zusätzlichen Sensorwerte oder Flussrichtungen abgeleitet.
+Die Vorlagengrafik wurde als eigenes SVG-Schema mit der Pumpen-/Ventilanordnung aus dem Foto neu gezeichnet und visuell verglichen: Sekundärpumpe im gemeinsamen Vorlauf unter dem Dreiwegeventil; Primärpumpe rechts im Erdsondenkreis; getrennte Vor- und Rückläufe. Dies ist keine hydraulische Fachplanung. Farben und Bauteilanordnung illustrieren die Kreise; aus ihnen werden keine zusätzlichen Sensorwerte oder Flussrichtungen abgeleitet.
 
 Der vorhandene GitHub-Workflow führt die lokalen Prüfungen bei Push/PR aus. Ein erfolgreicher lokaler Lauf belegt keinen erfolgreichen GitHub-CI-Lauf oder eine Installation auf dem Symcon-Server.
