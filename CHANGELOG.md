@@ -1,5 +1,9 @@
 # Änderungen
 
+## 1.9
+
+- Wärmepumpensymbol aus dem Kopfbereich entfernt.
+
 ## 1.8
 
 - Automatische Einpassung der gesamten Übersicht in Kachelbreite und -höhe, mit kompakteren Abständen bei geringer Höhe.

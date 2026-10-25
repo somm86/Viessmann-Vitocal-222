@@ -1,4 +1,4 @@
-# Prüfbericht · Version 1.8
+# Prüfbericht · Version 1.9
 
 Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb3763236fcf44ea4144271fdeddfd5`), Python 3, Playwright 1.62.0 und System-Chromium. PHP wurde aus anhand signierter Debian-Indizes geprüften Paketen lokal unter `/tmp/php-local` extrahiert. Die Testlaufzeit ist keine Produktivabhängigkeit.
 
@@ -21,6 +21,6 @@ Die vorhandenen Live-Quellwerte und Archivdaten müssen nach Installation in dei
 
 Die Quellendiagnose ist aus der Kachel entfernt; die Fußzeile für Quellenstatus und Update-Zeitpunkt verwendet 9 px. Die bestehende Diagnose in der Instanz bleibt verfügbar.
 
-Die Kachel enthält kein Anlagenschema und keine Schema-Exporte mehr. Die Browserprüfung kontrolliert, dass kein Anlagenschema vorhanden ist und die vier Temperaturkarten und Statusfelder weiterhin aktualisiert werden. Der Kopfbereich enthält zusätzlich ein stilisiertes SVG-Gerätesymbol. Dieses ist keine maßstabsgetreue Produktabbildung.
+Die Kachel enthält kein Anlagenschema und keine Schema-Exporte mehr. Die Browserprüfung kontrolliert, dass kein Anlagenschema vorhanden ist und die vier Temperaturkarten und Statusfelder weiterhin aktualisiert werden. Das Wärmepumpensymbol wurde aus dem Kopfbereich entfernt.
 
 Der vorhandene GitHub-Workflow führt die lokalen Prüfungen bei Push/PR aus. Ein erfolgreicher lokaler Lauf belegt keinen erfolgreichen GitHub-CI-Lauf oder eine Installation auf dem Symcon-Server.
