@@ -3,8 +3,8 @@
 <style>
 :root{color-scheme:dark;--bg:#061522;--panel:#0b2234;--line:#20455c;--text:#ecf5fb;--muted:#9cbace;--blue:#51c7ff;--warm:#ffbc70;--green:#57e2af}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#11334a,var(--bg) 70%);color:var(--text);font:15px/1.4 system-ui,sans-serif}main{max-width:1200px;padding:22px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}h1{margin:0;font-size:clamp(25px,4vw,42px);letter-spacing:-1px}h2{font-size:18px;margin:0 0 15px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted)}.subtitle{color:var(--muted)}.badge{border:1px solid var(--line);border-radius:24px;padding:9px 15px;color:var(--green);max-width:45%;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);background:linear-gradient(140deg,#0d293e,#081b2b);border-radius:18px;padding:20px;min-width:0}.wide{grid-column:1/-1}.reading{background:#071927;border:1px solid var(--line);border-radius:12px;padding:16px}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(24px,4vw,38px);font-weight:600;letter-spacing:-1px;overflow-wrap:anywhere}.warm{color:var(--warm)}.cold{color:var(--blue)}.diagram-note{font-size:10px;color:var(--muted);text-align:center}.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.status{background:#071927;border-radius:12px;padding:14px;border:1px solid var(--line)}.status strong{display:block;font-size:19px;margin-top:6px}.status[data-active="true"]{border-color:#287c63}.status[data-active="true"] strong{color:var(--green)}button{font:inherit;border-radius:9px;border:1px solid #376079;padding:10px 12px;background:#0d3047;color:var(--text);cursor:pointer;min-height:42px}button:disabled{opacity:.45;cursor:default}button:hover:enabled{border-color:var(--blue)}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px}.reason,.hint{font-size:12px;color:var(--muted);margin-top:10px}.feedback{font-size:13px;color:#ffd399;min-height:20px;margin:12px 0}footer{color:var(--muted);font-size:11px;margin-top:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}details{margin-top:15px;color:var(--muted);font-size:12px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}.unavailable{color:#ffd399} @media(max-width:650px){main{padding:12px}.grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr 1fr}.reading{padding:10px}.panel{padding:15px}.value{font-size:25px}.label{font-size:11px}.badge{font-size:12px}header{align-items:flex-start}.diagram-note{font-size:9px}}
 
-.section-heading,.dialog-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.section-heading h2{margin-bottom:0}.section-heading{margin-bottom:18px}.temperature-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.reading{text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}.reading .value{font-size:clamp(22px,3vw,34px)}.chart-link{color:var(--muted);font-size:11px}.plant{display:block;width:100%;max-width:650px;height:auto;margin:22px auto 0}.svg-label{font:17px system-ui;fill:#e0edf5}.svg-small{font:13px system-ui;fill:#c0d7e7}.pipe-hot,.pipe-cold{fill:none;stroke:#ef8d73;stroke-width:10;stroke-linejoin:round;stroke-linecap:round}.pipe-cold{stroke:#58b6e6}.component{fill:#14364a;stroke:#98b7c9;stroke-width:3}.component.active{fill:#1b7358;stroke:#8cf0ba}.component path{stroke-width:2}dialog{color:var(--text);background:#0a1d2c;border:1px solid #36627a;border-radius:18px;padding:22px;width:min(950px,96vw);max-width:96vw;max-height:95dvh;overflow:auto}dialog::backdrop{background:#000a}.dialog-heading h2{font-size:24px;margin:4px 0 15px}select{font:inherit;background:#102e42;border:1px solid #376079;border-radius:8px;color:var(--text);padding:9px;margin-left:6px}.history-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}.history-navigation{display:flex;gap:7px;flex-wrap:wrap}.history-dates{font-size:13px;color:var(--muted);margin:12px 0}#historyState{font-size:13px;color:#ffd399;min-height:24px}#chartWrap{position:relative}#historyChart{display:block;width:100%;height:auto;min-height:160px;touch-action:pan-y}#chartTooltip{position:absolute;left:10px;top:4px;background:#183e55;padding:8px;border-radius:7px;pointer-events:none;font-size:12px}#historySummary{margin-top:8px}.table-scroll{max-height:240px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}#historyChart text{fill:#9fbfd3;font:12px system-ui}.chart-grid{stroke:#244257;stroke-width:1}.chart-line{stroke:#ffbc70;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}.chart-point{fill:#ffbc70}
-@media(max-width:650px){.temperature-cards{grid-template-columns:1fr 1fr;gap:8px}.plant{margin-top:20px}.reading .value{font-size:26px}.dialog-heading h2{font-size:20px}dialog{padding:14px}.history-navigation button{padding:8px}.section-heading .hint{margin:0}}
+.section-heading,.dialog-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.section-heading h2{margin-bottom:0}.section-heading{margin-bottom:18px}.temperature-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.reading{text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}.reading .value{font-size:clamp(22px,3vw,34px)}.chart-link{color:var(--muted);font-size:11px}.plant-viewport{overflow-x:auto;margin:22px 0 0;border-radius:14px;overscroll-behavior-x:contain}.plant{display:block;width:100%;min-width:950px;height:auto;margin:0 auto}.plant-viewport:focus-visible{outline:2px solid var(--blue);outline-offset:3px}.component{fill:#14364a;stroke:#98b7c9;stroke-width:3}.component.active{fill:#1b7358;stroke:#8cf0ba}.component path{stroke-width:2}dialog{color:var(--text);background:#0a1d2c;border:1px solid #36627a;border-radius:18px;padding:22px;width:min(950px,96vw);max-width:96vw;max-height:95dvh;overflow:auto}dialog::backdrop{background:#000a}.dialog-heading h2{font-size:24px;margin:4px 0 15px}select{font:inherit;background:#102e42;border:1px solid #376079;border-radius:8px;color:var(--text);padding:9px;margin-left:6px}.history-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}.history-navigation{display:flex;gap:7px;flex-wrap:wrap}.history-dates{font-size:13px;color:var(--muted);margin:12px 0}#historyState{font-size:13px;color:#ffd399;min-height:24px}#chartWrap{position:relative}#historyChart{display:block;width:100%;height:auto;min-height:160px;touch-action:pan-y}#chartTooltip{position:absolute;left:10px;top:4px;background:#183e55;padding:8px;border-radius:7px;pointer-events:none;font-size:12px}#historySummary{margin-top:8px}.table-scroll{max-height:240px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}#historyChart text{fill:#9fbfd3;font:12px system-ui}.chart-grid{stroke:#244257;stroke-width:1}.chart-line{stroke:#ffbc70;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}.chart-point{fill:#ffbc70}
+@media(max-width:650px){.temperature-cards{grid-template-columns:1fr 1fr;gap:8px}.reading .value{font-size:26px}.dialog-heading h2{font-size:20px}dialog{padding:14px}.history-navigation button{padding:8px}.section-heading .hint{margin:0}}
 </style></head><body><main>
 <header><div><div class="eyebrow">VIESSMANN · WÄRMEPUMPE</div><h1>Vitocal 222-C</h1><div class="subtitle">Heizung &amp; Warmwasser</div></div><div id="modeBadge" class="badge">—</div></header>
 <div class="grid"><section class="panel wide"><div class="section-heading"><h2>Wärmekreislauf</h2><span class="hint">Temperatur anklicken → Verlauf</span></div>
@@ -14,67 +14,100 @@
 <button class="reading" data-history="return"><span class="label">Rücklauf Sekundär</span><span id="return" class="value cold">—</span><span class="chart-link">Verlauf öffnen</span></button>
 <button class="reading" data-history="water"><span class="label">Warmwasser Ist</span><span id="water" class="value warm">—</span><span class="chart-link">Verlauf öffnen</span></button>
 </div>
-<svg class="plant" viewBox="0 0 650 820" role="img" aria-labelledby="plantTitle plantDesc">
-<title id="plantTitle">Anlagenschema nach der bereitgestellten Vitocal-Vorlage</title>
-<desc id="plantDesc">Heizschleife links, Speicher rechts. Der Sekundärvorlauf steigt vom oberen Wärmetauscher über die Heizkreispumpe zum Dreiwegeventil. Beide Rückläufe treffen sich links; die Kreuzung mit dem Vorlauf ist keine Verbindung. Verdichter rechts, Expansionsorgan links und Verdampfer unten bilden den getrennten Kältekreis. Die Primärpumpe liegt rechts zwischen Verdampfer und Erdsonde.</desc>
+<div class="plant-viewport" tabindex="0" role="region" aria-label="Funktionsschema, bei Bedarf seitlich verschieben"><svg xmlns="http://www.w3.org/2000/svg" class="plant" viewBox="0 0 1220 760" role="img" aria-labelledby="plantTitle plantDesc">
+<title id="plantTitle">Vitocal 222-C – Funktionsschema einer Sole/Wasser-Wärmepumpe</title>
+<desc id="plantDesc">Der Primärkreis nimmt Erdwärme auf und überträgt sie im Verdampfer an einen getrennten Kältemittelkreis. Dort folgen Verdichter, Verflüssiger und Expansionsventil. Im Verflüssiger wird Wärme an den ebenfalls getrennten Sekundärkreis abgegeben. Ein Umschaltventil führt Heizwasser entweder zum Heizkreis oder zum Wärmetauscher des Trinkwasserspeichers. Nur Wärme, keine Flüssigkeit, gelangt durch die Trennwände der Wärmetauscher. Dies ist ein Funktionsschema, kein Installationsplan.</desc>
+<style>
+.plant .scheme-panel{fill:#0a1c2c;stroke:#29465d;stroke-width:1.5}.plant .scheme-device{fill:#102c40;stroke:#4d7892;stroke-width:1.5}.plant .scheme-heading{fill:#e5f2fc;font:600 20px system-ui,sans-serif}.plant .scheme-caption{fill:#afcbdc;font:16px system-ui,sans-serif}.plant .scheme-small{fill:#8daec4;font:14px system-ui,sans-serif}.plant .scheme-stage{fill:#79a4c0;font:600 13px system-ui,sans-serif;letter-spacing:2px}.plant .circuit{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}.plant .source-warm{stroke:#62d69c}.plant .source-cool{stroke:#379f9b}.plant .vapor{stroke:#6bcee6}.plant .hot-gas{stroke:#ff826c}.plant .liquid{stroke:#e8b65d}.plant .expanded{stroke:#8faff6}.plant .heating-supply{stroke:#f49b78}.plant .heating-return{stroke:#699ed7}.plant .separation{stroke:#a1b9c9;stroke-width:3}.plant .heat-transfer{stroke:#f5d893;stroke-width:2;fill:none}.plant .component{fill:#123346;stroke:#8badc2;stroke-width:2}.plant .component.active{fill:#135b44;stroke:#7de9ad}.plant .component path{stroke-width:2}.plant .scheme-arrow{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
 <defs>
-<linearGradient id="plantCabinet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5dfe2"/><stop offset="1" stop-color="#78909e"/></linearGradient>
-<linearGradient id="storageHeat" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b8473d"/><stop offset=".35" stop-color="#bd655a"/><stop offset="1" stop-color="#4a9dc4"/></linearGradient>
-<linearGradient id="heatingLoopGradient" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#df7268"/><stop offset=".45" stop-color="#aa9b9e"/><stop offset="1" stop-color="#69b5e3"/></linearGradient>
-<linearGradient id="secondaryTemperature" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#69b5e3"/><stop offset="1" stop-color="#df7268"/></linearGradient>
-<linearGradient id="storageCoil" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e98d78"/><stop offset="1" stop-color="#68b7e6"/></linearGradient>
-<linearGradient id="earth" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#47563b"/><stop offset=".1" stop-color="#62503a"/><stop offset="1" stop-color="#2b3842"/></linearGradient>
-<pattern id="earthStones" width="100" height="65" patternUnits="userSpaceOnUse"><path d="M8 20l22-12 20 13-7 18-28 1ZM62 43l19-16 17 9-4 23-23 3Z" fill="#94a29c" opacity=".14"/></pattern>
+<linearGradient id="schemeWater" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d47359"/><stop offset="1" stop-color="#3c6a9c"/></linearGradient>
 </defs>
-<rect x="16" y="16" width="618" height="788" rx="16" fill="#0b1f30" stroke="#34536a" stroke-width="3"/>
-<rect x="206" y="78" width="254" height="504" rx="5" fill="url(#plantCabinet)" opacity=".4" stroke="#c7d9e2"/>
-<text x="332" y="101" class="svg-small" text-anchor="middle">VITOCAL 222-C</text>
-<path d="M30 594H620V784H30Z" fill="url(#earth)"/><path d="M30 594H620V784H30Z" fill="url(#earthStones)"/><path d="M30 594H620" stroke="#68845d" stroke-width="7"/>
-<text x="46" y="623" class="svg-small">Erdreich</text>
-<!-- Storage body: hot water and the secondary heating coil are separate. -->
-<rect x="486" y="34" width="112" height="351" rx="32" fill="url(#storageHeat)" stroke="#bacbd3" stroke-width="4"/>
-<path d="M598 73H628" class="pipe-hot"/><path d="M598 362H628" class="pipe-cold"/>
-<text x="542" y="415" class="svg-label" text-anchor="middle">Warmwasser</text>
-<!-- Heating loop returns at x=280. It is not directly connected to the hot supply. -->
-<path id="heatingSupply" class="pipe-hot" d="M350 135H60Q45 135 45 150"/>
-<path id="heatingLoop" d="M45 150V414Q45 429 60 429Q75 429 75 414V182Q75 167 87 167Q99 167 99 182V414Q99 429 111 429Q123 429 123 414V182Q123 167 135 167Q147 167 147 182V414Q147 429 159 429Q171 429 171 414V182Q171 167 183 167H265Q280 167 280 182V350" fill="none" stroke="url(#heatingLoopGradient)" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
-<text x="111" y="464" class="svg-label" text-anchor="middle">Heizkreis</text>
-<!-- Common hot secondary flow enters the bottom port of the three-way valve. -->
-<path id="secondarySupply" class="pipe-hot" d="M375 289V155"/>
-<path id="storageSupply" class="pipe-hot" d="M395 135H510V149"/>
-<path id="storageCoilPath" d="M510 149C596 157 596 165 510 173C596 181 596 189 510 197C596 205 596 213 510 221C596 229 596 237 510 245C596 253 596 261 510 269C596 277 596 285 510 293C596 301 596 309 510 317C596 325 596 333 510 341V350" fill="none" stroke="url(#storageCoil)" stroke-width="5"/>
-<!-- Underlay marks the return crossing as NOT a hydraulic junction with the supply. -->
-<path id="storageReturnUnderlay" d="M510 350H475V210H280" fill="none" stroke="#0b1f30" stroke-width="14" stroke-linejoin="round"/>
-<path id="storageReturn" class="pipe-cold" d="M510 350H475V210H280"/>
-<circle cx="280" cy="210" r="6" fill="#69b5e3"/>
-<!-- Upper heat exchanger: the blue-to-red water coil is distinct from refrigerant. -->
-<path d="M258 273H398V367H258Z" fill="#a75636" stroke="#dfab87" stroke-width="2"/>
-<path d="M280 350C284 266 292 266 296 350C300 266 308 266 312 350C316 266 324 266 328 350C332 266 340 266 344 350C348 266 356 266 360 350C364 266 372 266 375 289" fill="none" stroke="url(#secondaryTemperature)" stroke-width="5"/>
-<text x="329" y="261" class="svg-small" text-anchor="middle">Verflüssiger</text>
-<!-- Refrigerant cycle follows the reference, without connecting to either water circuit. -->
-<path id="refrigerantHigh" d="M398 320H430V374" fill="none" stroke="#da7668" stroke-width="13"/>
-<path id="refrigerantSuction" d="M430 426V495H398" fill="none" stroke="#bdd8e6" stroke-width="13" stroke-linejoin="round"/>
-<path id="refrigerantLiquid" d="M258 300H234V395" fill="none" stroke="#e8ae83" stroke-width="13" stroke-linejoin="round"/>
-<path id="refrigerantLow" d="M234 445V495H258" fill="none" stroke="#70b7df" stroke-width="13" stroke-linejoin="round"/>
-<path d="M220 395H248L234 420ZM220 445H248L234 420Z" fill="#d5c9b5" stroke="#7896a8" stroke-width="2"/>
-<text x="209" y="405" class="svg-small" text-anchor="end">Expansion</text>
-<rect x="258" y="454" width="140" height="91" fill="#246c88" stroke="#9acde1" stroke-width="2"/>
-<path d="M280 529C284 463 292 463 296 529C300 463 308 463 312 529C316 463 324 463 328 529C332 463 340 463 344 529C348 463 356 463 360 529C364 463 372 463 375 529" fill="none" stroke="#b6d8b5" stroke-width="5"/>
-<text x="329" y="444" class="svg-small" text-anchor="middle">Verdampfer</text>
-<!-- Brine: left leg to the evaporator; pump on RIGHT leg as in the supplied photo. -->
-<path id="sourceFlow" d="M280 529V708Q280 721 293 721Q306 721 306 708V665Q306 652 318 652Q330 652 330 665V708Q330 721 342 721" fill="none" stroke="#69b5e3" stroke-width="8" stroke-linecap="round"/>
-<path id="sourceReturn" d="M342 721Q354 721 354 708V665Q354 652 365 652Q375 652 375 665V529" fill="none" stroke="#b8cbd5" stroke-width="8" stroke-linecap="round"/>
-<text x="415" y="697" class="svg-label">Erdsonde</text>
-<!-- Symbols are kept in the exact branches, not on a shared tee. -->
-<g id="heatingPumpSymbol" class="component"><circle cx="375" cy="183" r="16"/><path d="M366 192l9-18 9 18Z"/></g>
-<g id="valveSymbol" class="component"><path d="M350 122l25 13-25 13ZM400 122l-25 13 25 13ZM362 160l13-25 13 25Z"/></g>
-<text x="375" y="119" class="svg-small" text-anchor="middle">Umschaltventil</text>
-<g id="compressorSymbol" class="component"><circle cx="430" cy="400" r="27"/><path d="M414 411l16-30 16 30Z"/></g>
-<text x="466" y="453" class="svg-small">Verdichter</text>
-<g id="primaryPumpSymbol" class="component"><circle cx="375" cy="601" r="16"/><path d="M366 592l9 18 9-18Z"/></g>
-<text x="405" y="608" class="svg-small">Primärpumpe</text>
-</svg>
-<div class="diagram-note">Leitungsführung nach der Fotovorlage · schematische Darstellung</div></section>
+<rect width="1220" height="760" rx="18" fill="#071a29"/>
+<!-- Functional stages. Physical location inside the appliance is not asserted. -->
+<text x="35" y="48" class="scheme-stage">01 · WÄRMEQUELLE</text>
+<text x="330" y="48" class="scheme-stage">02 · WÄRMEPUMPE</text>
+<text x="930" y="48" class="scheme-stage">03 · WÄRMEABGABE</text>
+<path d="M35 70H270M330 70H850M930 70H1185" stroke="#25465d" stroke-width="1"/>
+<rect x="305" y="115" width="555" height="580" rx="24" class="scheme-panel"/>
+<text x="330" y="151" class="scheme-small">Geschlossener Kältemittelkreis</text>
+<!-- PRIMARY: heat-source fluid remains on the LEFT side of the evaporator. -->
+<rect x="40" y="350" width="170" height="180" rx="20" fill="#10362e" stroke="#388069" stroke-width="1.5"/>
+<text x="125" y="285" class="scheme-heading" text-anchor="middle">Erdwärme</text>
+<text x="125" y="309" class="scheme-caption" text-anchor="middle">Sonde / Kollektor</text>
+<path d="M210 375H355" class="circuit source-warm"/>
+<path d="M355 505H210" class="circuit source-cool"/>
+<path d="M210 375H165V470Q165 484 152 484Q139 484 139 470V405Q139 392 126 392Q113 392 113 405V470Q113 484 100 484Q87 484 87 470V505H210" class="circuit source-cool"/>
+<g id="primaryPumpSymbol" class="component"><circle cx="272" cy="375" r="17"/><path d="M263 366l18 9-18 9Z"/></g>
+<text x="267" y="345" class="scheme-small" text-anchor="middle">Primärpumpe</text>
+<path d="M295 370l7 5-7 5" class="scheme-arrow source-warm"/>
+<path d="M272 500l-7 5 7 5" class="scheme-arrow source-cool"/>
+<text x="124" y="570" class="scheme-caption" text-anchor="middle">Primärkreis · Sole</text>
+<!-- EVAPORATOR: separate parallel channels with a wall and heat-transfer arrows. -->
+<rect x="330" y="350" width="130" height="180" rx="16" class="scheme-device"/>
+<path d="M355 375V505" class="circuit source-warm"/>
+<path d="M435 505V375" class="circuit expanded"/>
+<path d="M395 367V513" class="separation"/>
+<path d="M373 420H417m-7-5 7 5-7 5M373 453H417m-7-5 7 5-7 5" class="heat-transfer"/>
+<text x="395" y="316" class="scheme-heading" text-anchor="middle">Verdampfer</text>
+
+<!-- REFRIGERANT: evaporator → compressor → condenser → expansion valve → evaporator. -->
+<path d="M435 375H480V215H557" class="circuit vapor"/>
+<path d="M613 215H680V330H725V375" class="circuit hot-gas"/>
+<path d="M725 505V620H610" class="circuit liquid"/>
+<path d="M560 620H435V505" class="circuit expanded"/>
+<g id="compressorSymbol" class="component"><circle cx="585" cy="215" r="28"/><path d="M572 202l26 13-26 13Z"/></g>
+<text x="585" y="272" class="scheme-heading" text-anchor="middle">Verdichter</text>
+<path d="M585 167V184" stroke="#e5cf78" stroke-width="2"/>
+<text x="585" y="109" class="scheme-small" text-anchor="middle">Elektrische Energie</text>
+<path d="M588 127l-9 14h8l-4 13 11-17h-8Z" fill="#e5cf78"/>
+<path d="M515 210l7 5-7 5" class="scheme-arrow vapor"/>
+<path d="M675 292l5 7 5-7" class="scheme-arrow hot-gas"/>
+<path d="M673 615l-7 5 7 5" class="scheme-arrow liquid"/>
+<path d="M440 562l-5-7-5 7" class="scheme-arrow expanded"/>
+<text x="479" y="193" class="scheme-small">Dampf</text>
+<text x="701" y="193" class="scheme-small" text-anchor="end">Heißgas</text>
+<text x="685" y="600" class="scheme-small" text-anchor="middle">Flüssig</text>
+<g id="expansionSymbol" class="component"><path d="M560 606l25 14-25 14ZM610 606l-25 14 25 14Z"/></g>
+<text x="585" y="665" class="scheme-caption" text-anchor="middle">Expansionsventil</text>
+<text x="580" y="415" class="scheme-heading" text-anchor="middle">Kältemittel</text>
+<text x="580" y="443" class="scheme-small" text-anchor="middle">zirkuliert im eigenen Kreis</text>
+<!-- CONDENSER: refrigerant LEFT, heating water RIGHT; no hydraulic connection. -->
+<rect x="700" y="350" width="130" height="180" rx="16" class="scheme-device"/>
+<path d="M725 375V505" class="circuit hot-gas"/>
+<path d="M805 505V375" class="circuit heating-supply"/>
+<path d="M765 367V513" class="separation"/>
+<path d="M743 420H787m-7-5 7 5-7 5M743 453H787m-7-5 7 5-7 5" class="heat-transfer"/>
+<text x="765" y="316" class="scheme-heading" text-anchor="middle">Verflüssiger</text>
+
+<!-- SECONDARY: selector distributes supply, common return stays outside both branches. -->
+<path d="M805 375H875" class="circuit heating-supply"/>
+<g id="heatingPumpSymbol" class="component"><circle cx="850" cy="375" r="16"/><path d="M842 367l16 8-16 8Z"/></g>
+<text x="842" y="340" class="scheme-small" text-anchor="middle">Heizkreispumpe</text>
+<path d="M900 350V260H1000M900 400V570H1000" class="circuit heating-supply"/>
+<g id="valveSymbol" class="component"><path d="M875 362l25 13-25 13ZM887 350l13 25 13-25ZM887 400l13-25 13 25Z"/></g>
+<text x="926" y="371" class="scheme-small">Umschaltung</text>
+<text x="926" y="393" class="scheme-small">Heizen / Warmwasser</text>
+<path d="M1145 320H1175V650H805V505M1145 630H1175" class="circuit heating-return"/>
+<circle cx="1175" cy="630" r="5" fill="#699ed7"/>
+<text x="974" y="680" class="scheme-small" text-anchor="middle">Gemeinsamer Rücklauf · Heizwasser</text>
+<!-- Space heating load. -->
+<rect x="1000" y="205" width="145" height="145" rx="18" class="scheme-panel"/>
+<path d="M1000 260H1022V316H1038V245H1054V316H1070V245H1086V316H1102V245H1118V320H1145" class="circuit heating-supply"/>
+<text x="1072" y="177" class="scheme-heading" text-anchor="middle">Heizung</text>
+<text x="1072" y="379" class="scheme-small" text-anchor="middle">Heizflächen</text>
+<!-- Domestic hot water is separated by its own coil from secondary heating water. -->
+<rect x="1000" y="470" width="145" height="170" rx="32" fill="url(#schemeWater)" stroke="#8bb0c8" stroke-width="2"/>
+<path d="M1000 570H1030C1125 578 1125 586 1030 594C1125 602 1125 610 1030 618L1145 630" fill="none" stroke="#f2c0a1" stroke-width="4"/>
+<text x="1072" y="443" class="scheme-heading" text-anchor="middle">Warmwasser</text>
+<text x="1072" y="505" fill="#fff0e5" font-family="system-ui,sans-serif" font-size="13" text-anchor="middle">Trinkwasserspeicher</text>
+<!-- Legend: distinct media, no assumed physical installation arrangement. -->
+<path d="M40 725H70" class="circuit source-warm"/><text x="83" y="730" class="scheme-small">Sole</text>
+<path d="M220 725H250" class="circuit vapor"/><text x="263" y="730" class="scheme-small">Kältemittel</text>
+<path d="M460 725H490" class="circuit heating-supply"/><text x="503" y="730" class="scheme-small">Heizwasser</text>
+<path d="M720 725H750m-7-5 7 5-7 5" class="heat-transfer"/><text x="763" y="730" class="scheme-small">Nur Wärmeübertragung</text>
+</svg></div>
+<div class="diagram-note">Funktionsschema Sole/Wasser · keine maßstäbliche Rohrleitungszeichnung · auf kleinen Bildschirmen seitlich verschieben</div></section>
 <section class="panel wide"><h2>Anlagenstatus</h2><div id="statuses" class="status-grid"></div></section>
 </div>
 <div id="feedback" class="feedback" role="status" aria-live="polite"></div><footer><span id="sourceState"></span><span id="updated"></span></footer><details><summary>Quellendiagnose</summary><pre id="diagnostics"></pre></details>

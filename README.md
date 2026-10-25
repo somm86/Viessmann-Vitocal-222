@@ -1,6 +1,6 @@
 # Viessmann Vitocal 222-C · Kachel für IP-Symcon
 
-Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Das Schema orientiert sich an der bereitgestellten Anlagenvorlage mit Heizkreis, Warmwasserspeicher, Kältekreis und Erdsonde. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
+Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Das neu konstruierte Funktionsschema zeigt Wärmequelle, Wärmepumpe und Wärmeabgabe als getrennte Bereiche. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
 
 ![Kachel mit synthetischen Testwerten](docs/dashboard.png)
 
@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.3.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.4.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Eine große Kachel zeigt das Schema übersichtlicher; kleine Kacheln können vertikal gescrollt werden. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -59,11 +59,23 @@ Variable `53049` wird mit ihrem formatierten Quellwert oben in der Statusanzeige
 
 **Quellendiagnose** zeigt die gelesenen Werte und den Schreibschutz. Die Instanz bietet zusätzlich **Quellen-Diagnose anzeigen** mit den konfigurierten Quell-IDs und dem Archiv.
 
-## Korrigiertes Anlagenschema
+## Neues Funktionsschema
 
-Das Schema ist nach der Fotovorlage neu gezeichnet: Die Heizkreispumpe sitzt im senkrechten gemeinsamen Vorlauf unter dem Dreiwegeventil. Vom Ventil gehen getrennte Leitungen zur linken Heizschleife und zur Speicherwendel rechts. Deren Rückläufe werden links zusammengeführt; die gezeichnete Kreuzung zum heißen Vorlauf ist keine hydraulische Verbindung. Der getrennte Kältekreis liegt zwischen Verflüssiger, Verdichter rechts, Verdampfer und Expansionsorgan links. Die Primärpumpe sitzt wie auf der Vorlage auf der rechten Leitung zwischen Verdampfer und Erdsonde.
+![Funktionsschema](docs/plant.png)
 
-Die Grafik bildet die sichtbare Anordnung der bereitgestellten Vorlage schematisch ab. Sie ersetzt keinen hydraulischen Bestandsplan der tatsächlichen Installation. Temperaturen und Betriebszustände kommen ausschließlich aus den konfigurierten Variablen.
+[SVG öffnen oder herunterladen](docs/plant.svg) · [PNG öffnen](docs/plant.png)
+
+Das Schema zeigt das Funktionsprinzip einer Sole/Wasser-Wärmepumpe mit drei getrennten Medienkreisen:
+
+1. **Primärkreis:** Die Sole nimmt Erdwärme aus Sonde oder Kollektor auf und gibt sie über eine Trennwand im Verdampfer an das Kältemittel ab.
+2. **Kältemittelkreis:** Verdampfer → Verdichter → Verflüssiger → Expansionsventil → Verdampfer. Dampf, Heißgas, Flüssigkeit und entspanntes Kältemittel sind unterschiedlich eingefärbt. Der Verdichter benötigt zusätzlich elektrische Energie.
+3. **Sekundärkreis:** Im Verflüssiger wird Heizwasser erwärmt. Die Umschaltung führt es zu den Heizflächen oder zur Wendel des Trinkwasserspeichers. Beide Zweige besitzen einen gemeinsamen Heizwasser-Rücklauf. Trinkwasser und Heizwasser bleiben im Speicher getrennt.
+
+Die gelben Pfeile an den Wärmetauschern kennzeichnen ausschließlich **Wärmeübertragung**. Sie sind keine Rohrverbindung zwischen Sole, Kältemittel und Heizwasser. Statische Pfeile erklären die prinzipielle Kreisrichtung im Heizbetrieb und sind keine Messung tatsächlicher Strömungen. Die gezeichnete Bauteilanordnung ist funktional; sie behauptet keine konkrete Position im Gehäuse. Es werden keine Speichergröße, Kältemittelsorte oder optionalen Anlagenkomponenten angenommen.
+
+Das Schema ist eine eigenständige Prinzipdarstellung, kein verifiziertes Hersteller-Hydraulikschema oder Bestandsplan der konkreten Installation. Aktive Pumpen und Verdichter werden anhand vorhandener Quellvariablen grün dargestellt. Die Umschaltventil-Anzeige ersetzt keine gemessene Flussrichtung. Auf kleinen Bildschirmen lässt sich das Schema im eigenen Bereich seitlich verschieben, ohne den Text unleserlich zu verkleinern.
+
+SVG und PNG stehen separat bereit. Das SVG entspricht exakt dem in der Kachel eingebetteten Schema; der Build prüft diese Übereinstimmung. Der PNG-Export wird bei den Browserprüfungen aus der Kachel erzeugt und kann synthetische Test-Betriebszustände zeigen.
 
 ## Entwicklung und Prüfungen
 

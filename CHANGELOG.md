@@ -1,5 +1,11 @@
 # Änderungen
 
+## 1.4
+
+- Anlagenschema vollständig als neues Funktionsschema mit Wärmequelle, Wärmepumpe und Wärmeabgabe konstruiert.
+- Getrennte Medienkanäle an Verdampfer und Verflüssiger, Kältekreis mit Verdichter und Expansionsventil, getrennte Heizungs- und Speicherzweige.
+- Eigenständige SVG-/PNG-Exporte und lesbare, seitlich verschiebbare Darstellung auf kleinen Bildschirmen.
+
 ## 1.3
 
 - Installationsfehler „ungültiges Module dist (module.json fehlt)“ behoben: Paketordner aus dem Modul-Repository entfernt.

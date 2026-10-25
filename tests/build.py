@@ -4,6 +4,7 @@ import hashlib
 import json
 import uuid
 import zipfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 lib=json.loads((root/'library.json').read_text())
@@ -13,8 +14,12 @@ assert lib['id'] != mod['id']
 assert lib['id'] != '{B24E29F4-981D-4B92-842B-785D28962BD5}'
 assert mod['id'] != '{4305595E-0E5F-4124-AD59-8E11257A1E97}'
 assert mod['prefix']=='V222' and lib['compatibility']['version']=='7.1'
-files=['library.json','Vitocal222CTile/module.json','Vitocal222CTile/module.php','Vitocal222CTile/tile.html','README.md','CHANGELOG.md','docs/VALIDATION.md','docs/dashboard.png','docs/history.png']
+files=['library.json','Vitocal222CTile/module.json','Vitocal222CTile/module.php','Vitocal222CTile/tile.html','README.md','CHANGELOG.md','docs/VALIDATION.md','docs/dashboard.png','docs/history.png','docs/plant.svg','docs/plant.png']
 assert all((root/p).is_file() for p in files)
+svg=(root/'docs/plant.svg').read_text().strip()
+ET.fromstring(svg)
+assert svg in (root/'Vitocal222CTile/tile.html').read_text(), 'Exported SVG must match the installed diagram'
+
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output-dir',type=Path,default=root.parent/(root.name+'-artifacts'))
 args=parser.parse_args()

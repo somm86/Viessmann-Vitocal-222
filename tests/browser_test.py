@@ -103,9 +103,16 @@ with sync_playwright() as p:
     page.evaluate('handleMessage',snapshot)
     check(all(c['ident']=='RequestHistory' for c in page.evaluate('calls')),'browser only requests read-only history')
     page.screenshot(path=str(ROOT/'docs/dashboard.png'),full_page=True)
+    page.locator('.plant').screenshot(path=str(ROOT/'docs/plant.png'))
     for width in [320,390,768,1200]:
         page.set_viewport_size({'width':width,'height':1000})
         check(page.evaluate('document.documentElement.scrollWidth<=innerWidth'),'dashboard no horizontal overflow '+str(width))
+        if width==320:
+            viewport=page.locator('.plant-viewport')
+            check(viewport.evaluate('(el)=>el.scrollWidth>el.clientWidth'),'diagram remains readable through local scrolling')
+            viewport.evaluate('(el)=>el.scrollTo({left:el.scrollWidth,behavior:"instant"})')
+            check(viewport.evaluate('(el)=>el.scrollLeft>0'),'right side of diagram reachable on mobile')
+            viewport.evaluate('(el)=>el.scrollTo({left:0,behavior:"instant"})')
         page.locator('[data-history="water"]').click();r=request()
         synthetic=[{'time':r['start']+int((r['end']-r['start'])*i/24),'value':44+(i%6)*.4} for i in range(25)]
         reply(r,synthetic)
