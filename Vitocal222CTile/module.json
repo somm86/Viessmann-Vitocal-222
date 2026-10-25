@@ -1,0 +1,14 @@
+{
+  "id": "{4282E625-69A8-4046-90B2-386AD1D4A7FF}",
+  "name": "Vitocal222CTile",
+  "type": 3,
+  "vendor": "Custom",
+  "aliases": [
+    "Vitocal 222-C Kachel"
+  ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "V222",
+  "url": "https://github.com/somm86/Viessmann-Vitocal-222"
+}
