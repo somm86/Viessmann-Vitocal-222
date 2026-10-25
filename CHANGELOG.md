@@ -1,5 +1,12 @@
 # Änderungen
 
+## 1.8
+
+- Automatische Einpassung der gesamten Übersicht in Kachelbreite und -höhe, mit kompakteren Abständen bei geringer Höhe.
+- Proportionale Skalierung bei flachen Kacheln und Rückkehr zur Originalgröße beim Vergrößern.
+- Neue Einpassung bei Containergrößenänderungen, Schriftladen und Quellupdates.
+- Verlaufsdialog bleibt unabhängig von der Übersicht bedienbar.
+
 ## 1.7
 
 - Zusatzbeschriftung „Heizung & Warmwasser“ oben links entfernt.

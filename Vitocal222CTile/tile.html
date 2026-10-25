@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vitocal 222-C</title>
 <style>
-:root{color-scheme:dark;--bg:#061522;--panel:#0b2234;--line:#20455c;--text:#ecf5fb;--muted:#9cbace;--blue:#51c7ff;--warm:#ffbc70;--green:#57e2af}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#11334a,var(--bg) 70%);color:var(--text);font:15px/1.4 system-ui,sans-serif}main{max-width:1200px;padding:22px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}h1{margin:0;font-size:clamp(18px,2.5vw,26px);letter-spacing:-.4px;line-height:1.2;overflow-wrap:anywhere}h2{font-size:18px;margin:0 0 15px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted)}.device-heading{display:flex;align-items:center;gap:12px;min-width:0}.heading-copy{min-width:0}.device-heading .eyebrow{font-size:9px;letter-spacing:1px;margin-bottom:4px}.heat-pump-icon{display:block;width:48px;height:68px;flex:0 0 auto}.badge{border:1px solid var(--line);border-radius:24px;padding:9px 15px;color:var(--green);max-width:45%;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);background:linear-gradient(140deg,#0d293e,#081b2b);border-radius:18px;padding:20px;min-width:0}.wide{grid-column:1/-1}.reading{background:#071927;border:1px solid var(--line);border-radius:12px;padding:16px}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(24px,4vw,38px);font-weight:600;letter-spacing:-1px;overflow-wrap:anywhere}.warm{color:var(--warm)}.cold{color:var(--blue)}.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.status{background:#071927;border-radius:12px;padding:14px;border:1px solid var(--line)}.status strong{display:block;font-size:19px;margin-top:6px}.status[data-active="true"]{border-color:#287c63}.status[data-active="true"] strong{color:var(--green)}button{font:inherit;border-radius:9px;border:1px solid #376079;padding:10px 12px;background:#0d3047;color:var(--text);cursor:pointer;min-height:42px}button:disabled{opacity:.45;cursor:default}button:hover:enabled{border-color:var(--blue)}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px}.reason,.hint{font-size:12px;color:var(--muted);margin-top:10px}.feedback{font-size:13px;color:#ffd399;min-height:20px;margin:12px 0}footer{color:var(--muted);font-size:9px;margin-top:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}details{margin-top:15px;color:var(--muted);font-size:12px}summary{cursor:pointer}.unavailable{color:#ffd399} @media(max-width:650px){main{padding:12px}.grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr 1fr}.reading{padding:10px}.panel{padding:15px}.value{font-size:25px}.label{font-size:11px}.badge{font-size:12px}header{align-items:flex-start;gap:12px}.device-heading{gap:8px}.heat-pump-icon{width:40px;height:58px}}
+:root{color-scheme:dark;--bg:#061522;--panel:#0b2234;--line:#20455c;--text:#ecf5fb;--muted:#9cbace;--blue:#51c7ff;--warm:#ffbc70;--green:#57e2af}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#11334a,var(--bg) 70%);color:var(--text);font:15px/1.4 system-ui,sans-serif}html,body{width:100%;height:100%;overflow:hidden}body{position:relative}main{position:absolute;top:0;left:50%;width:calc(100% / var(--tile-scale,1));max-width:none;padding:22px;margin:0;transform-origin:top center;transform:translateX(-50%) scale(var(--tile-scale,1))}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}h1{margin:0;font-size:clamp(18px,2.5vw,26px);letter-spacing:-.4px;line-height:1.2;overflow-wrap:anywhere}h2{font-size:18px;margin:0 0 15px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted)}.device-heading{display:flex;align-items:center;gap:12px;min-width:0}.heading-copy{min-width:0}.device-heading .eyebrow{font-size:9px;letter-spacing:1px;margin-bottom:4px}.heat-pump-icon{display:block;width:48px;height:68px;flex:0 0 auto}.badge{border:1px solid var(--line);border-radius:24px;padding:9px 15px;color:var(--green);max-width:45%;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);background:linear-gradient(140deg,#0d293e,#081b2b);border-radius:18px;padding:20px;min-width:0}.wide{grid-column:1/-1}.reading{background:#071927;border:1px solid var(--line);border-radius:12px;padding:16px}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(24px,4vw,38px);font-weight:600;letter-spacing:-1px;overflow-wrap:anywhere}.warm{color:var(--warm)}.cold{color:var(--blue)}.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.status{background:#071927;border-radius:12px;padding:14px;border:1px solid var(--line)}.status strong{overflow-wrap:anywhere;display:block;font-size:19px;margin-top:6px}.status[data-active="true"]{border-color:#287c63}.status[data-active="true"] strong{color:var(--green)}button{font:inherit;border-radius:9px;border:1px solid #376079;padding:10px 12px;background:#0d3047;color:var(--text);cursor:pointer;min-height:42px}button:disabled{opacity:.45;cursor:default}button:hover:enabled{border-color:var(--blue)}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px}.reason,.hint{font-size:12px;color:var(--muted);margin-top:10px}.feedback{font-size:13px;color:#ffd399;min-height:20px;margin:12px 0}footer{color:var(--muted);font-size:9px;margin-top:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}details{margin-top:15px;color:var(--muted);font-size:12px}summary{cursor:pointer}.unavailable{color:#ffd399} @media(max-width:650px){main{padding:12px}.grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr 1fr}.reading{padding:10px}.panel{padding:15px}.value{font-size:25px}.label{font-size:11px}.badge{font-size:12px}header{align-items:flex-start;gap:12px}.device-heading{gap:8px}.heat-pump-icon{width:40px;height:58px}}
 
 .section-heading,.dialog-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.section-heading h2{margin-bottom:0}.section-heading{margin-bottom:18px}.temperature-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.reading{text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}.reading .value{font-size:clamp(22px,3vw,34px)}.chart-link{color:var(--muted);font-size:11px}dialog{color:var(--text);background:#0a1d2c;border:1px solid #36627a;border-radius:18px;padding:22px;width:min(950px,96vw);max-width:96vw;max-height:95dvh;overflow:auto}dialog::backdrop{background:#000a}.dialog-heading h2{font-size:24px;margin:4px 0 15px}select{font:inherit;background:#102e42;border:1px solid #376079;border-radius:8px;color:var(--text);padding:9px;margin-left:6px}.history-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}.history-navigation{display:flex;gap:7px;flex-wrap:wrap}.history-dates{font-size:13px;color:var(--muted);margin:12px 0}#historyState{font-size:13px;color:#ffd399;min-height:24px}#chartWrap{position:relative}#historyChart{display:block;width:100%;height:auto;min-height:160px;touch-action:pan-y}#chartTooltip{position:absolute;left:10px;top:4px;background:#183e55;padding:8px;border-radius:7px;pointer-events:none;font-size:12px}#historySummary{margin-top:8px}.table-scroll{max-height:240px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}#historyChart text{fill:#9fbfd3;font:12px system-ui}.chart-grid{stroke:#244257;stroke-width:1}.chart-line{stroke:#ffbc70;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}.chart-point{fill:#ffbc70}
 @media(max-width:650px){.temperature-cards{grid-template-columns:1fr 1fr;gap:8px}.reading .value{font-size:26px}.dialog-heading h2{font-size:20px}dialog{padding:14px}.history-navigation button{padding:8px}.section-heading .hint{margin:0}}
+
+@media(max-height:450px){main{padding:10px}header{margin-bottom:10px}.heat-pump-icon{width:30px;height:42px}.grid{gap:10px}.panel{padding:12px}.section-heading{margin-bottom:10px}h2{margin-bottom:10px}.reading{padding:10px;gap:2px}.status{padding:8px}.status strong{margin-top:2px}.feedback:empty{display:none}footer{margin-top:8px}}
 </style></head><body><main>
 <header><div class="device-heading">
 <svg class="heat-pump-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 88" role="img" aria-labelledby="heatPumpTitle"><title id="heatPumpTitle">Wärmepumpe Viessmann Vitocal 222</title>
@@ -59,10 +61,11 @@ function render(data){
  $('sourceState').classList.toggle('unavailable',!!data.missing.length);
  const stamps=Object.values(data.values).map(v=>v.updated).filter(v=>v>0);
  $('updated').textContent=stamps.length?'Letztes Quellupdate: '+new Date(Math.max(...stamps)*1000).toLocaleString('de-DE'):'Noch kein Quellzeitstempel';
+ scheduleTileFit();
 }
 function handleMessage(message){
  try{const data=typeof message==='string'?JSON.parse(message):message;if(data.kind==='history')receiveHistory(data);else render(data);}
- catch(e){$('feedback').textContent='Datenaktualisierung konnte nicht gelesen werden.';}
+ catch(e){$('feedback').textContent='Datenaktualisierung konnte nicht gelesen werden.';scheduleTileFit();}
 }
 const historyLabels={primaryFlow:'Vorlauf Primärquelle',flow:'Vorlauf Sekundär',return:'Rücklauf Sekundär',water:'Warmwasser Ist'};
 const history={key:null,end:0,anchor:0,requestID:'',timer:null,points:[],start:0};
@@ -156,6 +159,41 @@ $('historyNext').onclick=()=>{history.end=Math.min(history.anchor,history.end+Nu
 $('historyNow').onclick=()=>{history.anchor=Math.floor(Date.now()/1000);history.end=history.anchor;loadHistory();};
 $('closeHistory').onclick=closeHistory;
 $('historyDialog').addEventListener('cancel',event=>{event.preventDefault();closeHistory();});
+
+// Fit the complete overview into the HTML SDK viewport, preserving icon/text proportions.
+let tileFitFrame = 0;
+function scheduleTileFit(){
+ if(tileFitFrame)return;
+ tileFitFrame=requestAnimationFrame(()=>{tileFitFrame=0;fitTile();});
+}
+function fitTile(){
+ const dashboard=document.querySelector('main');
+ const width=document.documentElement.clientWidth,height=document.documentElement.clientHeight;
+ if(width<=0 || height<=0)return;
+ const fits=scale=>{
+  // More layout width compensates for scaling so the final tile still fills its width.
+  dashboard.style.width=(width/scale)+'px';
+  return dashboard.scrollHeight*scale<=height-.5;
+ };
+ let scale=1;
+ if(!fits(1)){
+  let low=0,high=1;
+  for(let i=0;i<16;i++){
+   const candidate=(low+high)/2;
+   if(fits(candidate))low=candidate;else high=candidate;
+  }
+  scale=Math.max(low,0.000001);
+ }
+ dashboard.style.setProperty('--tile-scale',String(scale));
+ dashboard.style.removeProperty('width');
+}
+const tileObserver=new ResizeObserver(scheduleTileFit);
+tileObserver.observe(document.documentElement);
+tileObserver.observe(document.querySelector('main'));
+window.addEventListener('resize',scheduleTileFit);
+if(window.visualViewport)window.visualViewport.addEventListener('resize',scheduleTileFit);
+if(document.fonts)document.fonts.ready.then(scheduleTileFit);
+scheduleTileFit();
 
 render(INITIAL);
 </script></body></html>

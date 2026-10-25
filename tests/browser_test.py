@@ -114,6 +114,41 @@ with sync_playwright() as p:
         check(page.locator('#historyPrev').is_visible() and page.locator('#historyRange').is_visible(),'navigation reachable '+str(width))
         if width==1200: page.screenshot(path=str(ROOT/'docs/history.png'),full_page=True)
         page.locator('#closeHistory').click()
+    # Height-only and simultaneous viewport changes must refit without reloading.
+    for width,height in [(1200,220),(640,220),(320,260),(800,160),(320,480),(1800,180),(240,150),(1200,1100)]:
+        page.set_viewport_size({'width':width,'height':height})
+        page.wait_for_function("document.querySelector('main').getBoundingClientRect().bottom<=innerHeight && document.querySelector('main').getBoundingClientRect().right<=innerWidth+.5")
+        bounds=page.evaluate("""() => Array.from(document.querySelectorAll('main,main header,main .panel,main footer,main [data-history]')).map(el=>{
+            const r=el.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom};
+        })""")
+        check(all(r['left']>=-.5 and r['top']>=-.5 and r['right']<=width+.5 and r['bottom']<=height+.5 for r in bounds),'complete tile fits '+str((width,height)))
+        check(page.evaluate('document.documentElement.scrollHeight<=innerHeight && document.documentElement.scrollWidth<=innerWidth'),'no viewport scrolling '+str((width,height)))
+    page.wait_for_function("Number(document.querySelector('main').style.getPropertyValue('--tile-scale'))===1")
+    check(page.locator('main').evaluate("el=>Number(el.style.getPropertyValue('--tile-scale'))")==1,'growing restores original scale')
+    page.set_viewport_size({'width':800,'height':220});page.wait_for_function("document.querySelector('main').getBoundingClientRect().bottom<=innerHeight")
+    grown=copy.deepcopy(snapshot)
+    grown['missing']=['Warmwasser Ist','Vorlauf Primärquelle','Rücklauf Sekundär']
+    grown['values']['mode']['formatted']='Eine längere Betriebsartbeschreibung mit zusätzlichem Status aus der Quellvariable'
+    page.evaluate('handleMessage',grown);page.wait_for_function("document.querySelector('main').getBoundingClientRect().bottom<=innerHeight")
+    check(page.locator('main').evaluate('(el)=>el.getBoundingClientRect().bottom<=innerHeight'),'long live values trigger refit')
+    page.evaluate('handleMessage',snapshot);page.clock.run_for(120)
+    page.locator('[data-history="water"]').click();scaled_request=request()
+    reply(scaled_request,[{'time':scaled_request['start']+100,'value':44.5}])
+    check(page.locator('#historyChart .chart-point').count()==1,'scaled temperature button opens usable history')
+    check(page.locator('#historyDialog').evaluate('(el)=>el.getBoundingClientRect().height<=innerHeight'),'history dialog fits short tile independently')
+    page.locator('#closeHistory').click()
+    # Resizing a containing tile/iframe must work without changing the outer window.
+    host=browser.new_page(viewport={'width':1200,'height':900})
+    host.set_content('<iframe id="tile" style="width:800px;height:500px;border:0"></iframe>')
+    frame=host.frames[1];frame.set_content(html)
+    host.locator('#tile').evaluate("el=>el.style.height='180px'")
+    frame.wait_for_function("document.querySelector('main').getBoundingClientRect().bottom<=innerHeight")
+    check(frame.evaluate("document.querySelector('footer').getBoundingClientRect().bottom<=180"),'parent iframe height change refits content')
+    host.locator('#tile').evaluate("el=>el.style.height='800px'")
+    frame.wait_for_function("Number(document.querySelector('main').style.getPropertyValue('--tile-scale'))===1")
+    check(frame.evaluate("document.querySelector('main').getBoundingClientRect().bottom<=innerHeight"),'parent iframe grows without stale small scale')
+    host.close()
+    page.set_viewport_size({'width':1200,'height':1100});page.clock.run_for(120)
     malicious=copy.deepcopy(snapshot);malicious['values']['mode']['formatted']='<img src=x onerror="window.injected=true">'
     page.evaluate('handleMessage',malicious)
     check(page.locator('#modeBadge img').count()==0,'mode captions escaped')
