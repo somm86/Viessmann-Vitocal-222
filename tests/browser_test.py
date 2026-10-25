@@ -23,6 +23,7 @@ with sync_playwright() as p:
     page.set_content(html)
     page.clock.install()
     check(page.locator('input').count()==0,'no setpoint inputs')
+    check(page.locator('.plant, .plant-viewport, svg[role=img]').count()==1,'only history chart, no plant schema')
     check('Solltemperatur' not in page.locator('body').inner_text(),'only actual temperatures shown')
     check(page.locator('[data-history]').count()==4,'four clickable temperatures')
     check(page.locator('#water').inner_text()=='45,6 °C','water reading')
@@ -102,17 +103,10 @@ with sync_playwright() as p:
         page.locator(f'[data-history="{key}"]').click();r=request();check(r['key']==key,'correct source '+key);page.locator('#closeHistory').click()
     page.evaluate('handleMessage',snapshot)
     check(all(c['ident']=='RequestHistory' for c in page.evaluate('calls')),'browser only requests read-only history')
-    page.screenshot(path=str(ROOT/'docs/dashboard.png'),full_page=True)
-    page.locator('.plant').screenshot(path=str(ROOT/'docs/plant.png'))
+    page.locator('main').screenshot(path=str(ROOT/'docs/dashboard.png'))
     for width in [320,390,768,1200]:
         page.set_viewport_size({'width':width,'height':1000})
         check(page.evaluate('document.documentElement.scrollWidth<=innerWidth'),'dashboard no horizontal overflow '+str(width))
-        if width==320:
-            viewport=page.locator('.plant-viewport')
-            check(viewport.evaluate('(el)=>el.scrollWidth>el.clientWidth'),'diagram remains readable through local scrolling')
-            viewport.evaluate('(el)=>el.scrollTo({left:el.scrollWidth,behavior:"instant"})')
-            check(viewport.evaluate('(el)=>el.scrollLeft>0'),'right side of diagram reachable on mobile')
-            viewport.evaluate('(el)=>el.scrollTo({left:0,behavior:"instant"})')
         page.locator('[data-history="water"]').click();r=request()
         synthetic=[{'time':r['start']+int((r['end']-r['start'])*i/24),'value':44+(i%6)*.4} for i in range(25)]
         reply(r,synthetic)

@@ -1,6 +1,6 @@
 # Viessmann Vitocal 222-C · Kachel für IP-Symcon
 
-Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Das neu konstruierte Funktionsschema zeigt Wärmequelle, Wärmepumpe und Wärmeabgabe als getrennte Bereiche. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
+Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Kompakte Anzeige der Istwerte und Anlagenzustände ohne Anlagenschema. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
 
 ![Kachel mit synthetischen Testwerten](docs/dashboard.png)
 
@@ -8,9 +8,9 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.4.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.5.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
-Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Eine große Kachel zeigt das Schema übersichtlicher; kleine Kacheln können vertikal gescrollt werden. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
+Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der Kachelbreite an; kleine Kacheln können vertikal gescrollt werden. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
 ## Vorbelegte Quellen
 
@@ -28,7 +28,7 @@ Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Eine große Kac
 
 Alle IDs sind in der Instanz änderbar. Die früheren Sollwertquellen `10939` und `27660` werden nicht mehr gelesen, angezeigt oder geschaltet. Eine Raum-Isttemperatur war nicht vorhanden und wird nicht aus dem Raumsollwert abgeleitet. Abluft, Fortluft, Lüftungsaußentemperatur, Lüftungsbetriebsart, Filterrestzeit und Zuluft-Volumenstrom sind ausgeschlossen.
 
-Temperaturen müssen in °C vorliegen. Pumpen und Umschaltventil verwenden die formatierten Quellwerte; die Bedeutung des Ventilwerts wird nicht eigenmächtig umgedreht. Aktive Boolesche Pumpen-/Verdichtersignale werden im Schema grün hervorgehoben. Das Schema ist vereinfacht und keine Messung von Flussrichtungen oder vollständige hydraulische Installationszeichnung.
+Temperaturen müssen in °C vorliegen. Pumpen und Umschaltventil verwenden die formatierten Quellwerte; die Bedeutung des Ventilwerts wird nicht eigenmächtig umgedreht. Aktive Pumpen-/Verdichtersignale werden in den Statusfeldern grün hervorgehoben.
 
 ## Temperaturverlauf
 
@@ -58,24 +58,6 @@ Die Datenübertragung läuft über die HTML-SDK-Brücke und den Visualisierungsn
 Variable `53049` wird mit ihrem formatierten Quellwert oben in der Statusanzeige dargestellt. Es gibt keine Betriebsartauswahl und keine Schaltaktionen mehr. Eine Profil-Auswahlliste oder Variablenaktion ist für die Anzeige nicht erforderlich. Selbst direkte Aufrufe der ehemaligen Aktionen `ChangeMode`, `SetRoomTarget` und `SetWaterTarget` werden serverseitig abgewiesen. Die HTML-SDK-Aktion wird ausschließlich für lesende Archivabfragen verwendet.
 
 **Quellendiagnose** zeigt die gelesenen Werte und den Schreibschutz. Die Instanz bietet zusätzlich **Quellen-Diagnose anzeigen** mit den konfigurierten Quell-IDs und dem Archiv.
-
-## Neues Funktionsschema
-
-![Funktionsschema](docs/plant.png)
-
-[SVG öffnen oder herunterladen](docs/plant.svg) · [PNG öffnen](docs/plant.png)
-
-Das Schema zeigt das Funktionsprinzip einer Sole/Wasser-Wärmepumpe mit drei getrennten Medienkreisen:
-
-1. **Primärkreis:** Die Sole nimmt Erdwärme aus Sonde oder Kollektor auf und gibt sie über eine Trennwand im Verdampfer an das Kältemittel ab.
-2. **Kältemittelkreis:** Verdampfer → Verdichter → Verflüssiger → Expansionsventil → Verdampfer. Dampf, Heißgas, Flüssigkeit und entspanntes Kältemittel sind unterschiedlich eingefärbt. Der Verdichter benötigt zusätzlich elektrische Energie.
-3. **Sekundärkreis:** Im Verflüssiger wird Heizwasser erwärmt. Die Umschaltung führt es zu den Heizflächen oder zur Wendel des Trinkwasserspeichers. Beide Zweige besitzen einen gemeinsamen Heizwasser-Rücklauf. Trinkwasser und Heizwasser bleiben im Speicher getrennt.
-
-Die gelben Pfeile an den Wärmetauschern kennzeichnen ausschließlich **Wärmeübertragung**. Sie sind keine Rohrverbindung zwischen Sole, Kältemittel und Heizwasser. Statische Pfeile erklären die prinzipielle Kreisrichtung im Heizbetrieb und sind keine Messung tatsächlicher Strömungen. Die gezeichnete Bauteilanordnung ist funktional; sie behauptet keine konkrete Position im Gehäuse. Es werden keine Speichergröße, Kältemittelsorte oder optionalen Anlagenkomponenten angenommen.
-
-Das Schema ist eine eigenständige Prinzipdarstellung, kein verifiziertes Hersteller-Hydraulikschema oder Bestandsplan der konkreten Installation. Aktive Pumpen und Verdichter werden anhand vorhandener Quellvariablen grün dargestellt. Die Umschaltventil-Anzeige ersetzt keine gemessene Flussrichtung. Auf kleinen Bildschirmen lässt sich das Schema im eigenen Bereich seitlich verschieben, ohne den Text unleserlich zu verkleinern.
-
-SVG und PNG stehen separat bereit. Das SVG entspricht exakt dem in der Kachel eingebetteten Schema; der Build prüft diese Übereinstimmung. Der PNG-Export wird bei den Browserprüfungen aus der Kachel erzeugt und kann synthetische Test-Betriebszustände zeigen.
 
 ## Entwicklung und Prüfungen
 

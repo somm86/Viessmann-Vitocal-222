@@ -1,5 +1,10 @@
 # Änderungen
 
+## 1.5
+
+- Anlagenschema, zugehörige Symbole und separate Schema-Dateien vollständig entfernt.
+- Kompakte Ansicht mit Isttemperaturen, Temperaturverläufen und Anlagenstatus.
+
 ## 1.4
 
 - Anlagenschema vollständig als neues Funktionsschema mit Wärmequelle, Wärmepumpe und Wärmeabgabe konstruiert.
