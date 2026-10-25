@@ -1,4 +1,4 @@
-# Prüfbericht · Version 1.5
+# Prüfbericht · Version 1.6
 
 Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb3763236fcf44ea4144271fdeddfd5`), Python 3, Playwright 1.62.0 und System-Chromium. PHP wurde aus anhand signierter Debian-Indizes geprüften Paketen lokal unter `/tmp/php-local` extrahiert. Die Testlaufzeit ist keine Produktivabhängigkeit.
 
@@ -17,6 +17,8 @@ Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb37632
 Keine echte Symcon-Instanz oder Wärmepumpe ist mit dieser Entwicklungsumgebung verbunden. Die Modultests nutzen offizielle Stubs und synthetische Archivdaten, der Browsertest eine simulierte HTML-SDK-Brücke. Die Screenshots enthalten synthetische Beispielwerte; der Verlaufs-Screenshot zeigt eine künstliche Kurve und keine Aufzeichnung der Anlage.
 
 Die vorhandenen Live-Quellwerte und Archivdaten müssen nach Installation in deiner Symcon-Instanz verglichen werden. Für Historie ist aktive Standardwert-Archivierung der vier Isttemperaturen erforderlich. Historie, Profilwerte, Aktionen und tatsächliche Geräteantworten deiner Anlage konnten hier nicht geprüft werden. Die Betriebsart wird ausschließlich als formatierter Quellwert angezeigt; alle früheren Schreibaktionen werden abgewiesen.
+
+Die Quellendiagnose ist aus der Kachel entfernt; die Fußzeile für Quellenstatus und Update-Zeitpunkt verwendet 9 px. Die bestehende Diagnose in der Instanz bleibt verfügbar.
 
 Die Kachel enthält kein Anlagenschema und keine Schema-Exporte mehr. Die Browserprüfung kontrolliert, dass ausschließlich der Verlaufsgraph als SVG verbleibt und die vier Temperaturkarten und Statusfelder weiterhin aktualisiert werden.
 

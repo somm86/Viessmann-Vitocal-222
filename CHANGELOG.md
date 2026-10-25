@@ -1,5 +1,10 @@
 # Änderungen
 
+## 1.6
+
+- Quellendiagnose aus der Kachel entfernt; Instanzdiagnose bleibt verfügbar.
+- Fußzeile mit Quellenstatus und Update-Zeitpunkt auf 9 px verkleinert.
+
 ## 1.5
 
 - Anlagenschema, zugehörige Symbole und separate Schema-Dateien vollständig entfernt.

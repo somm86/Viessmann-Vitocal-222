@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.5.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.6.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der Kachelbreite an; kleine Kacheln können vertikal gescrollt werden. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -57,7 +57,7 @@ Die Datenübertragung läuft über die HTML-SDK-Brücke und den Visualisierungsn
 
 Variable `53049` wird mit ihrem formatierten Quellwert oben in der Statusanzeige dargestellt. Es gibt keine Betriebsartauswahl und keine Schaltaktionen mehr. Eine Profil-Auswahlliste oder Variablenaktion ist für die Anzeige nicht erforderlich. Selbst direkte Aufrufe der ehemaligen Aktionen `ChangeMode`, `SetRoomTarget` und `SetWaterTarget` werden serverseitig abgewiesen. Die HTML-SDK-Aktion wird ausschließlich für lesende Archivabfragen verwendet.
 
-**Quellendiagnose** zeigt die gelesenen Werte und den Schreibschutz. Die Instanz bietet zusätzlich **Quellen-Diagnose anzeigen** mit den konfigurierten Quell-IDs und dem Archiv.
+Die Diagnose ist ausschließlich in der Instanz über **Quellen-Diagnose anzeigen** mit den konfigurierten Quell-IDs und dem Archiv verfügbar. In der Kachel wird keine Quellendiagnose eingeblendet. Die Fußzeile mit Quellenstatus und letztem Quellupdate verwendet 9 px Schriftgröße.
 
 ## Entwicklung und Prüfungen
 
