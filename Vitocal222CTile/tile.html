@@ -3,7 +3,7 @@
 <style>
 :root{color-scheme:dark;--bg:#061522;--panel:#0b2234;--line:#20455c;--text:#ecf5fb;--muted:#9cbace;--blue:#51c7ff;--warm:#ffbc70;--green:#57e2af}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#11334a,var(--bg) 70%);color:var(--text);font:15px/1.4 system-ui,sans-serif}html,body{width:100%;height:100%;overflow:hidden}body{position:relative}main{position:absolute;top:0;left:50%;width:calc(100% / var(--tile-scale,1));max-width:none;padding:22px;margin:0;transform-origin:top center;transform:translateX(-50%) scale(var(--tile-scale,1))}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}h1{margin:0;font-size:clamp(18px,2.5vw,26px);letter-spacing:-.4px;line-height:1.2;overflow-wrap:anywhere}h2{font-size:18px;margin:0 0 15px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted)}.device-heading{display:flex;align-items:center;gap:12px;min-width:0}.heading-copy{min-width:0}.device-heading .eyebrow{font-size:9px;letter-spacing:1px;margin-bottom:4px}.badge{border:1px solid var(--line);border-radius:24px;padding:9px 15px;color:var(--green);max-width:45%;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);background:linear-gradient(140deg,#0d293e,#081b2b);border-radius:18px;padding:20px;min-width:0}.wide{grid-column:1/-1}.reading{background:#071927;border:1px solid var(--line);border-radius:12px;padding:16px}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(24px,4vw,38px);font-weight:600;letter-spacing:-1px;overflow-wrap:anywhere}.warm{color:var(--warm)}.cold{color:var(--blue)}.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.status{background:#071927;border-radius:12px;padding:14px;border:1px solid var(--line)}.status strong{overflow-wrap:anywhere;display:block;font-size:19px;margin-top:6px}.status[data-active="true"]{border-color:#287c63}.status[data-active="true"] strong{color:var(--green)}button{font:inherit;border-radius:9px;border:1px solid #376079;padding:10px 12px;background:#0d3047;color:var(--text);cursor:pointer;min-height:42px}button:disabled{opacity:.45;cursor:default}button:hover:enabled{border-color:var(--blue)}button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px}.reason,.hint{font-size:12px;color:var(--muted);margin-top:10px}.feedback{font-size:13px;color:#ffd399;min-height:20px;margin:12px 0}footer{color:var(--muted);font-size:9px;margin-top:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}details{margin-top:15px;color:var(--muted);font-size:12px}summary{cursor:pointer}.unavailable{color:#ffd399} @media(max-width:650px){main{padding:12px}.grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr 1fr}.reading{padding:10px}.panel{padding:15px}.value{font-size:25px}.label{font-size:11px}.badge{font-size:12px}header{align-items:flex-start;gap:12px}.device-heading{gap:8px}}
 
-.section-heading,.dialog-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.section-heading h2{margin-bottom:0}.section-heading{margin-bottom:18px}.temperature-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.reading{text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}.reading .value{font-size:clamp(22px,3vw,34px)}.chart-link{color:var(--muted);font-size:11px}dialog{color:var(--text);background:#0a1d2c;border:1px solid #36627a;border-radius:18px;padding:22px;width:min(950px,96vw);max-width:96vw;max-height:95dvh;overflow:auto}dialog::backdrop{background:#000a}.dialog-heading h2{font-size:24px;margin:4px 0 15px}select{font:inherit;background:#102e42;border:1px solid #376079;border-radius:8px;color:var(--text);padding:9px;margin-left:6px}.history-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}.history-navigation{display:flex;gap:7px;flex-wrap:wrap}.history-dates{font-size:13px;color:var(--muted);margin:12px 0}#historyState{font-size:13px;color:#ffd399;min-height:24px}#chartWrap{position:relative}#historyChart{display:block;width:100%;height:auto;min-height:160px;touch-action:pan-y}#chartTooltip{position:absolute;left:10px;top:4px;background:#183e55;padding:8px;border-radius:7px;pointer-events:none;font-size:12px}#historySummary{margin-top:8px}.table-scroll{max-height:240px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}#historyChart text{fill:#9fbfd3;font:12px system-ui}.chart-grid{stroke:#244257;stroke-width:1}.chart-line{stroke:#ffbc70;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}.chart-point{fill:#ffbc70}
+.section-heading,.dialog-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.section-heading h2{margin-bottom:0}.section-heading{margin-bottom:18px}.temperature-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.reading{text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}.reading .value{font-size:clamp(22px,3vw,34px)}.chart-link{color:var(--muted);font-size:11px}dialog{color:var(--text);background:#0a1d2c;border:1px solid #36627a;border-radius:18px;padding:22px;width:min(950px,96vw);max-width:96vw;max-height:95dvh;overflow:auto}dialog::backdrop{background:#000a}.dialog-heading h2{font-size:24px;margin:4px 0 15px}select{font:inherit;background:#102e42;border:1px solid #376079;border-radius:8px;color:var(--text);padding:9px;margin-left:6px}.history-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}.history-navigation{display:flex;gap:7px;flex-wrap:wrap}.history-dates{font-size:13px;color:var(--muted);margin:12px 0}#historyState{font-size:13px;color:#ffd399;min-height:24px}#chartWrap{position:relative}#historyChart{display:block;width:100%;height:auto;min-height:160px;touch-action:pan-y}#chartTooltip{position:absolute;left:10px;top:4px;background:#183e55;padding:8px;border-radius:7px;pointer-events:none;font-size:12px}#historySummary{margin-top:8px}.table-scroll{max-height:240px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}#historyChart text{fill:#9fbfd3;font:12px system-ui}.chart-grid{stroke:#244257;stroke-width:1}.chart-line{stroke:#ffbc70;stroke-width:2;fill:none;vector-effect:non-scaling-stroke}.chart-point,.chart-bar{fill:#ffbc70}
 @media(max-width:650px){.temperature-cards{grid-template-columns:1fr 1fr;gap:8px}.reading .value{font-size:26px}.dialog-heading h2{font-size:20px}dialog{padding:14px}.history-navigation button{padding:8px}.section-heading .hint{margin:0}}
 
 @media(max-height:450px){main{padding:10px}header{margin-bottom:10px}.grid{gap:10px}.panel{padding:12px}.section-heading{margin-bottom:10px}h2{margin-bottom:10px}.reading{padding:10px;gap:2px}.status{padding:8px}.status strong{margin-top:2px}.feedback:empty{display:none}footer{margin-top:8px}}
@@ -55,7 +55,9 @@ function render(data){
  $('monthCaption').textContent='Monatsverbrauch'+(data.energy?.month?.periodLabel?' · '+data.energy.month.periodLabel:'');
  $('statuses').replaceChildren();
  for(const [key,label] of Object.entries(statusLabels)){
-  const item=document.createElement('div');item.className='status';item.dataset.active=String(data.values[key].value===true);
+  const clickable=['compressor','valve'].includes(key);
+  const item=document.createElement(clickable?'button':'div');item.className='status';
+  if(clickable){item.dataset.history=key;item.addEventListener('click',()=>openHistory(key));item.title='Verlauf öffnen';}item.dataset.active=String(data.values[key].value===true);
   const title=document.createElement('div');title.className='label';title.textContent=label;
   const value=document.createElement('strong');value.textContent=data.values[key].formatted;
   item.append(title,value);$('statuses').append(item);
@@ -70,9 +72,10 @@ function handleMessage(message){
  try{const data=typeof message==='string'?JSON.parse(message):message;if(data.kind==='history')receiveHistory(data);else render(data);}
  catch(e){$('feedback').textContent='Datenaktualisierung konnte nicht gelesen werden.';scheduleTileFit();}
 }
-const historyLabels={primaryFlow:'Vorlauf Primärquelle',flow:'Vorlauf Sekundär',return:'Rücklauf Sekundär',water:'Warmwasser Ist',power:'Momentanleistung · elektrisch',total:'Gesamtverbrauch · Stromzähler',month:'Monatsverbrauch'};
+const historyLabels={primaryFlow:'Vorlauf Primärquelle',flow:'Vorlauf Sekundär',return:'Rücklauf Sekundär',water:'Warmwasser Ist',power:'Momentanleistung · elektrisch',total:'Gesamtverbrauch · Stromzähler',month:'Monatsverbrauch',compressor:'Verdichter',valve:'Ventil Heizen / Warmwasser'};
 const history={key:null,end:0,anchor:0,requestID:'',timer:null,points:[],start:0,unit:'°C',plotLeft:65};
-function historyFormat(value){return (history.unit==='°C'?number:energyNumbers[history.key]).format(value);}
+function isStatus(){return ['compressor','valve'].includes(history.key);}
+function historyFormat(value){if(isStatus())return history.key==='valve'?(value>=.5?'Warmwasser':'Heizung'):(value>=.5?'An':'Aus');return (history.unit==='°C'?number:energyNumbers[history.key]).format(value);}
 function svgNode(name,attributes={},text=''){
  const node=document.createElementNS('http://www.w3.org/2000/svg',name);
  for(const [key,value] of Object.entries(attributes))node.setAttribute(key,String(value));
@@ -106,8 +109,8 @@ function openHistory(key){
  if(!Object.hasOwn(historyLabels,key))return;
  history.key=key;history.anchor=Math.floor(Date.now()/1000);history.end=history.anchor;
  $('historyTitle').textContent=historyLabels[key];
- history.unit=key==='power'?'kW':(['total','month'].includes(key)?'kWh':'°C');
- $('historyUnitHeading').textContent=(history.unit==='°C'?'Temperatur ':'Messwert ')+history.unit;
+ history.unit=key==='power'?'kW':(['total','month'].includes(key)?'kWh':(isStatus()?'':'°C'));
+ $('historyUnitHeading').textContent=(isStatus()?'Status':history.unit==='°C'?'Temperatur ':'Messwert ')+history.unit;
  if(!$('historyDialog').open)$('historyDialog').showModal();
  loadHistory();
 }
@@ -125,11 +128,13 @@ function receiveHistory(data){
 function drawChart(resolution){
  const points=history.points;let low=Infinity,high=-Infinity;
  for(const p of points){low=Math.min(low,p.value);high=Math.max(high,p.value);}
- const pad=Math.max((high-low)*.12,history.unit==='°C'?.5:.01),min=history.unit==='°C'?low-pad:Math.max(0,low-pad),max=high+pad;
+ const bars=['total','month'].includes(history.key);
+ const pad=Math.max((high-low)*.12,history.unit==='°C'?.5:.01),min=isStatus()?0:bars?0:history.unit==='°C'?low-pad:Math.max(0,low-pad),max=isStatus()?1:high+pad;
  history.plotLeft=history.unit==='°C'?65:110;
  const chart=$('historyChart'),x=t=>history.plotLeft+(t-history.start)/(history.end-history.start)*(840-history.plotLeft),y=v=>265-(v-min)/(max-min)*240;
  $('chartDescription').textContent=points.length+' Archivwerte von '+historyLabels[history.key]+', Minimum '+historyFormat(low)+' '+history.unit+', Maximum '+historyFormat(high)+' '+history.unit+'.';
  for(let i=0;i<=4;i++){
+  if(isStatus() && i!==0 && i!==4)continue;
   const yy=25+i*60,value=max-i*(max-min)/4;
   chart.append(svgNode('line',{x1:history.plotLeft,y1:yy,x2:840,y2:yy,class:'chart-grid'}),svgNode('text',{x:history.plotLeft-10,y:yy+4,'text-anchor':'end'},historyFormat(value)+(history.unit==='°C'?'°':'')));
  }
@@ -138,10 +143,19 @@ function drawChart(resolution){
   const date=new Date(time*1000),label=history.end-history.start>172800?date.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):date.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   chart.append(svgNode('text',{x:xx,y:294,'text-anchor':i===0?'start':i===4?'end':'middle'},label));
  }
- const path=points.map((p,i)=>(i && !p.breakBefore?'L':'M')+x(p.time).toFixed(2)+' '+y(p.value).toFixed(2)).join(' ');
- chart.append(svgNode('path',{d:path,class:'chart-line'}));
- if(points.length===1)chart.append(svgNode('circle',{cx:x(points[0].time),cy:y(points[0].value),r:4,class:'chart-point'}));
- $('historySummary').textContent=(resolution==='monthly'?'Laufender Verbrauch je Kalendermonat':resolution==='counterHourly'?'Archivierte Zählerstände · stündliche Stützpunkte':resolution==='hourly'?'Stundenmittelwerte':'Archivierte Einzelwerte')+' · '+points.length+' Werte · Min '+historyFormat(low)+' '+history.unit+' · Max '+historyFormat(high)+' '+history.unit+'. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen. Tabelle: maximal 500 Werte.';
+ if(bars){
+  for(let i=0;i<points.length;i++){
+   const p=points[i],cx=x(p.time),prev=i?x(points[i-1].time):history.plotLeft,next=i+1<points.length?x(points[i+1].time):840;
+   const width=Math.max(.5,Math.min(40,Math.max(1,Math.min(cx-prev || next-cx,next-cx || cx-prev))*.8));
+   chart.append(svgNode('rect',{x:Math.max(history.plotLeft,Math.min(840-width,cx-width/2)),y:y(p.value),width,height:Math.max(0,y(0)-y(p.value)),class:'chart-bar'}));
+  }
+ }else{
+  let path=points.map((p,i)=>(i && !p.breakBefore?(isStatus()?'H'+x(p.time).toFixed(2)+' V':'L'+x(p.time).toFixed(2)+' '):'M'+x(p.time).toFixed(2)+' ')+y(p.value).toFixed(2)).join(' ');
+  if(isStatus())path+=' H'+x(history.end).toFixed(2);
+  chart.append(svgNode('path',{d:path,class:'chart-line'}));
+  if(points.length===1 && !isStatus())chart.append(svgNode('circle',{cx:x(points[0].time),cy:y(points[0].value),r:4,class:'chart-point'}));
+ }
+ $('historySummary').textContent=(resolution==='monthly'?'Laufender Verbrauch je Kalendermonat':resolution==='counterHourly'?'Archivierte Zählerstände · stündliche Stützpunkte':resolution==='hourly'?'Stundenmittelwerte':'Archivierte Einzelwerte')+' · '+points.length+' Werte · Min '+historyFormat(low)+' '+history.unit+' · Max '+historyFormat(high)+' '+history.unit+(bars?'. Balken zeigen archivierte Zählerstände.':isStatus()?'. Stufen zeigen den archivierten Schaltzustand bis zum nächsten Wechsel.':'. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen.')+' Tabelle: maximal 500 Werte.';
  const rows=document.createDocumentFragment();
  for(const p of points.slice(0,500)){
   const row=document.createElement('tr'),date=document.createElement('td'),value=document.createElement('td');

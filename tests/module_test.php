@@ -90,6 +90,13 @@ foreach (['WaterID','FlowID','ReturnID','PrimaryFlowID'] as $prop) {
     AC_SetLoggingStatus($archive,$ids[$prop],true);
     AC_AddLoggedValues($archive,$ids[$prop],[['TimeStamp'=>$end-3600,'Value'=>21.5],['TimeStamp'=>$end-1800,'Value'=>23.0],['TimeStamp'=>$end-100,'Value'=>22.0]]);
 }
+foreach (['compressor'=>'CompressorID','valve'=>'ValveID'] as $key=>$prop) {
+    AC_SetLoggingStatus($archive,$ids[$prop],true);
+    AC_AddLoggedValues($archive,$ids[$prop],[['TimeStamp'=>$start-100,'Value'=>false],['TimeStamp'=>$end-3600,'Value'=>true],['TimeStamp'=>$end-100,'Value'=>false]]);
+    $statusHistory=json_decode($module->GetHistory($key,$start,$end),true);
+    check($statusHistory['resolution']==='status' && array_column($statusHistory['points'],'value')===[0,1,0],'raw boolean transitions '.$key);
+    check($statusHistory['points'][0]['time']===$start,'status baseline at window start '.$key);
+}
 $h=json_decode($module->GetHistory('water',$start,$end),true);
 check($h['resolution']==='raw' && count($h['points'])===3,'actual archive rows retrieved');
 check(array_column($h['points'],'value')===[21.5,23,22],'rows sorted ascending, not current value');

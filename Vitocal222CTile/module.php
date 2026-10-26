@@ -360,9 +360,31 @@ class Vitocal222CTile extends IPSModule
     public function GetHistory(string $Key, int $Start, int $End): string
     {
         if (IPS_GetKernelRunlevel() !== KR_READY) { throw new RuntimeException('IP-Symcon ist noch nicht bereit.'); }
-        if (!in_array($Key, array_merge(self::TEMPERATURES, array_keys(self::ENERGY)), true)) { throw new InvalidArgumentException('Keine freigegebene Messgröße.'); }
+        if (!in_array($Key, array_merge(self::TEMPERATURES, array_keys(self::ENERGY), ['compressor', 'valve']), true)) { throw new InvalidArgumentException('Keine freigegebene Messgröße.'); }
         if ($Start < 0 || $End <= $Start || $End - $Start > 2678400 || $End > time() + 60) {
             throw new InvalidArgumentException('Ungültiger Zeitraum (maximal 31 Tage, keine Zukunft).');
+        }
+        if (in_array($Key, ['compressor', 'valve'], true)) {
+            $id = $this->ReadPropertyInteger(self::SOURCES[$Key][0]);
+            if ($id <= 0 || !IPS_VariableExists($id) || IPS_GetVariable($id)['VariableType'] !== 0) {
+                throw new RuntimeException('Boolesche Statusvariable fehlt.');
+            }
+            $archive = $this->archiveFor($id);
+            if (AC_GetAggregationType($archive, $id) !== 0) throw new RuntimeException('Status muss als Standardwert archiviert werden.');
+            $rows = AC_GetLoggedValues($archive, $id, $Start, $End, 10000);
+            $before = AC_GetLoggedValues($archive, $id, 0, $Start, 1);
+            if (!is_array($rows) || !is_array($before)) throw new RuntimeException('Archivdaten konnten nicht gelesen werden.');
+            if (count($rows) >= 10000) throw new RuntimeException('Zu viele Statuswechsel. Bitte kleineren Zeitraum auswählen.');
+            $points = [];
+            foreach (array_merge($before, $rows) as $row) {
+                $stamp = $row['TimeStamp'] ?? null;
+                $value = $row['Value'] ?? null;
+                if (!is_int($stamp) || $stamp > $End || !in_array($value, [false, true, 0, 1, 0.0, 1.0], true)) continue;
+                $points[max($Start, $stamp)] = ['time' => max($Start, $stamp), 'value' => (int) $value];
+            }
+            ksort($points);
+            return $this->encode(['key' => $Key, 'label' => self::SOURCES[$Key][2], 'variableID' => $id,
+                'unit' => '', 'start' => $Start, 'end' => $End, 'resolution' => 'status', 'points' => array_values($points)]);
         }
         if (isset(self::ENERGY[$Key])) return $this->encode($this->energyHistory($Key, $Start, $End));
         $id = $this->ReadPropertyInteger(self::SOURCES[$Key][0]);

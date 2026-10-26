@@ -167,7 +167,13 @@ with sync_playwright() as p:
         if key=='month':
             points[1]['breakBefore']=True
             page.locator('#historyNow').click();month_request=request();reply(month_request,points,resolution='monthly')
-            check(page.locator('#historyChart .chart-line').get_attribute('d').count('M')==2,'monthly reset does not draw a connecting line')
+            check(page.locator('#historyChart .chart-bar').count()==2 and page.locator('#historyChart .chart-line').count()==0,'monthly values use independent bars')
+        page.locator('#closeHistory').click()
+    for key in ['compressor','valve']:
+        page.locator(f'[data-history="{key}"]').click();status_request=request()
+        reply(status_request,[{'time':status_request['start'],'value':0},{'time':status_request['end']-100,'value':1}],resolution='status')
+        check('H' in page.locator('#historyChart .chart-line').get_attribute('d') and 'V' in page.locator('#historyChart .chart-line').get_attribute('d'),'stepped status history '+key)
+        check(('Warmwasser' if key=='valve' else 'An') in page.locator('#historyChart').text_content(),'status labels '+key)
         page.locator('#closeHistory').click()
     electrical_update=copy.deepcopy(snapshot);electrical_update['energy']['power']['value']=3.1
     page.evaluate('handleMessage',electrical_update)

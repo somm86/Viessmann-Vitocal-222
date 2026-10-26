@@ -1,5 +1,10 @@
 # Änderungen
 
+## 2.2
+
+- Gesamt- und Monatsverbrauch als Balkendiagramme der archivierten Zählerstände.
+- Verdichter und Heizungs-/Warmwasserventil mit anklickbarem Statusverlauf als Stufendiagramm einschließlich archiviertem Anfangszustand.
+
 ## 2.1
 
 - Feste Nachkommastellen in Karten und Verläufen: Momentanleistung 2, Gesamtverbrauch 0, Monatsverbrauch 1.
