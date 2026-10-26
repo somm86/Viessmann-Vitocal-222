@@ -25,8 +25,12 @@ with sync_playwright() as p:
     check(page.locator('input').count()==0,'no setpoint inputs')
     check(page.locator('.plant, .plant-viewport').count()==0,'no plant schema')
     check('Solltemperatur' not in page.locator('body').inner_text(),'only actual temperatures shown')
-    check(page.locator('[data-history]').count()==4,'four clickable temperatures')
+    check(page.locator('.temperature-cards [data-history]').count()==4,'four clickable temperatures')
     check(page.locator('#water').inner_text()=='45,6 °C','water reading')
+    check(page.locator('.energy-cards [data-history]').count()==3,'three clickable electrical cards')
+    check(page.locator('#power').inner_text()=='2,6 kW','normalized power displayed')
+    check(page.locator('#total').inner_text()=='1.250 kWh','total energy displayed')
+    check(page.locator('#month').inner_text()=='50 kWh','calendar month consumption displayed')
     check(page.locator('#modes').count()==0,'operating mode selection removed')
     check(page.locator('#modeBadge').inner_text()=='Heizen + Warmwasser','read-only operating-mode status')
     page.locator('[data-history="water"]').click()
@@ -149,6 +153,29 @@ with sync_playwright() as p:
     check(frame.evaluate("document.querySelector('main').getBoundingClientRect().bottom<=innerHeight"),'parent iframe grows without stale small scale')
     host.close()
     page.set_viewport_size({'width':1200,'height':1100});page.clock.run_for(120)
+    for key,unit,values in [('power','kW',[2.0,2.6]),('total','kWh',[1248.0,1250.0]),('month','kWh',[48.0,50.0])]:
+        page.locator(f'[data-history="{key}"]').click();energy_request=request()
+        check(energy_request['key']==key,'correct electrical history target '+key)
+        points=[{'time':energy_request['start']+100,'value':values[0]},{'time':energy_request['end']-1,'value':values[1]}]
+        reply(energy_request,points,resolution='monthly' if key=='month' else 'raw')
+        if not page.locator('#historyDialog details').evaluate('(el)=>el.open'):
+            page.locator('#historyDialog details summary').click()
+        check(unit in page.locator('#historyUnitHeading').inner_text(),'energy table unit '+key)
+        check(unit in page.locator('#historySummary').inner_text() and '°C' not in page.locator('#historySummary').inner_text(),'energy graph units '+key)
+        page.locator('#historyChart').hover(position={'x':300,'y':120})
+        check(unit in page.locator('#chartTooltip').inner_text(),'energy tooltip unit '+key)
+        if key=='month':
+            points[1]['breakBefore']=True
+            page.locator('#historyNow').click();month_request=request();reply(month_request,points,resolution='monthly')
+            check(page.locator('#historyChart .chart-line').get_attribute('d').count('M')==2,'monthly reset does not draw a connecting line')
+        page.locator('#closeHistory').click()
+    electrical_update=copy.deepcopy(snapshot);electrical_update['energy']['power']['value']=3.1
+    page.evaluate('handleMessage',electrical_update)
+    check(page.locator('#power').inner_text()=='3,1 kW','live electrical update')
+    unconfigured=copy.deepcopy(snapshot);unconfigured['energy']['power'].update(value=None,reason='Quellvariable auswählen')
+    page.evaluate('handleMessage',unconfigured)
+    check(page.locator('#power').inner_text()=='—' and 'Quellvariable' in page.locator('#powerReason').inner_text(),'unconfigured electrical source is not zero')
+    page.evaluate('handleMessage',snapshot)
     malicious=copy.deepcopy(snapshot);malicious['values']['mode']['formatted']='<img src=x onerror="window.injected=true">'
     page.evaluate('handleMessage',malicious)
     check(page.locator('#modeBadge img').count()==0,'mode captions escaped')

@@ -1,6 +1,6 @@
 # Viessmann Vitocal 222-C · Kachel für IP-Symcon
 
-Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, Pumpen, Verdichter, Umschaltventil und Betriebsart. Kompakte Anzeige der Istwerte und Anlagenzustände mit kompaktem Gerätekopf, ohne Anlagenschema. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
+Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, elektrische Momentanleistung, Gesamt- und Monatsverbrauch sowie Pumpen, Verdichter, Umschaltventil und Betriebsart. Kompakte Anzeige der Istwerte und Anlagenzustände mit kompaktem Gerätekopf, ohne Anlagenschema. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
 
 ![Kachel mit synthetischen Testwerten](docs/dashboard.png)
 
@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-1.9.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.0.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der verfügbaren Kachelbreite und -höhe an. Bei geringer Höhe wird die komplette Übersicht proportional verkleinert, einschließlich Kopfbereich und Fußzeile. Wird die Kachel wieder größer, kehrt sie bis zur ursprünglichen Darstellungsgröße zurück. Die Übersicht benötigt keine vertikale Bildlaufleiste; der Verlaufsdialog besitzt bei Bedarf einen eigenen Scrollbereich. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -36,6 +36,40 @@ Alle IDs sind in der Instanz änderbar. Die früheren Sollwertquellen `10939` un
 
 Temperaturen müssen in °C vorliegen. Pumpen und Umschaltventil verwenden die formatierten Quellwerte; die Bedeutung des Ventilwerts wird nicht eigenmächtig umgedreht. Aktive Pumpen-/Verdichtersignale werden in den Statusfeldern grün hervorgehoben.
 
+## Momentanleistung und Stromverbrauch
+
+Drei zusätzliche Karten zeigen **elektrische Momentanleistung (kW)**, **kumulierten Gesamtverbrauch (kWh)** und **Verbrauch des laufenden Kalendermonats (kWh)**. Alle Karten öffnen per Klick einen Verlauf mit Zeitbereichswahl und Vor-/Zurücknavigation.
+
+In der Instanz die tatsächlich vorhandenen elektrischen Variablen auswählen:
+
+| Eigenschaft | Bedeutung | Voreinstellung |
+|---|---|---|
+| `PowerID` | Aktuelle elektrische Leistungsaufnahme | `48059` |
+| `TotalEnergyID` | Kumulativer elektrischer Energiezähler | `58570` |
+| `MonthlyEnergyID` | Bereits vorhandener Monatszähler, falls verfügbar | `0` – aus Gesamtzähler berechnen |
+| `PowerUnit` | Eingabeeinheit W oder kW | `W` |
+| `TotalEnergyUnit` | Eingabeeinheit Wh oder kWh | `kWh` |
+| `MonthlyEnergyUnit` | Eingabeeinheit eines vorhandenen Monatszählers | `auto` |
+| `EnergyTimeZone` | Zeitzone der Kalendermonate | `Europe/Vienna` |
+
+Die mitgeteilten Anlagenvariablen **48059 (W)** und **58570 (kWh)** sind vorbelegt. Bei fehlenden Quellen erscheinen **—** und ein Hinweis. Die Einheitenautomatik liest das wirksame Quellprofil-Suffix bzw. `SUFFIX` der Darstellung. Falls keine eindeutige Einheit vorliegt, die Eingabeeinheit ausdrücklich auswählen. W werden durch 1000 in kW, Wh durch 1000 in kWh umgerechnet; die archivierten Rohwerte müssen in derselben Eingabeeinheit vorliegen. Es muss sich um **Stromverbrauch**, nicht um erzeugte Heizwärme handeln. Negative oder nichtnumerische Verbrauchswerte werden abgewiesen. Es werden keine Leistungswerte aus dem Verdichterstatus geschätzt.
+
+### Monatsverbrauch
+
+Bei `MonthlyEnergyID > 0` wird die vorhandene Monatsvariable unverändert in kWh umgerechnet. Ihr Graph verwendet ihr eigenes Archiv. Diese Quelle ist dafür verantwortlich, dass der Wert tatsächlich den laufenden Monat darstellt.
+
+Ohne Monatsvariable wird der aktuelle Gesamtzählerstand abzüglich des letzten archivierten Gesamtzählerstands **am oder vor dem Monatsbeginn** angezeigt. Die Monatsgrenze wird in `EnergyTimeZone` berechnet, einschließlich Sommer-/Winterzeit und Jahreswechsel. `Monatsverbrauch · MM.JJJJ` zeigt den ausgewerteten Monat. Voraussetzung: aktive Archivierung des Gesamtzählers und ein aktueller Wert aus dem laufenden Monat. Der letzte archivierte Wert wird an der Monatsgrenze als gehaltener Zählerstand verwendet; es ist keine rückwirkende exakte Messung zum Monatswechsel. Ein erst später begonnener Archivverlauf ersetzt keinen fehlenden Monatsanfangswert.
+
+Alle Rohschritte seit Monatsbeginn werden auf rückläufige Zählerstände geprüft. Bei Zählerrücksetzung, fehlender Grenze oder ungültiger Einheit erscheint ein Hinweis statt eines negativen, unvollständigen oder erfundenen Monatsverbrauchs. Für besonders dichte Archive kann alternativ ein vorhandener Monatszähler verwendet werden. Die Auswertung liest höchstens 500.000 Datensätze pro Anfrage, seitenweise mit maximal 10.000 Einträgen im Speicher. Wird die Grenze erreicht oder ist eine Sekunde an einer Seitengrenze nicht eindeutig, erfolgt ein Fehlerhinweis statt stiller Kürzung.
+
+### Elektrische Verläufe
+
+- **Momentanleistung:** Einzelwerte für kurze Zeitbereiche; Stundenmittel für mehr als 48 Stunden. Als Standardwert archivieren.
+- **Gesamtverbrauch:** tatsächliche kumulative Zählerstände, keine Mittelwerte oder Summen der Zählerstände. Bei mehr als 48 Stunden wird je Stunde der neueste vorhandene Rohwert als Stützpunkt gezeigt. Archivierung als Standardwert oder Zähler wird unterstützt.
+- **Monatsverbrauch:** bei berechnetem Wert ein laufender Verbrauch seit dem jeweiligen Kalender-Monatsbeginn. Die Monatsanfangswerte und Rohschritte werden auch für historische Monate geprüft. Zwischen unterschiedlichen Monaten wird die Linie unterbrochen. Bei ausgewählter Monatsvariable werden ihre tatsächlichen Archivwerte gezeigt. Der gewählte Zeitbereich bleibt ein rollendes Fenster (z. B. 30 Tage), kein automatisch vollständiger Kalendermonat.
+
+Die Achsen-/Tabellenbeschriftung und der Tooltip verwenden kW oder kWh. Historische Graphen zeigen ausschließlich Archivwerte, nicht nachträglich angehängte aktuelle Werte. Ein aktueller Kartenwert kann deshalb neuer sein als der zuletzt archivierte Messpunkt. Die Kachel aktiviert keine Archivierung und schreibt weder Verbrauchsvariablen noch Archivdaten.
+
 ## Temperaturverlauf
 
 Eine der vier Temperaturkarten anklicken oder per Tastatur aktivieren. Es öffnet sich ein Graph mit:
@@ -55,7 +89,7 @@ Im Symcon **Archive Control** muss die Archivierung für `18104`, `18969`, `2187
 
 In der Instanz kann **Archive Control** ausgewählt werden. Mit `0` sucht die Kachel für die angeklickte Temperatur automatisch das erste Archiv mit aktiver Aufzeichnung. Bei mehreren Archiven eine explizite Instanz auswählen; eine ausdrücklich gewählte Instanz wird nicht stillschweigend ersetzt. Fehlende Archivierung beeinflusst den Graphen, die aktuellen Werte bleiben nutzbar.
 
-Bis einschließlich 48 Stunden werden `AC_GetLoggedValues()`-Einzelwerte gelesen. Für 7 und 30 Tage werden über `AC_GetAggregatedValues(..., 0, ...)` Stundenmittelwerte verwendet und als solche beschriftet. Keine historischen Werte werden aus dem aktuellen Wert erfunden. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen. Fehlende Daten und Fehler erscheinen im Dialog. Wird das API-Limit von 10.000 Einträgen erreicht, wird der Graph nicht unbemerkt abgeschnitten: einen kleineren Zeitraum oder 7/30 Tage mit Stundenmitteln wählen.
+Bis einschließlich 48 Stunden werden `AC_GetLoggedValues()`-Einzelwerte gelesen. Für Temperaturverläufe über 7 und 30 Tage werden über `AC_GetAggregatedValues(..., 0, ...)` Stundenmittelwerte verwendet und als solche beschriftet. Keine historischen Werte werden aus dem aktuellen Wert erfunden. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen. Fehlende Daten und Fehler erscheinen im Dialog. Wird das API-Limit von 10.000 Einträgen erreicht, wird der Graph nicht unbemerkt abgeschnitten: einen kleineren Zeitraum oder 7/30 Tage mit Stundenmitteln wählen.
 
 Die Datenübertragung läuft über die HTML-SDK-Brücke und den Visualisierungsnachrichtenkanal. Jede Anfrage hat eine eigene Kennung; verspätete Antworten aus einem anderen Zeitraum, einer anderen Temperatur, einem anderen geöffneten Client oder einem geschlossenen Dialog werden verworfen. Nach 15 Sekunden ohne Antwort wird ein Hinweis angezeigt. Keine WebHooks, CDN-, npm- oder Chartbibliotheken erforderlich.
 

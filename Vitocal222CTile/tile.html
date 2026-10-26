@@ -7,6 +7,7 @@
 @media(max-width:650px){.temperature-cards{grid-template-columns:1fr 1fr;gap:8px}.reading .value{font-size:26px}.dialog-heading h2{font-size:20px}dialog{padding:14px}.history-navigation button{padding:8px}.section-heading .hint{margin:0}}
 
 @media(max-height:450px){main{padding:10px}header{margin-bottom:10px}.grid{gap:10px}.panel{padding:12px}.section-heading{margin-bottom:10px}h2{margin-bottom:10px}.reading{padding:10px;gap:2px}.status{padding:8px}.status strong{margin-top:2px}.feedback:empty{display:none}footer{margin-top:8px}}
+.energy-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.energy-value{color:#79dfbc}.energy-note{font-size:11px;color:var(--muted);overflow-wrap:anywhere}.energy-note:empty{display:none}@media(max-width:650px){.energy-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.energy-card:last-child{grid-column:1/-1}}
 </style></head><body><main>
 <header><div class="device-heading">
 
@@ -19,15 +20,20 @@
 <button class="reading" data-history="water"><span class="label">Warmwasser Ist</span><span id="water" class="value warm">—</span><span class="chart-link">Verlauf öffnen</span></button>
 </div>
 </section>
+<section class="panel wide"><div class="section-heading"><h2>Strom &amp; Verbrauch</h2><span class="hint">Wert anklicken → Verlauf</span></div><div class="energy-cards">
+<button class="reading energy-card" data-history="power"><span class="label">Momentanleistung · elektrisch</span><span id="power" class="value energy-value">—</span><span id="powerReason" class="energy-note"></span><span class="chart-link">Verlauf öffnen</span></button>
+<button class="reading energy-card" data-history="total"><span class="label">Gesamtverbrauch · Stromzähler</span><span id="total" class="value energy-value">—</span><span id="totalReason" class="energy-note"></span><span class="chart-link">Verlauf öffnen</span></button>
+<button class="reading energy-card" data-history="month"><span id="monthCaption" class="label">Monatsverbrauch</span><span id="month" class="value energy-value">—</span><span id="monthReason" class="energy-note"></span><span class="chart-link">Verlauf öffnen</span></button>
+</div></section>
 <section class="panel wide"><h2>Anlagenstatus</h2><div id="statuses" class="status-grid"></div></section>
 </div>
 <div id="feedback" class="feedback" role="status" aria-live="polite"></div><footer><span id="sourceState"></span><span id="updated"></span></footer>
 </main>
-<dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-heading"><div><div class="eyebrow">TEMPERATURVERLAUF</div><h2 id="historyTitle">Verlauf</h2></div><button id="closeHistory" aria-label="Verlauf schließen">✕</button></div>
+<dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-heading"><div><div class="eyebrow">MESSWERTVERLAUF</div><h2 id="historyTitle">Verlauf</h2></div><button id="closeHistory" aria-label="Verlauf schließen">✕</button></div>
 <div class="history-toolbar"><label>Zeitraum <select id="historyRange"><option value="3600">1 Stunde</option><option value="21600">6 Stunden</option><option value="86400" selected>24 Stunden</option><option value="604800">7 Tage</option><option value="2592000">30 Tage</option></select></label><div class="history-navigation"><button id="historyPrev" aria-label="Einen Zeitraum zurück">← Zurück</button><button id="historyNow">Jetzt</button><button id="historyNext" aria-label="Einen Zeitraum vor">Vor →</button></div></div>
 <div id="historyDates" class="history-dates"></div><div id="historyState" role="status" aria-live="polite"></div>
 <div id="chartWrap"><svg id="historyChart" viewBox="0 0 860 320" role="img" aria-labelledby="chartTitle chartDescription"><title id="chartTitle">Temperaturverlauf</title><desc id="chartDescription"></desc></svg><div id="chartTooltip" hidden></div></div><div id="historySummary" class="hint"></div>
-<details><summary>Verlaufswerte als Tabelle</summary><div class="table-scroll"><table><thead><tr><th>Zeitpunkt</th><th>Temperatur °C</th></tr></thead><tbody id="historyTable"></tbody></table></div></details></dialog>
+<details><summary>Verlaufswerte als Tabelle</summary><div class="table-scroll"><table><thead><tr><th>Zeitpunkt</th><th id="historyUnitHeading">Temperatur °C</th></tr></thead><tbody id="historyTable"></tbody></table></div></details></dialog>
 <script>
 'use strict';
 const INITIAL = /*__INITIAL_DATA__*/null;
@@ -35,11 +41,18 @@ const $ = id => document.getElementById(id);
 
 const statusLabels = {compressor:'Verdichter',heatingPump:'Heizkreispumpe',primaryPump:'Primärpumpe',valve:'Heizung / Warmwasser'};
 const number = new Intl.NumberFormat('de-DE',{maximumFractionDigits:1});
+const energyNumber = new Intl.NumberFormat('de-DE',{maximumFractionDigits:3});
 function temperature(entry){return entry && typeof entry.value === 'number' ? number.format(entry.value)+' °C' : '—';}
 function render(data){
  if(!data || !data.values) return;
  for(const key of ['primaryFlow','return','flow','water']) $(key).textContent=temperature(data.values[key]);
  $('modeBadge').textContent=data.values.mode.formatted;
+ for(const key of ['power','total','month']){
+  const entry=data.energy?.[key];
+  $(key).textContent=entry && Number.isFinite(entry.value)?energyNumber.format(entry.value)+' '+entry.unit:'—';
+  $(key+'Reason').textContent=entry?.reason || entry?.note || '';
+ }
+ $('monthCaption').textContent='Monatsverbrauch'+(data.energy?.month?.periodLabel?' · '+data.energy.month.periodLabel:'');
  $('statuses').replaceChildren();
  for(const [key,label] of Object.entries(statusLabels)){
   const item=document.createElement('div');item.className='status';item.dataset.active=String(data.values[key].value===true);
@@ -47,9 +60,9 @@ function render(data){
   const value=document.createElement('strong');value.textContent=data.values[key].formatted;
   item.append(title,value);$('statuses').append(item);
  }
- $('sourceState').textContent=data.missing.length?'Nicht verfügbar: '+data.missing.join(', '):'IP-Symcon · 9 Quellvariablen';
+ $('sourceState').textContent=data.missing.length?'Nicht verfügbar: '+data.missing.join(', '):'IP-Symcon · '+(data.sourceCount ?? 9)+' Quellvariablen';
  $('sourceState').classList.toggle('unavailable',!!data.missing.length);
- const stamps=Object.values(data.values).map(v=>v.updated).filter(v=>v>0);
+ const stamps=[...Object.values(data.values),...Object.values(data.energy || {})].map(v=>v.updated).filter(v=>v>0);
  $('updated').textContent=stamps.length?'Letztes Quellupdate: '+new Date(Math.max(...stamps)*1000).toLocaleString('de-DE'):'Noch kein Quellzeitstempel';
  scheduleTileFit();
 }
@@ -57,8 +70,9 @@ function handleMessage(message){
  try{const data=typeof message==='string'?JSON.parse(message):message;if(data.kind==='history')receiveHistory(data);else render(data);}
  catch(e){$('feedback').textContent='Datenaktualisierung konnte nicht gelesen werden.';scheduleTileFit();}
 }
-const historyLabels={primaryFlow:'Vorlauf Primärquelle',flow:'Vorlauf Sekundär',return:'Rücklauf Sekundär',water:'Warmwasser Ist'};
-const history={key:null,end:0,anchor:0,requestID:'',timer:null,points:[],start:0};
+const historyLabels={primaryFlow:'Vorlauf Primärquelle',flow:'Vorlauf Sekundär',return:'Rücklauf Sekundär',water:'Warmwasser Ist',power:'Momentanleistung · elektrisch',total:'Gesamtverbrauch · Stromzähler',month:'Monatsverbrauch'};
+const history={key:null,end:0,anchor:0,requestID:'',timer:null,points:[],start:0,unit:'°C',plotLeft:65};
+function historyFormat(value){return (history.unit==='°C'?number:energyNumber).format(value);}
 function svgNode(name,attributes={},text=''){
  const node=document.createElementNS('http://www.w3.org/2000/svg',name);
  for(const [key,value] of Object.entries(attributes))node.setAttribute(key,String(value));
@@ -92,6 +106,8 @@ function openHistory(key){
  if(!Object.hasOwn(historyLabels,key))return;
  history.key=key;history.anchor=Math.floor(Date.now()/1000);history.end=history.anchor;
  $('historyTitle').textContent=historyLabels[key];
+ history.unit=key==='power'?'kW':(['total','month'].includes(key)?'kWh':'°C');
+ $('historyUnitHeading').textContent=(history.unit==='°C'?'Temperatur ':'Messwert ')+history.unit;
  if(!$('historyDialog').open)$('historyDialog').showModal();
  loadHistory();
 }
@@ -103,41 +119,43 @@ function receiveHistory(data){
  if(data.key!==history.key || data.start!==history.start || data.end!==history.end){$('historyState').textContent='Archivantwort passt nicht zum gewählten Zeitraum. Bitte erneut laden.';return;}
  history.points=(Array.isArray(data.points)?data.points:[]).filter(p=>Number.isFinite(p.time)&&Number.isFinite(p.value)&&p.time>=history.start&&p.time<=history.end).sort((a,b)=>a.time-b.time);
  if(!history.points.length){$('historyState').textContent='Keine archivierten Werte in diesem Zeitraum.';return;}
+ if(data.unit)history.unit=data.unit;
  $('historyState').textContent='';drawChart(data.resolution);
 }
 function drawChart(resolution){
  const points=history.points;let low=Infinity,high=-Infinity;
  for(const p of points){low=Math.min(low,p.value);high=Math.max(high,p.value);}
- const pad=Math.max((high-low)*.12,.5),min=low-pad,max=high+pad;
- const chart=$('historyChart'),x=t=>65+(t-history.start)/(history.end-history.start)*775,y=v=>265-(v-min)/(max-min)*240;
- $('chartDescription').textContent=points.length+' Archivwerte von '+historyLabels[history.key]+', Minimum '+number.format(low)+' °C, Maximum '+number.format(high)+' °C.';
+ const pad=Math.max((high-low)*.12,history.unit==='°C'?.5:.01),min=history.unit==='°C'?low-pad:Math.max(0,low-pad),max=high+pad;
+ history.plotLeft=history.unit==='°C'?65:110;
+ const chart=$('historyChart'),x=t=>history.plotLeft+(t-history.start)/(history.end-history.start)*(840-history.plotLeft),y=v=>265-(v-min)/(max-min)*240;
+ $('chartDescription').textContent=points.length+' Archivwerte von '+historyLabels[history.key]+', Minimum '+historyFormat(low)+' '+history.unit+', Maximum '+historyFormat(high)+' '+history.unit+'.';
  for(let i=0;i<=4;i++){
   const yy=25+i*60,value=max-i*(max-min)/4;
-  chart.append(svgNode('line',{x1:65,y1:yy,x2:840,y2:yy,class:'chart-grid'}),svgNode('text',{x:55,y:yy+4,'text-anchor':'end'},number.format(value)+'°'));
+  chart.append(svgNode('line',{x1:history.plotLeft,y1:yy,x2:840,y2:yy,class:'chart-grid'}),svgNode('text',{x:history.plotLeft-10,y:yy+4,'text-anchor':'end'},historyFormat(value)+(history.unit==='°C'?'°':'')));
  }
  for(let i=0;i<=4;i++){
   const time=history.start+(history.end-history.start)*i/4,xx=x(time);
   const date=new Date(time*1000),label=history.end-history.start>172800?date.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):date.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   chart.append(svgNode('text',{x:xx,y:294,'text-anchor':i===0?'start':i===4?'end':'middle'},label));
  }
- const path=points.map((p,i)=>(i?'L':'M')+x(p.time).toFixed(2)+' '+y(p.value).toFixed(2)).join(' ');
+ const path=points.map((p,i)=>(i && !p.breakBefore?'L':'M')+x(p.time).toFixed(2)+' '+y(p.value).toFixed(2)).join(' ');
  chart.append(svgNode('path',{d:path,class:'chart-line'}));
  if(points.length===1)chart.append(svgNode('circle',{cx:x(points[0].time),cy:y(points[0].value),r:4,class:'chart-point'}));
- $('historySummary').textContent=(resolution==='hourly'?'Stundenmittelwerte':'Archivierte Einzelwerte')+' · '+points.length+' Werte · Min '+number.format(low)+' °C · Max '+number.format(high)+' °C. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen. Tabelle: maximal 500 Werte.';
+ $('historySummary').textContent=(resolution==='monthly'?'Laufender Verbrauch je Kalendermonat':resolution==='counterHourly'?'Archivierte Zählerstände · stündliche Stützpunkte':resolution==='hourly'?'Stundenmittelwerte':'Archivierte Einzelwerte')+' · '+points.length+' Werte · Min '+historyFormat(low)+' '+history.unit+' · Max '+historyFormat(high)+' '+history.unit+'. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen. Tabelle: maximal 500 Werte.';
  const rows=document.createDocumentFragment();
  for(const p of points.slice(0,500)){
   const row=document.createElement('tr'),date=document.createElement('td'),value=document.createElement('td');
-  date.textContent=new Date(p.time*1000).toLocaleString('de-DE');value.textContent=number.format(p.value);row.append(date,value);rows.append(row);
+  date.textContent=new Date(p.time*1000).toLocaleString('de-DE');value.textContent=historyFormat(p.value);row.append(date,value);rows.append(row);
  }
  $('historyTable').replaceChildren(rows);
 }
 function showHistoryPoint(event){
  if(!history.points.length)return;
- const rect=$('historyChart').getBoundingClientRect(),t=history.start+((event.clientX-rect.left)/rect.width*860-65)/775*(history.end-history.start);
+ const rect=$('historyChart').getBoundingClientRect(),t=history.start+((event.clientX-rect.left)/rect.width*860-history.plotLeft)/(840-history.plotLeft)*(history.end-history.start);
  let a=0,b=history.points.length-1;
  while(a<b){const mid=Math.floor((a+b)/2);if(history.points[mid].time<t)a=mid+1;else b=mid;}
  let point=history.points[a];if(a>0 && Math.abs(history.points[a-1].time-t)<Math.abs(point.time-t))point=history.points[a-1];
- $('chartTooltip').textContent=new Date(point.time*1000).toLocaleString('de-DE')+' · '+number.format(point.value)+' °C';$('chartTooltip').hidden=false;
+ $('chartTooltip').textContent=new Date(point.time*1000).toLocaleString('de-DE')+' · '+historyFormat(point.value)+' '+history.unit;$('chartTooltip').hidden=false;
 }
 $('historyChart').addEventListener('pointermove',showHistoryPoint);
 $('historyChart').addEventListener('pointerdown',showHistoryPoint);

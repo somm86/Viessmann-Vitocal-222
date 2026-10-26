@@ -26,6 +26,9 @@ function snapshot($module) {
     preg_match('/const INITIAL = (.*);/', $module->GetVisualizationTile(), $m);
     return json_decode($m[1], true, 512, JSON_THROW_ON_ERROR);
 }
+check(IPS_GetProperty($id,'PowerID')===48059 && IPS_GetProperty($id,'TotalEnergyID')===58570,'user electrical source defaults');
+check(IPS_GetProperty($id,'PowerUnit')==='W' && IPS_GetProperty($id,'TotalEnergyUnit')==='kWh','user electrical input units');
+IPS_SetProperty($id,'PowerID',0);IPS_SetProperty($id,'TotalEnergyID',0);IPS_ApplyChanges($id);
 check(count(snapshot($module)['missing']) === 9, 'missing sources reported');
 check(IPS_GetProperty($id, 'ModeID') === 53049, 'heating mode default');
 check(IPS_GetProperty($id, 'ArchiveID') === 0, 'archive auto-detection default');
@@ -135,6 +138,88 @@ IPS_SetProperty($id,'WaterID',$ids['WaterID']);IPS_SetProperty($id,'ArchiveID',0
 check(count(IPS_GetReferenceList($id))===9,'removed explicit archive reference');
 check(strpos($module->GetVisualizationTile(),'SetRoomTarget')===false && strpos($module->GetVisualizationTile(),'SetWaterTarget')===false,'no setpoint controls in HTML');
 check(strpos($module->GetVisualizationTile(),'ChangeMode')===false,'no mode action in browser');
+// Electrical values use independent sources; missing optional sources do not break existing tiles.
+check(IPS_GetProperty($id,'PowerID')===0 && IPS_GetProperty($id,'TotalEnergyID')===0,'electrical sources can be disabled');
+check(snapshot($module)['energy']['power']['value']===null,'missing power never becomes zero');
+$power=IPS_CreateVariable(2);$total=IPS_CreateVariable(2);$monthVariable=IPS_CreateVariable(2);
+foreach (['Fixture.W'=>' W','Fixture.Wh'=>' Wh','Fixture.kWh'=>' kWh'] as $name=>$suffix) {
+    IPS_CreateVariableProfile($name,2);IPS_SetVariableProfileText($name,'',$suffix);
+}
+IPS_SetVariableCustomProfile($power,'Fixture.W');IPS_SetVariableCustomProfile($total,'Fixture.Wh');IPS_SetVariableCustomProfile($monthVariable,'Fixture.kWh');
+SetValue($power,2600.0);SetValue($total,1250000.0);SetValue($monthVariable,12.5);
+IPS_SetProperty($id,'PowerID',$power);IPS_SetProperty($id,'TotalEnergyID',$total);IPS_SetProperty($id,'PowerUnit','auto');IPS_SetProperty($id,'TotalEnergyUnit','auto');IPS_ApplyChanges($id);
+$s=snapshot($module);
+check($s['energy']['power']['value']===2.6 && $s['energy']['power']['unit']==='kW','W converted to kW');
+check($s['energy']['total']['value']===1250 && $s['energy']['total']['unit']==='kWh','Wh converted to kWh');
+check(count(IPS_GetReferenceList($id))===11,'energy sources subscribed');
+check($s['energy']['month']['value']===null,'monthly archive missing is not zero');
+$zone=new DateTimeZone('Europe/Vienna');
+$monthStart=(new DateTimeImmutable('now',$zone))->modify('first day of this month')->setTime(0,0)->getTimestamp();
+$previousMonth=(new DateTimeImmutable('@'.$monthStart))->setTimezone($zone)->modify('-1 month')->getTimestamp();
+$monthMethod = new ReflectionMethod(Vitocal222CTile::class, 'monthStart');
+foreach ([['2026-03-31T12:00:00Z','2026-03-01T00:00:00+01:00'],['2026-10-31T12:00:00Z','2026-10-01T00:00:00+02:00'],['2027-01-05T12:00:00Z','2027-01-01T00:00:00+01:00'],['2028-02-29T12:00:00Z','2028-02-01T00:00:00+01:00']] as [$input,$expected]) {
+    check($monthMethod->invoke($module,strtotime($input))===strtotime($expected),'DST, year and leap-month boundary ' . $input);
+}
+$now=time();$span=$now-$monthStart;
+$p1=$monthStart+(int)($span/3);$p2=$monthStart+(int)($span*2/3);
+AC_SetLoggingStatus($archive,$total,true);AC_SetAggregationType($archive,$total,1);
+AC_AddLoggedValues($archive,$total,[['TimeStamp'=>$previousMonth-1,'Value'=>1150000.0],['TimeStamp'=>$previousMonth+600,'Value'=>1160000.0],['TimeStamp'=>$monthStart-1,'Value'=>1200000.0],['TimeStamp'=>$p1,'Value'=>1210000.0],['TimeStamp'=>$p2,'Value'=>1248000.0]]);
+AC_SetLoggingStatus($archive,$power,true);
+AC_AddLoggedValues($archive,$power,[['TimeStamp'=>$now-3600,'Value'=>2000.0],['TimeStamp'=>$now-100,'Value'=>2600.0]]);
+AC_StubsAddAggregatedValues($archive,$power,0,[['TimeStamp'=>$now-25*3600,'Duration'=>3600,'Avg'=>1800.0]]);
+$s=snapshot($module);
+check($s['energy']['month']['value']===50,'calendar month is current total minus boundary total');
+check($s['energy']['month']['baselineTime']===$monthStart-1,'boundary sample provenance');
+check($s['energy']['month']['periodLabel']===(new DateTimeImmutable('@'.$monthStart))->setTimezone($zone)->format('m.Y'),'calendar month uses configured zone');
+check($s['sourceCount']===11,'source footer count includes configured electrical sources');
+$ph=json_decode($module->GetHistory('power',$now-86400,$now),true);
+check($ph['unit']==='kW' && array_column($ph['points'],'value')===[2,2.6],'power graph normalized units');
+$phLong=json_decode($module->GetHistory('power',$now-604800,$now),true);
+check($phLong['resolution']==='hourly' && abs($phLong['points'][0]['value']-1.8)<1e-10,'power graph averages standard values');
+$th=json_decode($module->GetHistory('total',$monthStart,$now),true);
+check($th['unit']==='kWh' && array_column($th['points'],'value')===[1210,1248],'total graph reads actual counter levels, never aggregate Avg');
+$mh=json_decode($module->GetHistory('month',$monthStart,$now),true);
+check($mh['resolution']==='monthly' && array_column($mh['points'],'value')===[10,48],'derived monthly graph uses archived changes, not current value');
+$cross=json_decode($module->GetHistory('month',max($monthStart-86400,$now-2678400),$now),true);
+check(count(array_filter($cross['points'],fn($p)=>!empty($p['breakBefore'])))===1,'monthly chart breaks line between calendar months');
+IPS_SetVariableProfileText('Fixture.W','',' %');
+check(snapshot($module)['energy']['power']['value']===null,'unknown source units not guessed');
+IPS_SetProperty($id,'PowerUnit','W');IPS_ApplyChanges($id);
+check(snapshot($module)['energy']['power']['value']===2.6,'explicit power input unit');
+IPS_SetVariableProfileText('Fixture.W','',' W');IPS_SetProperty($id,'PowerUnit','auto');IPS_ApplyChanges($id);
+SetValue($power,0.0);check(snapshot($module)['energy']['power']['value']===0,'real zero power preserved');
+SetValue($power,-1.0);check(snapshot($module)['energy']['power']['value']===null,'negative consumption power rejected');SetValue($power,2600.0);
+$reset=IPS_CreateVariable(2);IPS_SetVariableCustomProfile($reset,'Fixture.kWh');SetValue($reset,1250.0);AC_SetLoggingStatus($archive,$reset,true);
+AC_AddLoggedValues($archive,$reset,[['TimeStamp'=>$monthStart-1,'Value'=>1000.0],['TimeStamp'=>$p1,'Value'=>1010.0],['TimeStamp'=>$p2,'Value'=>5.0],['TimeStamp'=>$monthStart+(int)($span*5/6),'Value'=>1200.0]]);
+IPS_SetProperty($id,'TotalEnergyID',$reset);IPS_ApplyChanges($id);
+check(snapshot($module)['energy']['month']['value']===null && strpos(snapshot($module)['energy']['month']['reason'],'Zähler')!==false,'mid-month reset detected even when final reading exceeds initial');
+rejects(fn()=>$module->GetHistory('month',$monthStart,$now),'reset prevents misleading derived graph');
+$noBase=IPS_CreateVariable(2);IPS_SetVariableCustomProfile($noBase,'Fixture.kWh');SetValue($noBase,20.0);AC_SetLoggingStatus($archive,$noBase,true);AC_AddLoggedValues($archive,$noBase,[['TimeStamp'=>$monthStart+100,'Value'=>10.0]]);
+IPS_SetProperty($id,'TotalEnergyID',$noBase);IPS_ApplyChanges($id);
+check(snapshot($module)['energy']['month']['value']===null,'no month boundary reading never replaced by first later reading');
+IPS_SetProperty($id,'MonthlyEnergyID',$monthVariable);IPS_ApplyChanges($id);
+check(snapshot($module)['energy']['month']['value']===12.5,'provided month variable takes precedence');
+AC_SetLoggingStatus($archive,$monthVariable,true);AC_AddLoggedValues($archive,$monthVariable,[['TimeStamp'=>$now-100,'Value'=>12.0]]);
+$direct=json_decode($module->GetHistory('month',$now-86400,$now),true);
+check($direct['points'][0]['value']===12 && $direct['unit']==='kWh','provided monthly counter has its own graph');
+IPS_SetProperty($id,'TotalEnergyID',$total);IPS_SetProperty($id,'MonthlyEnergyID',0);IPS_ApplyChanges($id);
+IPS_SetProperty($id,'EnergyTimeZone','Not/AZone');IPS_ApplyChanges($id);
+check(snapshot($module)['energy']['month']['value']===null,'invalid timezone reported without breaking base readings');
+check(count(json_decode($module->GetHistory('power',$now-86400,$now),true)['points'])===2,'power history independent of month timezone');
+IPS_SetProperty($id,'EnergyTimeZone','Europe/Vienna');IPS_ApplyChanges($id);
+// More than 10,000 readings must be processed page by page, not silently truncated.
+$paged=IPS_CreateVariable(2);IPS_SetVariableCustomProfile($paged,'Fixture.kWh');SetValue($paged,10001.0);AC_SetLoggingStatus($archive,$paged,true);
+$rows=[['TimeStamp'=>$monthStart-200001,'Value'=>0.0]];
+for($i=0;$i<10001;$i++)$rows[]=['TimeStamp'=>$monthStart-12000+$i,'Value'=>(float)($i+1)];
+AC_AddLoggedValues($archive,$paged,$rows);IPS_SetProperty($id,'TotalEnergyID',$paged);IPS_ApplyChanges($id);
+check(snapshot($module)['energy']['month']['value']===0,'month starts at latest preceding counter reading');
+$sampled=json_decode($module->GetHistory('total',$monthStart-200000,$monthStart),true);
+check($sampled['points'][count($sampled['points'])-1]['value']===10001,'hourly support points preserve latest true counter');
+IPS_SetProperty($id,'TotalEnergyID',$total);IPS_ApplyChanges($id);
+$module->MessageSink(time(),$power,VM_UPDATE,[2600.0,true]);
+check(snapshot($module)['energy']['power']['value']===2.6,'live power update refreshes energy cards');
+check(!isset($GLOBALS['captured']),'electrical display never dispatches device actions');
+
 if(!is_dir(__DIR__.'/output')) mkdir(__DIR__.'/output',0777,true);
 file_put_contents(__DIR__.'/output/tile.html',$module->GetVisualizationTile());
 file_put_contents(__DIR__.'/output/snapshot.json',json_encode(snapshot($module),JSON_THROW_ON_ERROR));

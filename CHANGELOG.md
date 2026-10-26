@@ -1,5 +1,14 @@
 # Änderungen
 
+## 2.0
+
+- Elektrische Momentanleistung, Gesamtverbrauch und laufender Monatsverbrauch mit auswählbaren Quellvariablen.
+- Anlagenvariablen 48059 (Leistungsaufnahme in W) und 58570 (Gesamtverbrauch in kWh) vorbelegt.
+- Einheitenprüfung und Normalisierung von W/kW und Wh/kWh.
+- Monatsberechnung aus archivierten Gesamtzählerständen, mit Zeitzone und Erkennung von Zählerrücksetzungen; alternativ vorhandene Monatsvariable.
+- Passende elektrische Graphen mit Einheiten, Zeitnavigation und unterbrochener Monatslinie am Monatswechsel.
+- Seitenweise Zählerauswertung ohne stilles Abschneiden; ursprüngliche Quellen und Schreibschutz bleiben erhalten.
+
 ## 1.9
 
 - Wärmepumpensymbol aus dem Kopfbereich entfernt.
