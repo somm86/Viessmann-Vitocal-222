@@ -5,15 +5,17 @@ class Vitocal222CTile extends IPSModule
     private const LEGACY = '{4153A8D4-5C33-C65F-C1F3-7B61AAF99B1C}';
 
     private const SOURCES = [
-        'mode' => ['ModeID', 53049, 'Betriebsart Heizung'],
-        'heatingPump' => ['HeatingPumpID', 20926, 'Heizkreispumpe'],
-        'primaryPump' => ['PrimaryPumpID', 39794, 'Primärpumpe'],
-        'return' => ['ReturnID', 21875, 'Rücklauf Sekundär'],
-        'valve' => ['ValveID', 53786, 'Umschaltventil Heizung / Warmwasser'],
-        'compressor' => ['CompressorID', 31722, 'Verdichter'],
-        'primaryFlow' => ['PrimaryFlowID', 18104, 'Vorlauf Primärquelle'],
-        'flow' => ['FlowID', 18969, 'Vorlauf Sekundär'],
-        'water' => ['WaterID', 56634, 'Warmwasser Ist']
+        'mode' => ['ModeID', 41758, 'Betriebsart Heizung'],
+        'heatingPump' => ['HeatingPumpID', 35797, 'Heizkreispumpe'],
+        'primaryPump' => ['PrimaryPumpID', 51638, 'Primärpumpe'],
+        'return' => ['ReturnID', 26909, 'Rücklauf Sekundär'],
+        'valve' => ['ValveID', 16126, 'Umschaltventil Heizung / Warmwasser'],
+        'compressor' => ['CompressorID', 12943, 'Verdichter'],
+        'primaryFlow' => ['PrimaryFlowID', 14749, 'Vorlauf Primärquelle'],
+        'flow' => ['FlowID', 35782, 'Vorlauf Sekundär'],
+        'water' => ['WaterID', 46137, 'Warmwasser Ist'],
+        'roomTarget' => ['RoomTargetID', 55945, 'Raumsolltemperatur'],
+        'waterTarget' => ['WaterTargetID', 10078, 'Warmwasser-Solltemperatur']
     ];
 
     private const TEMPERATURES = ['primaryFlow', 'return', 'flow', 'water'];
@@ -217,6 +219,15 @@ class Vitocal222CTile extends IPSModule
     public function ApplyChanges()
     {
         parent::ApplyChanges();
+        $oldIDs = ['ModeID'=>53049,'HeatingPumpID'=>20926,'PrimaryPumpID'=>39794,'ReturnID'=>21875,'ValveID'=>53786,'CompressorID'=>31722,'PrimaryFlowID'=>18104,'FlowID'=>18969,'WaterID'=>56634];
+        $migrated = false;
+        foreach (self::SOURCES as $source) {
+            if (isset($oldIDs[$source[0]]) && $this->ReadPropertyInteger($source[0]) === $oldIDs[$source[0]]) {
+                IPS_SetProperty($this->InstanceID, $source[0], $source[1]); $migrated = true;
+            }
+        }
+        if ($migrated) { IPS_ApplyChanges($this->InstanceID); return; }
+
         $this->RegisterMessage(0, IPS_KERNELSTARTED);
         // Only remove subscriptions owned by this module; retain the kernel subscription.
         foreach ($this->GetMessageList() as $sender => $messages) {
@@ -256,7 +267,7 @@ class Vitocal222CTile extends IPSModule
 
     public function GetConfigurationForm()
     {
-        $elements = [['type' => 'Label', 'caption' => 'Vorhandene Wärmepumpenvariablen auswählen. Reine Anzeige mit Messwertverläufen, keine Schaltaktionen.']];
+        $elements = [['type' => 'Label', 'caption' => 'Vorhandene Wärmepumpenvariablen auswählen. Messwertverläufe sowie Bedienung von Heizungsbetriebsart, Raum- und Warmwasser-Solltemperatur über vorhandene Variablenaktionen.']];
         foreach (self::SOURCES as $source) {
             $elements[] = ['type' => 'SelectVariable', 'name' => $source[0], 'caption' => $source[2]];
         }
@@ -296,8 +307,63 @@ class Vitocal222CTile extends IPSModule
         return str_replace('/*__INITIAL_DATA__*/null', $this->encode($this->snapshot()), file_get_contents(__DIR__ . '/tile.html'));
     }
 
+    private function controls(): array
+    {
+        $controls = [];
+        foreach (['mode', 'roomTarget', 'waterTarget'] as $key) {
+            $id = $this->ReadPropertyInteger(self::SOURCES[$key][0]);
+            $entry = ['enabled'=>false, 'reason'=>'Quellvariable fehlt.', 'options'=>[], 'min'=>10.0, 'max'=>30.0, 'step'=>0.5];
+            if ($key === 'waterTarget') { $entry['min'] = 10.0; $entry['max'] = 60.0; }
+            if ($id > 0 && IPS_VariableExists($id)) {
+                $v = IPS_GetVariable($id);
+                $profile = $this->profile($v, $id); $presentation = $this->presentation($id);
+                $options = $profile !== null ? array_map(function ($a) { return ['value'=>$a['Value'], 'caption'=>$a['Name']]; }, $profile['Associations']) :
+                    array_map(function ($a) { return ['value'=>$a['Value'] ?? null, 'caption'=>$a['Caption'] ?? '']; }, json_decode($presentation['OPTIONS'] ?? '[]', true) ?: []);
+                $entry['options'] = array_values(array_filter($options, function ($a) { return is_string($a['value']); }));
+                $min = $profile['MinValue'] ?? $presentation['MIN'] ?? null;
+                $max = $profile['MaxValue'] ?? $presentation['MAX'] ?? null;
+                if (is_numeric($min) && is_numeric($max) && $max > $min) {
+                    $entry['min'] = (float)$min; $entry['max'] = (float)$max;
+                    $step = $profile['StepSize'] ?? $presentation['STEP_SIZE'] ?? 0.5;
+                    $entry['step'] = is_numeric($step) && $step > 0 ? (float)$step : 0.5;
+                }
+                $action = $v['VariableCustomAction'] ?: $v['VariableAction'];
+                $entry['enabled'] = $action >= 10000 && (IPS_InstanceExists($action) || IPS_ScriptExists($action)) && ($key === 'mode' ? $v['VariableType'] === 3 : in_array($v['VariableType'], [1,2], true));
+                $entry['reason'] = $entry['enabled'] ? '' : 'Keine passende Variablenaktion verfügbar.';
+            }
+            $controls[$key] = $entry;
+        }
+        return $controls;
+    }
+
     public function RequestAction($ident, $value)
     {
+        if (in_array($ident, ['ChangeMode', 'SetRoomTarget', 'SetWaterTarget'], true)) {
+            $response = ['kind'=>'control', 'action'=>$ident, 'error'=>''];
+            try {
+                if (IPS_GetKernelRunlevel() !== KR_READY) throw new RuntimeException('IP-Symcon ist noch nicht bereit.');
+                $key = ['ChangeMode'=>'mode', 'SetRoomTarget'=>'roomTarget', 'SetWaterTarget'=>'waterTarget'][$ident];
+                $control = $this->controls()[$key];
+                if (!$control['enabled']) throw new RuntimeException($control['reason']);
+                if ($key === 'mode') {
+                    if (!is_string($value) || trim($value) === '' || strlen($value)>100) throw new InvalidArgumentException('Ungültige Betriebsart.');
+                    if ($control['options'] && !in_array($value, array_column($control['options'], 'value'), true)) throw new InvalidArgumentException('Betriebsart ist nicht im Quellprofil freigegeben.');
+                } else {
+                    if ((!is_int($value) && !is_float($value)) || !is_finite((float)$value) || $value < $control['min'] || $value > $control['max']) throw new InvalidArgumentException('Solltemperatur außerhalb des erlaubten Bereichs.');
+                    $steps = ($value-$control['min'])/$control['step'];
+                    if (abs($steps-round($steps))>0.000001) throw new InvalidArgumentException('Ungültige Temperaturschrittweite.');
+                }
+                $source = $this->ReadPropertyInteger(self::SOURCES[$key][0]);
+                if (IPS_GetVariable($source)['VariableType'] === 1) {
+                    if (floor($value) !== (float)$value) throw new InvalidArgumentException('Ganzzahliger Sollwert erforderlich.');
+                    $value = (int)$value;
+                }
+                if (RequestAction($source, $value) === false) throw new RuntimeException('Variablenaktion hat den Befehl abgelehnt.');
+            } catch (Throwable $e) { $response['error'] = $e->getMessage(); }
+            $this->UpdateVisualizationValue($this->encode($response));
+            $this->Refresh();
+            return;
+        }
         if ($ident === 'RequestHistory') {
             $response = ['kind' => 'history', 'requestID' => '', 'error' => '', 'points' => []];
             try {
@@ -320,12 +386,12 @@ class Vitocal222CTile extends IPSModule
             $this->UpdateVisualizationValue($this->encode($response));
             return;
         }
-        throw new InvalidArgumentException('Die Kachel ist schreibgeschützt. Nur Verlaufsanfragen sind erlaubt.');
+        throw new InvalidArgumentException('Unbekannte Aktion. Erlaubt sind Verläufe und die drei Heizungsbedienelemente.');
     }
 
     public function GetDiagnostics(): string
     {
-        return $this->encode(['sources' => array_combine(array_merge(array_keys(self::SOURCES), array_keys(self::ENERGY)), $this->sourceIDs()), 'archiveID' => $this->ReadPropertyInteger('ArchiveID'), 'readOnly' => true]);
+        return $this->encode(['sources' => array_combine(array_merge(array_keys(self::SOURCES), array_keys(self::ENERGY)), $this->sourceIDs()), 'archiveID' => $this->ReadPropertyInteger('ArchiveID'), 'readOnly' => false]);
     }
 
     private function sourceMessages(): array
@@ -444,6 +510,7 @@ class Vitocal222CTile extends IPSModule
                 $data['missing'][] = $source[2];
             }
         }
+        $data['controls'] = $this->controls();
         $data['energy'] = ['power' => $this->energySource('power'), 'total' => $this->energySource('total')];
         $data['energy']['month'] = $this->monthlyEnergy($data['energy']['total']);
         foreach (self::ENERGY as $key => $spec) {

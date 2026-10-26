@@ -29,14 +29,16 @@ function snapshot($module) {
 check(IPS_GetProperty($id,'PowerID')===48059 && IPS_GetProperty($id,'TotalEnergyID')===58570,'user electrical source defaults');
 check(IPS_GetProperty($id,'PowerUnit')==='W' && IPS_GetProperty($id,'TotalEnergyUnit')==='kWh','user electrical input units');
 IPS_SetProperty($id,'PowerID',0);IPS_SetProperty($id,'TotalEnergyID',0);IPS_ApplyChanges($id);
-check(count(snapshot($module)['missing']) === 9, 'missing sources reported');
-check(IPS_GetProperty($id, 'ModeID') === 53049, 'heating mode default');
+check(count(snapshot($module)['missing']) === 11, 'missing sources reported');
+check(IPS_GetProperty($id, 'ModeID') === 41758, 'heating mode default');
 check(IPS_GetProperty($id, 'ArchiveID') === 0, 'archive auto-detection default');
+$migration=IPS_CreateInstance($manifest['id']);IPS_SetProperty($migration,'ModeID',53049);IPS_SetProperty($migration,'FlowID',12345);IPS_ApplyChanges($migration);
+check(IPS_GetProperty($migration,'ModeID')===41758 && IPS_GetProperty($migration,'FlowID')===12345,'migrate known old IDs and preserve custom sources');IPS_DeleteInstance($migration);
 $form = json_decode($module->GetConfigurationForm(), true);
-check(!in_array('RoomTargetID', array_column($form['elements'], 'name'), true), 'room setpoint selector removed');
-check(!in_array('WaterTargetID', array_column($form['elements'], 'name'), true), 'water setpoint selector removed');
+check(in_array('RoomTargetID', array_column($form['elements'], 'name'), true), 'room setpoint selector present');
+check(in_array('WaterTargetID', array_column($form['elements'], 'name'), true), 'water setpoint selector present');
 check(IPS_GetInstance($id)['InstanceVisualizationType'] === 1, 'HTML visualization');
-$props = ['ModeID'=>3,'HeatingPumpID'=>0,'PrimaryPumpID'=>0,'ReturnID'=>2,'ValveID'=>0,'CompressorID'=>0,'PrimaryFlowID'=>2,'FlowID'=>2,'WaterID'=>2];
+$props = ['ModeID'=>3,'HeatingPumpID'=>0,'PrimaryPumpID'=>0,'ReturnID'=>2,'ValveID'=>0,'CompressorID'=>0,'PrimaryFlowID'=>2,'FlowID'=>2,'WaterID'=>2,'RoomTargetID'=>2,'WaterTargetID'=>2];
 $ids = [];
 foreach ($props as $prop => $type) {
     $v = IPS_CreateVariable($type); $ids[$prop] = $v;
@@ -45,7 +47,7 @@ foreach ($props as $prop => $type) {
 }
 $action = IPS_CreateScript(0);
 IPS_SetScriptContent($action, '<?php $GLOBALS["captured"] = $_IPS;'); // no fake acknowledgement
-foreach (['ModeID'] as $prop) IPS_SetVariableCustomAction($ids[$prop], $action);
+foreach (['ModeID','RoomTargetID','WaterTargetID'] as $prop) IPS_SetVariableCustomAction($ids[$prop], $action);
 IPS_SetVariableCustomPresentation($ids['ModeID'], ['PRESENTATION'=>VARIABLE_PRESENTATION_ENUMERATION,'OPTIONS'=>json_encode([['Value'=>'heating','Caption'=>'Heizen + Warmwasser'],['Value'=>'water','Caption'=>'Nur Warmwasser']])]);
 SetValue($ids['WaterID'],45.6);SetValue($ids['FlowID'],27.7);SetValue($ids['ReturnID'],27.4);SetValue($ids['PrimaryFlowID'],10.0);
 IPS_CreateVariableProfile('Fixture.Pump',0);
@@ -56,20 +58,42 @@ IPS_SetVariableProfileAssociation('Fixture.Valve',0,'Heizung','',-1);IPS_SetVari
 IPS_SetVariableCustomProfile($ids['ValveID'],'Fixture.Valve');
 IPS_ApplyChanges($id);
 $s=snapshot($module);
-check(count($s['missing'])===0,'all nine values read including booleans');
-check(count(IPS_GetReferenceList($id))===9,'all references');
+check(count($s['missing'])===0,'all eleven values read including booleans');
+check(count(IPS_GetReferenceList($id))===11,'all references');
 check(IPS_GetInstance($id)['InstanceStatus']===102,'active');
 check($s['values']['valve']['formatted']==='Heizung','valve uses source labels');
 check($s['values']['mode']['formatted']==='Heizen + Warmwasser','mode is a formatted read-only status');
-foreach (['water','heating','invalid',1,true,null,[]] as $value) rejects(fn()=>$module->RequestAction('ChangeMode',$value),'all operating-mode writes rejected');
-check(!isset($GLOBALS['captured']),'configured source action never called');
-check(GetValue($ids['ModeID'])==='heating','source mode not changed');
-rejects(fn()=>$module->RequestAction('SetRoomTarget',22.5),'room setpoint route removed');
-rejects(fn()=>$module->RequestAction('SetWaterTarget',51),'water setpoint route removed');
-check(!isset($s['mode'],$s['controls']),'snapshot exposes no control configuration');
-check(json_decode($module->GetDiagnostics(),true)['readOnly'],'diagnostics identify read-only module');
+foreach (['invalid',1,true,null,[]] as $value) {
+    $module->RequestAction('ChangeMode',$value);
+    check(!isset($GLOBALS['captured']),'invalid mode does not dispatch');
+}
+$module->RequestAction('ChangeMode','water');
+check($GLOBALS['captured']['VARIABLE']===$ids['ModeID'] && $GLOBALS['captured']['VALUE']==='water','mode routed to source action');
+check(GetValue($ids['ModeID'])==='heating','no fabricated source mode acknowledgement');
+unset($GLOBALS['captured']);
+$module->RequestAction('SetRoomTarget',22.5);
+check($GLOBALS['captured']['VARIABLE']===$ids['RoomTargetID'] && $GLOBALS['captured']['VALUE']===22.5,'room target routed to source action');
+check(GetValue($ids['RoomTargetID'])===22.0,'no fabricated target acknowledgement');
+unset($GLOBALS['captured']);
+foreach ([-1,31,22.3,'22.5',NAN,INF,null] as $value) {
+    $module->RequestAction('SetRoomTarget',$value);
+    check(!isset($GLOBALS['captured']),'invalid room target does not dispatch');
+}
+IPS_SetVariableCustomAction($ids['RoomTargetID'],0);
+$module->RequestAction('SetRoomTarget',22.5);
+check(!isset($GLOBALS['captured']) && !snapshot($module)['controls']['roomTarget']['enabled'],'missing action disables control');
+IPS_SetVariableCustomAction($ids['RoomTargetID'],$action);
+IPS_CreateVariableProfile('Fixture.Room',2);IPS_SetVariableProfileValues('Fixture.Room',15,25,0.5);IPS_SetVariableCustomProfile($ids['RoomTargetID'],'Fixture.Room');
+$module->RequestAction('SetRoomTarget',26);check(!isset($GLOBALS['captured']),'source profile limits override fallback range');
+IPS_SetVariableCustomProfile($ids['RoomTargetID'],'');
+$module->RequestAction('SetWaterTarget',51);
+check($GLOBALS['captured']['VARIABLE']===$ids['WaterTargetID'] && $GLOBALS['captured']['VALUE']===51,'water target routed to source action');
+unset($GLOBALS['captured']);
+$module->RequestAction('SetWaterTarget',61);check(!isset($GLOBALS['captured']),'out of range water target rejected');
+check(isset($s['controls']),'snapshot exposes controls');
+check(!json_decode($module->GetDiagnostics(),true)['readOnly'],'diagnostics identify controls');
 IPS_ApplyChanges($id);IPS_ApplyChanges($id);
-check(count(IPS_GetReferenceList($id))===9,'repeatable apply');
+check(count(IPS_GetReferenceList($id))===11,'repeatable apply');
 SetValue($ids['HeatingPumpID'],true);$module->MessageSink(time(),$ids['HeatingPumpID'],VM_UPDATE,[true,true]);
 check(snapshot($module)['values']['heatingPump']['value']===true,'live boolean update');
 // HTML must keep profile captions as data.
@@ -124,6 +148,11 @@ function lastMessage($module) {
     $messages = $property->getValue($module);$last = end($messages);
     return json_decode($last['Data'][0],true,512,JSON_THROW_ON_ERROR);
 }
+$failure=IPS_CreateScript(0);IPS_SetScriptContent($failure,'<?php throw new RuntimeException("Quelle nicht erreichbar");');
+IPS_SetVariableCustomAction($ids['WaterTargetID'],$failure);
+$module->Refresh();$module->RequestAction('SetWaterTarget',50);
+check(lastMessage($module)['kind']==='control' && lastMessage($module)['error']==='Quelle nicht erreichbar','source action exception reported to tile');
+IPS_SetVariableCustomAction($ids['WaterTargetID'],$action);$module->Refresh();
 $module->RequestAction('RequestHistory',json_encode(['requestID'=>'test_1','key'=>'water','start'=>$start,'end'=>$end]));
 $reply=lastMessage($module);
 check($reply['kind']==='history' && $reply['requestID']==='test_1' && count($reply['points'])===3,'correlated void SDK reply');
@@ -144,9 +173,9 @@ rejects(fn()=>$module->GetHistory('flow',$start,$end),'truncation refused');
 $wrong=IPS_CreateVariable(3);IPS_SetProperty($id,'WaterID',$wrong);IPS_ApplyChanges($id);
 rejects(fn()=>$module->GetHistory('water',$start,$end),'nonnumeric history variable rejected');
 IPS_SetProperty($id,'WaterID',$ids['WaterID']);IPS_SetProperty($id,'ArchiveID',0);IPS_ApplyChanges($id);
-check(count(IPS_GetReferenceList($id))===9,'removed explicit archive reference');
-check(strpos($module->GetVisualizationTile(),'SetRoomTarget')===false && strpos($module->GetVisualizationTile(),'SetWaterTarget')===false,'no setpoint controls in HTML');
-check(strpos($module->GetVisualizationTile(),'ChangeMode')===false,'no mode action in browser');
+check(count(IPS_GetReferenceList($id))===11,'removed explicit archive reference');
+check(strpos($module->GetVisualizationTile(),'SetRoomTarget')!==false && strpos($module->GetVisualizationTile(),'SetWaterTarget')!==false,'room and water controls in HTML');
+check(strpos($module->GetVisualizationTile(),'ChangeMode')!==false,'mode action in browser');
 // Electrical values use independent sources; missing optional sources do not break existing tiles.
 check(IPS_GetProperty($id,'PowerID')===0 && IPS_GetProperty($id,'TotalEnergyID')===0,'electrical sources can be disabled');
 check(snapshot($module)['energy']['power']['value']===null,'missing power never becomes zero');
@@ -160,7 +189,7 @@ IPS_SetProperty($id,'PowerID',$power);IPS_SetProperty($id,'TotalEnergyID',$total
 $s=snapshot($module);
 check($s['energy']['power']['value']===2.6 && $s['energy']['power']['unit']==='kW','W converted to kW');
 check($s['energy']['total']['value']===1250 && $s['energy']['total']['unit']==='kWh','Wh converted to kWh');
-check(count(IPS_GetReferenceList($id))===11,'energy sources subscribed');
+check(count(IPS_GetReferenceList($id))===13,'energy sources subscribed');
 check($s['energy']['month']['value']===null,'monthly archive missing is not zero');
 $zone=new DateTimeZone('Europe/Vienna');
 $monthStart=(new DateTimeImmutable('now',$zone))->modify('first day of this month')->setTime(0,0)->getTimestamp();
@@ -180,7 +209,7 @@ $s=snapshot($module);
 check($s['energy']['month']['value']===50,'calendar month is current total minus boundary total');
 check($s['energy']['month']['baselineTime']===$monthStart-1,'boundary sample provenance');
 check($s['energy']['month']['periodLabel']===(new DateTimeImmutable('@'.$monthStart))->setTimezone($zone)->format('m.Y'),'calendar month uses configured zone');
-check($s['sourceCount']===11,'source footer count includes configured electrical sources');
+check($s['sourceCount']===13,'source footer count includes configured electrical sources');
 $ph=json_decode($module->GetHistory('power',$now-86400,$now),true);
 check($ph['unit']==='kW' && array_column($ph['points'],'value')===[2,2.6],'power graph normalized units');
 $phLong=json_decode($module->GetHistory('power',$now-604800,$now),true);

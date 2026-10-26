@@ -1,6 +1,6 @@
 # Viessmann Vitocal 222-C · Kachel für IP-Symcon
 
-Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, elektrische Momentanleistung, Gesamt- und Monatsverbrauch sowie Pumpen, Verdichter, Umschaltventil und Betriebsart. Kompakte Anzeige der Istwerte und Anlagenzustände mit kompaktem Gerätekopf, ohne Anlagenschema. **Keine Sollwertanzeigen oder Sollwerteingaben, keine Lüftungsdaten.** Die Betriebsart wird ausschließlich als aktueller Status angezeigt; die gesamte Kachel ist schreibgeschützt.
+Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene Temperaturen, elektrische Momentanleistung, Gesamt- und Monatsverbrauch sowie Pumpen, Verdichter, Umschaltventil und Betriebsart. Kompakte Anzeige der Istwerte und Anlagenzustände mit kompaktem Gerätekopf, ohne Anlagenschema. **Betriebsart Heizung, Raumsolltemperatur und Warmwasser-Solltemperatur sind über vorhandene Variablenaktionen bedienbar. Keine Lüftungsdaten.**
 
 ![Kachel mit synthetischen Testwerten](docs/dashboard.png)
 
@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.5.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.6.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der verfügbaren Kachelbreite und -höhe an. Bei geringer Höhe wird die komplette Übersicht proportional verkleinert, einschließlich Kopfbereich und Fußzeile. Wird die Kachel wieder größer, kehrt sie bis zur ursprünglichen Darstellungsgröße zurück. Die Übersicht benötigt keine vertikale Bildlaufleiste; der Verlaufsdialog besitzt bei Bedarf einen eigenen Scrollbereich. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -22,17 +22,19 @@ Der Temperaturverlauf öffnet außerhalb der skalierten Übersicht als Dialog. S
 
 | Wert | ID | Eigenschaft |
 |---|---:|---|
-| Betriebsart Heizung | 53049 | `ModeID` |
-| Heizkreispumpe | 20926 | `HeatingPumpID` |
-| Primärpumpe | 39794 | `PrimaryPumpID` |
-| Rücklauftemperatur Sekundär | 21875 | `ReturnID` |
-| Ventil Heizen/Warmwasser | 53786 | `ValveID` |
-| Verdichterbetrieb | 31722 | `CompressorID` |
-| Vorlauftemperatur Primärquelle | 18104 | `PrimaryFlowID` |
-| Vorlauftemperatur Sekundär | 18969 | `FlowID` |
-| Warmwasser Ist | 56634 | `WaterID` |
+| Betriebsart Heizung | 41758 | `ModeID` |
+| Heizkreispumpe | 35797 | `HeatingPumpID` |
+| Primärpumpe | 51638 | `PrimaryPumpID` |
+| Rücklauftemperatur Sekundär | 26909 | `ReturnID` |
+| Ventil Heizen/Warmwasser | 16126 | `ValveID` |
+| Verdichterbetrieb | 12943 | `CompressorID` |
+| Vorlauftemperatur Primärquelle | 14749 | `PrimaryFlowID` |
+| Vorlauftemperatur Sekundär | 35782 | `FlowID` |
+| Warmwasser Ist | 46137 | `WaterID` |
+| Raumsolltemperatur | 55945 | `RoomTargetID` |
+| Warmwasser-Solltemperatur | 10078 | `WaterTargetID` |
 
-Alle IDs sind in der Instanz änderbar. Die früheren Sollwertquellen `10939` und `27660` werden nicht mehr gelesen, angezeigt oder geschaltet. Eine Raum-Isttemperatur war nicht vorhanden und wird nicht aus dem Raumsollwert abgeleitet. Abluft, Fortluft, Lüftungsaußentemperatur, Lüftungsbetriebsart, Filterrestzeit und Zuluft-Volumenstrom sind ausgeschlossen.
+Alle IDs sind in der Instanz änderbar. Beim Update werden die bisherigen Standard-IDs automatisch auf die neuen Anlagen-IDs umgestellt. Abweichende eigene Zuordnungen bleiben erhalten. Die elektrischen IDs 48059 und 58570 bleiben bestehen. Eine Raum-Isttemperatur war nicht vorhanden und wird nicht aus dem Raumsollwert abgeleitet. Abluft, Fortluft, Lüftungsaußentemperatur, Lüftungsbetriebsart, Filterrestzeit und Zuluft-Volumenstrom sind ausgeschlossen.
 
 Temperaturen müssen in °C vorliegen. Pumpen und Umschaltventil verwenden die formatierten Quellwerte; die Bedeutung des Ventilwerts wird nicht eigenmächtig umgedreht. Aktive Pumpen-/Verdichtersignale werden in den Statusfeldern grün hervorgehoben.
 
@@ -40,7 +42,7 @@ Temperaturen müssen in °C vorliegen. Pumpen und Umschaltventil verwenden die f
 
 Die Anzeige verwendet 2 Nachkommastellen für die Momentanleistung, 0 für den Gesamtverbrauch und 1 für den Monatsverbrauch, auch in den Verläufen.
 
-Gesamt- und Monatsverbrauch verwenden Balkendiagramme der archivierten Zählerstände. Verdichter (31722) und Ventil (53786) öffnen Statusverläufe als Balkendiagramme mit derselben Zeitnavigation; hierfür ist aktive Archivierung erforderlich. Boolesche Statusarchive werden unabhängig vom Aggregationstyp über ihre Rohwerte gelesen.
+Gesamt- und Monatsverbrauch verwenden Balkendiagramme der archivierten Zählerstände. Verdichter (12943) und Ventil (16126) öffnen Statusverläufe als Balkendiagramme mit derselben Zeitnavigation; hierfür ist aktive Archivierung erforderlich. Boolesche Statusarchive werden unabhängig vom Aggregationstyp über ihre Rohwerte gelesen.
 
 Drei zusätzliche Karten zeigen **elektrische Momentanleistung (kW)**, **kumulierten Gesamtverbrauch (kWh)** und **Verbrauch des laufenden Kalendermonats (kWh)**. Alle Karten öffnen per Klick einen Verlauf mit Zeitbereichswahl und Vor-/Zurücknavigation.
 
@@ -89,7 +91,7 @@ Die Zeiträume sind feste, rollende Dauern; 24 Stunden sind unabhängig von Somm
 
 ### Archivierung als Voraussetzung
 
-Im Symcon **Archive Control** muss die Archivierung für `18104`, `18969`, `21875` und `56634` bzw. deine abweichenden Isttemperatur-IDs aktiv sein. Archivierung als **Standardwert**, nicht als Zähler konfigurieren. Die Kachel schaltet die Archivierung nicht selbst ein und verändert keine historischen Daten. Alte Werte werden durch Aktivierung nicht nachträglich erzeugt.
+Im Symcon **Archive Control** muss die Archivierung für `14749`, `35782`, `26909` und `46137` bzw. deine abweichenden Isttemperatur-IDs aktiv sein. Archivierung als **Standardwert**, nicht als Zähler konfigurieren. Die Kachel schaltet die Archivierung nicht selbst ein und verändert keine historischen Daten. Alte Werte werden durch Aktivierung nicht nachträglich erzeugt.
 
 In der Instanz kann **Archive Control** ausgewählt werden. Mit `0` sucht die Kachel für die angeklickte Temperatur automatisch das erste Archiv mit aktiver Aufzeichnung. Bei mehreren Archiven eine explizite Instanz auswählen; eine ausdrücklich gewählte Instanz wird nicht stillschweigend ersetzt. Fehlende Archivierung beeinflusst den Graphen, die aktuellen Werte bleiben nutzbar.
 
@@ -97,9 +99,13 @@ Bis einschließlich 48 Stunden werden `AC_GetLoggedValues()`-Einzelwerte gelesen
 
 Die Datenübertragung läuft über die HTML-SDK-Brücke und den Visualisierungsnachrichtenkanal. Jede Anfrage hat eine eigene Kennung; verspätete Antworten aus einem anderen Zeitraum, einer anderen Temperatur, einem anderen geöffneten Client oder einem geschlossenen Dialog werden verworfen. Nach 15 Sekunden ohne Antwort wird ein Hinweis angezeigt. Keine WebHooks, CDN-, npm- oder Chartbibliotheken erforderlich.
 
-## Betriebsart: nur Status
+## Heizung bedienen
 
-Variable `53049` wird mit ihrem formatierten Quellwert oben in der Statusanzeige dargestellt. Es gibt keine Betriebsartauswahl und keine Schaltaktionen mehr. Eine Profil-Auswahlliste oder Variablenaktion ist für die Anzeige nicht erforderlich. Selbst direkte Aufrufe der ehemaligen Aktionen `ChangeMode`, `SetRoomTarget` und `SetWaterTarget` werden serverseitig abgewiesen. Die HTML-SDK-Aktion wird ausschließlich für lesende Archivabfragen verwendet.
+Die Betriebsart (41758), Raumsolltemperatur (55945) und Warmwasser-Solltemperatur (10078) besitzen eigene Bedienelemente mit Übernehmen-Schaltflächen. Befehle laufen ausschließlich über `RequestAction()` der jeweiligen Quellvariable. Es werden keine Quellwerte mit `SetValue()` überschrieben. Ohne vorhandene Variablenaktion bzw. bei falschem Variablentyp ist das betreffende Bedienelement deaktiviert.
+
+Für die Betriebsart verwendet die Auswahl vorhandene String-Assoziationen des Quellprofils bzw. der Darstellung. Ohne Auswahlliste wird ein Textfeld für den exakten Betriebsartwert angeboten; die Geräteintegration muss den Wert unterstützen. Es werden keine Betriebsartcodes geraten.
+
+Temperaturgrenzen und Schrittweite werden aus dem wirksamen Quellprofil bzw. der Darstellung übernommen und serverseitig geprüft. Ohne gültigen Profilbereich gelten 10–30 °C für den Raum und 10–60 °C für Warmwasser bei 0,5 °C Schrittweite. Nichtnumerische Werte, unzulässige Schritte und Werte außerhalb des Bereichs werden abgewiesen. Die Kachel zeigt nach Befehlsübergabe weiterhin den tatsächlichen Quellwert; erst die Rückmeldung der Geräteintegration bestätigt eine Änderung. Fehler der Quellaktion erscheinen in der Kachel.
 
 Die Diagnose ist ausschließlich in der Instanz über **Quellen-Diagnose anzeigen** mit den konfigurierten Quell-IDs und dem Archiv verfügbar. In der Kachel wird keine Quellendiagnose eingeblendet. Die Fußzeile mit Quellenstatus und letztem Quellupdate verwendet 9 px Schriftgröße.
 

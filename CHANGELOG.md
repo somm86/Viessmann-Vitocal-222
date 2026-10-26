@@ -1,5 +1,12 @@
 # Änderungen
 
+## 2.6
+
+- Neue Heizungs-IDs aus der aktualisierten Anlage; automatische Migration der bisherigen Standardzuordnungen unter Erhalt eigener Quellen.
+- Bedienung von Betriebsart Heizung (41758), Raumsolltemperatur (55945) und Warmwasser-Solltemperatur (10078) über die jeweiligen Symcon-Variablenaktionen.
+- Quellprofil-Auswahl und Temperaturgrenzen, Prüfung von Typ und Schrittweite, deaktivierte Bedienung ohne Aktion und sichtbare Aktionsfehler.
+- Quellwerte werden erst durch die Geräteintegration aktualisiert; elektrische Werte und bestehende Balkenverläufe bleiben erhalten.
+
 ## 2.5
 
 - Verdichter und Ventil als Balkendiagramme über die archivierten Zustandsintervalle; inaktive Zustände bleiben als schmale Basisbalken sichtbar.
