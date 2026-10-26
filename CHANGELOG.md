@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.1
+
+- Feste Nachkommastellen in Karten und Verläufen: Momentanleistung 2, Gesamtverbrauch 0, Monatsverbrauch 1.
+
 ## 2.0
 
 - Elektrische Momentanleistung, Gesamtverbrauch und laufender Monatsverbrauch mit auswählbaren Quellvariablen.

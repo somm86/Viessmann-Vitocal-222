@@ -41,7 +41,7 @@ const $ = id => document.getElementById(id);
 
 const statusLabels = {compressor:'Verdichter',heatingPump:'Heizkreispumpe',primaryPump:'Primärpumpe',valve:'Heizung / Warmwasser'};
 const number = new Intl.NumberFormat('de-DE',{maximumFractionDigits:1});
-const energyNumber = new Intl.NumberFormat('de-DE',{maximumFractionDigits:3});
+const energyNumbers = Object.fromEntries(Object.entries({power:2,total:0,month:1}).map(([key,digits])=>[key,new Intl.NumberFormat('de-DE',{minimumFractionDigits:digits,maximumFractionDigits:digits})]));
 function temperature(entry){return entry && typeof entry.value === 'number' ? number.format(entry.value)+' °C' : '—';}
 function render(data){
  if(!data || !data.values) return;
@@ -49,7 +49,7 @@ function render(data){
  $('modeBadge').textContent=data.values.mode.formatted;
  for(const key of ['power','total','month']){
   const entry=data.energy?.[key];
-  $(key).textContent=entry && Number.isFinite(entry.value)?energyNumber.format(entry.value)+' '+entry.unit:'—';
+  $(key).textContent=entry && Number.isFinite(entry.value)?energyNumbers[key].format(entry.value)+' '+entry.unit:'—';
   $(key+'Reason').textContent=entry?.reason || entry?.note || '';
  }
  $('monthCaption').textContent='Monatsverbrauch'+(data.energy?.month?.periodLabel?' · '+data.energy.month.periodLabel:'');
@@ -72,7 +72,7 @@ function handleMessage(message){
 }
 const historyLabels={primaryFlow:'Vorlauf Primärquelle',flow:'Vorlauf Sekundär',return:'Rücklauf Sekundär',water:'Warmwasser Ist',power:'Momentanleistung · elektrisch',total:'Gesamtverbrauch · Stromzähler',month:'Monatsverbrauch'};
 const history={key:null,end:0,anchor:0,requestID:'',timer:null,points:[],start:0,unit:'°C',plotLeft:65};
-function historyFormat(value){return (history.unit==='°C'?number:energyNumber).format(value);}
+function historyFormat(value){return (history.unit==='°C'?number:energyNumbers[history.key]).format(value);}
 function svgNode(name,attributes={},text=''){
  const node=document.createElementNS('http://www.w3.org/2000/svg',name);
  for(const [key,value] of Object.entries(attributes))node.setAttribute(key,String(value));
