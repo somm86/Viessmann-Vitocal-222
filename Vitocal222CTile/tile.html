@@ -128,7 +128,7 @@ function receiveHistory(data){
 function drawChart(resolution){
  const points=history.points;let low=Infinity,high=-Infinity;
  for(const p of points){low=Math.min(low,p.value);high=Math.max(high,p.value);}
- const bars=['total','month'].includes(history.key);
+ const bars=isStatus() || ['total','month'].includes(history.key);
  const pad=Math.max((high-low)*.12,history.unit==='°C'?.5:.01),min=isStatus()?0:bars?0:history.unit==='°C'?low-pad:Math.max(0,low-pad),max=isStatus()?1:high+pad;
  history.plotLeft=history.unit==='°C'?65:110;
  const chart=$('historyChart'),x=t=>history.plotLeft+(t-history.start)/(history.end-history.start)*(840-history.plotLeft),y=v=>265-(v-min)/(max-min)*240;
@@ -146,6 +146,10 @@ function drawChart(resolution){
  if(bars){
   for(let i=0;i<points.length;i++){
    const p=points[i],cx=x(p.time),prev=i?x(points[i-1].time):history.plotLeft,next=i+1<points.length?x(points[i+1].time):840;
+   if(isStatus()){
+    chart.append(svgNode('rect',{x:cx,y:p.value?y(1):y(0)-2,width:Math.max(.5,x(i+1<points.length?points[i+1].time:history.end)-cx-1),height:p.value?y(0)-y(1):2,class:'chart-bar',opacity:p.value?1:.45}));
+    continue;
+   }
    const width=Math.max(.5,Math.min(40,Math.max(1,Math.min(cx-prev || next-cx,next-cx || cx-prev))*.8));
    chart.append(svgNode('rect',{x:Math.max(history.plotLeft,Math.min(840-width,cx-width/2)),y:y(p.value),width,height:Math.max(0,y(0)-y(p.value)),class:'chart-bar'}));
   }
@@ -154,7 +158,7 @@ function drawChart(resolution){
   chart.append(svgNode('path',{d:path,class:'chart-line'}));
   if(points.length===1)chart.append(svgNode('circle',{cx:x(points[0].time),cy:y(points[0].value),r:4,class:'chart-point'}));
  }
- $('historySummary').textContent=(resolution==='monthly'?'Laufender Verbrauch je Kalendermonat':resolution==='counterHourly'?'Archivierte Zählerstände · stündliche Stützpunkte':resolution==='hourly'?'Stundenmittelwerte':'Archivierte Einzelwerte')+' · '+points.length+' Werte · Min '+historyFormat(low)+' '+history.unit+' · Max '+historyFormat(high)+' '+history.unit+(bars?'. Balken zeigen archivierte Zählerstände.':'. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen.')+' Tabelle: maximal 500 Werte.';
+ $('historySummary').textContent=(resolution==='monthly'?'Laufender Verbrauch je Kalendermonat':resolution==='counterHourly'?'Archivierte Zählerstände · stündliche Stützpunkte':resolution==='hourly'?'Stundenmittelwerte':'Archivierte Einzelwerte')+' · '+points.length+' Werte · Min '+historyFormat(low)+' '+history.unit+' · Max '+historyFormat(high)+' '+history.unit+(bars?(isStatus()?'. Balken zeigen archivierte Schaltzustände bis zum nächsten Wechsel.':'. Balken zeigen archivierte Zählerstände.'):'. Linien verbinden vorhandene Messpunkte; Zwischenwerte sind nicht separat gemessen.')+' Tabelle: maximal 500 Werte.';
  const rows=document.createDocumentFragment();
  for(const p of points.slice(0,500)){
   const row=document.createElement('tr'),date=document.createElement('td'),value=document.createElement('td');
@@ -167,7 +171,8 @@ function showHistoryPoint(event){
  const rect=$('historyChart').getBoundingClientRect(),t=history.start+((event.clientX-rect.left)/rect.width*860-history.plotLeft)/(840-history.plotLeft)*(history.end-history.start);
  let a=0,b=history.points.length-1;
  while(a<b){const mid=Math.floor((a+b)/2);if(history.points[mid].time<t)a=mid+1;else b=mid;}
- let point=history.points[a];if(a>0 && Math.abs(history.points[a-1].time-t)<Math.abs(point.time-t))point=history.points[a-1];
+ if(isStatus() && a>0 && history.points[a].time>t)a--;
+ let point=history.points[a];if(!isStatus() && a>0 && Math.abs(history.points[a-1].time-t)<Math.abs(point.time-t))point=history.points[a-1];
  $('chartTooltip').textContent=new Date(point.time*1000).toLocaleString('de-DE')+' · '+historyFormat(point.value)+' '+history.unit;$('chartTooltip').hidden=false;
 }
 $('historyChart').addEventListener('pointermove',showHistoryPoint);

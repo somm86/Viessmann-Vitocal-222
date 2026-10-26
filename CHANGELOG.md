@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.5
+
+- Verdichter und Ventil als Balkendiagramme über die archivierten Zustandsintervalle; inaktive Zustände bleiben als schmale Basisbalken sichtbar.
+
 ## 2.4
 
 - Boolesche Statusarchive werden anhand ihrer Rohwerte gelesen, ohne sie auf den numerischen Standard-Aggregationstyp einzuschränken. Behebt die blockierten Verdichter- und Ventilverläufe.
