@@ -96,6 +96,8 @@ foreach (['compressor'=>'CompressorID','valve'=>'ValveID'] as $key=>$prop) {
     $statusHistory=json_decode($module->GetHistory($key,$start,$end),true);
     check($statusHistory['resolution']==='status' && array_column($statusHistory['points'],'value')===[0,1,0],'raw boolean transitions '.$key);
     check($statusHistory['points'][0]['time']===$start,'status baseline at window start '.$key);
+    AC_SetAggregationType($archive,$ids[$prop],2);
+    check(json_decode($module->GetHistory($key,$start,$end),true)['points']===$statusHistory['points'],'boolean archive type preserves raw status history '.$key);
 }
 $h=json_decode($module->GetHistory('water',$start,$end),true);
 check($h['resolution']==='raw' && count($h['points'])===3,'actual archive rows retrieved');

@@ -1,4 +1,4 @@
-# Prüfbericht · Version 2.3
+# Prüfbericht · Version 2.4
 
 Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb3763236fcf44ea4144271fdeddfd5`), Python 3, Playwright 1.62.0 und System-Chromium. PHP wurde aus anhand signierter Debian-Indizes geprüften Paketen lokal unter `/tmp/php-local` extrahiert. Die Testlaufzeit ist keine Produktivabhängigkeit.
 
@@ -7,7 +7,7 @@ Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb37632
 - PHP-Syntaxprüfung des Moduls.
 - Bibliotheksprüfung: Laden der vollständigen `library.json` mit dem offiziellen SymconStubs-Lader, einschließlich Erkennung aller Modulordner. Der frühere Test lud nur das Einzelmodul und erkannte deshalb den ungültigen Ordner `dist` nicht.
 - Build-Ausgaben außerhalb des Repositorys; Ausgabeziele im Checkout werden vor Dateierzeugung abgewiesen. Nicht reservierte sichtbare Verzeichnisse ohne `module.json` verhindern den Build.
-- **103 Modulprüfungen**: neun Quellen und Referenzen, Entfernen der Sollwertkonfiguration und der beiden Schreibaktionen, Betriebsart als reiner Status, serverseitige Ablehnung aller Betriebsart- und Sollwert-Schreibaktionen ohne Aufruf der vorhandenen Quellaktion, Quellupdates, HTML-Escaping und wiederholtes ApplyChanges.
+- **105 Modulprüfungen**: neun Quellen und Referenzen, Entfernen der Sollwertkonfiguration und der beiden Schreibaktionen, Betriebsart als reiner Status, serverseitige Ablehnung aller Betriebsart- und Sollwert-Schreibaktionen ohne Aufruf der vorhandenen Quellaktion, Quellupdates, HTML-Escaping und wiederholtes ApplyChanges.
 - Archivintegration über das echte offizielle **ArchiveControl-Stub-Modul**: aktive/fehlende Archivierung, alle vier Temperaturzuordnungen, Rohwerte in chronologischer Reihenfolge, leere Zeitfenster ohne erfundene Ersatzwerte, Stundenmittel, automatisch und explizit ausgewählte Archive, Archivwechsel, falsche Instanz, Ablehnung von Zählerarchiven, Zeitbereichsgrenzen, Quellen-Allowlist, nichtnumerische Quellen, Erkennung des 10.000-Werte-Limits, korrelierte SDK-Antworten sowie lesbare Fehlermeldungen bei fehlerhaften Anfragen. Archivschreibaufrufe existieren ausschließlich im Test zur Fixture-Erzeugung.
 - **123 Browserprüfungen**: vier anklickbare Isttemperaturen ohne Sollwerteingaben, Betriebsart nur als Textstatus ohne Auswahl, ausschließlich lesende Browser-Anfragen, SDK-Verfügbarkeit, Modal und Tastaturbedienung, Zeichnen von Archivdaten, Tabelle, Messpunktanzeige, alle fünf Zeitbereiche, Vor-/Zurückblättern um eine vollständige Fensterbreite, Zukunftssperre, Stundenmittel-Kennzeichnung, einzelner Messpunkt, leere Daten, Archivfehler, Zeitüberschreitung, Verwerfen verspäteter Antworten und Wechsel zwischen Temperaturen. Kein horizontaler Überlauf bei 320, 390, 768 und 1200 Pixel Breite; keine JavaScript-Fehler.
 - Höhenanpassung geprüft bei 1200×220, 640×220, 320×260, 800×160, 320×480, 1800×180, 240×150 und 1200×1100 Pixeln: sämtliche Übersichtselemente einschließlich Fußzeile liegen innerhalb des sichtbaren Bereichs, ohne Seiten-Scrollleisten. Größenwechsel funktionieren ohne Neuladen; Vergrößern stellt den Originalmaßstab wieder her. Längere Livewerte lösen eine erneute Einpassung aus. Ein eigener Iframe-Test ändert ausschließlich die Höhe des umgebenden Tiles und prüft Verkleinern und Vergrößern. Die skalierten Temperaturkarten öffnen weiterhin den unabhängig begrenzten Verlaufsdialog.
@@ -27,4 +27,6 @@ Die Kachel enthält kein Anlagenschema und keine Schema-Exporte mehr. Die Browse
 
 Der vorhandene GitHub-Workflow führt die lokalen Prüfungen bei Push/PR aus. Ein erfolgreicher lokaler Lauf belegt keinen erfolgreichen GitHub-CI-Lauf oder eine Installation auf dem Symcon-Server.
 
-Version 2.3 prüft zusätzlich archivierte boolesche Statuswechsel einschließlich Anfangszustand, Liniendarstellung und Zustandsbeschriftung für Verdichter und Ventil sowie Verbrauchsbalken ohne Verbindungslinie.
+Version 2.4 prüft zusätzlich archivierte boolesche Statuswechsel einschließlich Anfangszustand, Liniendarstellung und Zustandsbeschriftung für Verdichter und Ventil sowie Verbrauchsbalken ohne Verbindungslinie.
+
+Regression 2.4: Beide booleschen Quellen liefern auch bei Archiv-Aggregationstyp 2 dieselben Rohzustände und Anfangswerte; es werden keine numerischen Mittelwerte für Schaltzustände verwendet.

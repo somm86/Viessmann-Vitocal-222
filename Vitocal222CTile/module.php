@@ -370,7 +370,7 @@ class Vitocal222CTile extends IPSModule
                 throw new RuntimeException('Boolesche Statusvariable fehlt.');
             }
             $archive = $this->archiveFor($id);
-            if (AC_GetAggregationType($archive, $id) !== 0) throw new RuntimeException('Status muss als Standardwert archiviert werden.');
+            // Boolean archives may expose a distinct aggregation type. Read raw states only.
             $rows = AC_GetLoggedValues($archive, $id, $Start, $End, 10000);
             $before = AC_GetLoggedValues($archive, $id, 0, $Start, 1);
             if (!is_array($rows) || !is_array($before)) throw new RuntimeException('Archivdaten konnten nicht gelesen werden.');

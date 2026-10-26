@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.4
+
+- Boolesche Statusarchive werden anhand ihrer Rohwerte gelesen, ohne sie auf den numerischen Standard-Aggregationstyp einzuschränken. Behebt die blockierten Verdichter- und Ventilverläufe.
+
 ## 2.3
 
 - Boolesche Verdichter- und Ventilzustände als Liniendiagramme mit Zustandsbeschriftungen.
