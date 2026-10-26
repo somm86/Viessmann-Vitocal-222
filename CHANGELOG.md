@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.3
+
+- Boolesche Verdichter- und Ventilzustände als Liniendiagramme mit Zustandsbeschriftungen.
+
 ## 2.2
 
 - Gesamt- und Monatsverbrauch als Balkendiagramme der archivierten Zählerstände.

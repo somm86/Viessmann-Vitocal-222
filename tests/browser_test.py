@@ -172,7 +172,7 @@ with sync_playwright() as p:
     for key in ['compressor','valve']:
         page.locator(f'[data-history="{key}"]').click();status_request=request()
         reply(status_request,[{'time':status_request['start'],'value':0},{'time':status_request['end']-100,'value':1}],resolution='status')
-        check('H' in page.locator('#historyChart .chart-line').get_attribute('d') and 'V' in page.locator('#historyChart .chart-line').get_attribute('d'),'stepped status history '+key)
+        check('L' in page.locator('#historyChart .chart-line').get_attribute('d') and 'V' not in page.locator('#historyChart .chart-line').get_attribute('d'),'linear boolean status history '+key)
         check(('Warmwasser' if key=='valve' else 'An') in page.locator('#historyChart').text_content(),'status labels '+key)
         page.locator('#closeHistory').click()
     electrical_update=copy.deepcopy(snapshot);electrical_update['energy']['power']['value']=3.1

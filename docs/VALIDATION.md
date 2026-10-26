@@ -1,4 +1,4 @@
-# Prüfbericht · Version 2.2
+# Prüfbericht · Version 2.3
 
 Lokal geprüft mit PHP 8.4.24, offiziellen SymconStubs (Commit `31f2e0478eb3763236fcf44ea4144271fdeddfd5`), Python 3, Playwright 1.62.0 und System-Chromium. PHP wurde aus anhand signierter Debian-Indizes geprüften Paketen lokal unter `/tmp/php-local` extrahiert. Die Testlaufzeit ist keine Produktivabhängigkeit.
 
@@ -27,4 +27,4 @@ Die Kachel enthält kein Anlagenschema und keine Schema-Exporte mehr. Die Browse
 
 Der vorhandene GitHub-Workflow führt die lokalen Prüfungen bei Push/PR aus. Ein erfolgreicher lokaler Lauf belegt keinen erfolgreichen GitHub-CI-Lauf oder eine Installation auf dem Symcon-Server.
 
-Version 2.2 prüft zusätzlich archivierte boolesche Statuswechsel einschließlich Anfangszustand, Stufendarstellung und Zustandsbeschriftung für Verdichter und Ventil sowie Verbrauchsbalken ohne Verbindungslinie.
+Version 2.3 prüft zusätzlich archivierte boolesche Statuswechsel einschließlich Anfangszustand, Liniendarstellung und Zustandsbeschriftung für Verdichter und Ventil sowie Verbrauchsbalken ohne Verbindungslinie.
