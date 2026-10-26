@@ -8,7 +8,7 @@
 
 @media(max-height:450px){main{padding:10px}header{margin-bottom:10px}.grid{gap:10px}.panel{padding:12px}.section-heading{margin-bottom:10px}h2{margin-bottom:10px}.reading{padding:10px;gap:2px}.status{padding:8px}.status strong{margin-top:2px}.feedback:empty{display:none}footer{margin-top:8px}}
 .energy-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.energy-value{color:#79dfbc}.energy-note{font-size:11px;color:var(--muted);overflow-wrap:anywhere}.energy-note:empty{display:none}@media(max-width:650px){.energy-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.energy-card:last-child{grid-column:1/-1}}
-.control-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.control-grid label{display:flex;flex-direction:column;gap:8px}.control-grid input,.control-grid select{width:100%;min-width:0;margin:0;background:#102e42;color:var(--text);font:inherit;padding:10px;border:1px solid #376079;border-radius:8px}.control-grid button{margin-top:10px}.control-note{color:var(--muted);font-size:12px}@media(max-width:650px){.control-grid{grid-template-columns:1fr}}
+.control-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.control-grid label{display:flex;flex-direction:column;gap:8px}.control-grid input,.control-grid select{width:100%;min-width:0;margin:0;background:#102e42;color:var(--text);font:inherit;padding:10px;border:1px solid #376079;border-radius:8px}.control-grid button{margin-top:10px}.mode-choices[hidden]{display:none}.mode-choices{display:flex;flex-wrap:wrap;gap:8px}.mode-choices button{margin-top:8px;overflow-wrap:anywhere;text-align:left}.mode-choices button[aria-pressed="true"]{background:#165441;border-color:var(--green);color:var(--green)}.control-note{color:var(--muted);font-size:12px}@media(max-width:650px){.control-grid{grid-template-columns:1fr}}
 </style></head><body><main>
 <header><div class="device-heading">
 
@@ -26,7 +26,7 @@
 <button class="reading energy-card" data-history="total"><span class="label">Gesamtverbrauch · Stromzähler</span><span id="total" class="value energy-value">—</span><span id="totalReason" class="energy-note"></span><span class="chart-link">Verlauf öffnen</span></button>
 <button class="reading energy-card" data-history="month"><span id="monthCaption" class="label">Monatsverbrauch</span><span id="month" class="value energy-value">—</span><span id="monthReason" class="energy-note"></span><span class="chart-link">Verlauf öffnen</span></button>
 </div></section>
-<section class="panel wide"><h2>Heizung einstellen</h2><div class="control-grid"><div><label>Betriebsart Heizung<select id="modeSelect"></select><input id="modeInput" type="text" maxlength="100" aria-label="Betriebsart als Variablenwert" hidden></label><div id="modeReason" class="control-note"></div><button id="applyMode">Betriebsart übernehmen</button></div><div><label>Raumsolltemperatur (°C)<select id="roomTargetInput" required></select></label><div id="roomTargetCurrent" class="control-note"></div><div id="roomTargetReason" class="control-note"></div><button id="applyRoomTarget">Temperatur übernehmen</button></div><div><label>Warmwasser-Solltemperatur (°C)<select id="waterTargetInput" required></select></label><div id="waterTargetCurrent" class="control-note"></div><div id="waterTargetReason" class="control-note"></div><button id="applyWaterTarget">Temperatur übernehmen</button></div></div></section>
+<section class="panel wide"><h2>Heizung einstellen</h2><div class="control-grid"><div><div id="modeLabel">Betriebsart Heizung</div><div id="modeChoices" class="mode-choices" role="group" aria-labelledby="modeLabel"></div><label><input id="modeInput" type="text" maxlength="100" aria-label="Betriebsart als Variablenwert" hidden></label><div id="modeReason" class="control-note"></div><button id="applyMode">Betriebsart übernehmen</button></div><div><label>Raumsolltemperatur (°C)<select id="roomTargetInput" required></select></label><div id="roomTargetCurrent" class="control-note"></div><div id="roomTargetReason" class="control-note"></div><button id="applyRoomTarget">Temperatur übernehmen</button></div><div><label>Warmwasser-Solltemperatur (°C)<select id="waterTargetInput" required></select></label><div id="waterTargetCurrent" class="control-note"></div><div id="waterTargetReason" class="control-note"></div><button id="applyWaterTarget">Temperatur übernehmen</button></div></div></section>
 <section class="panel wide"><h2>Anlagenstatus</h2><div id="statuses" class="status-grid"></div></section>
 </div>
 <div id="feedback" class="feedback" role="status" aria-live="polite"></div><footer><span id="sourceState"></span><span id="updated"></span></footer>
@@ -75,14 +75,16 @@ function renderControls(data){
  const mode=data.controls?.mode;
  const options=mode?.options || [];
  const optionSignature=JSON.stringify(options);
- if($('modeSelect').dataset.options!==optionSignature){
-  $('modeSelect').replaceChildren(...options.map(item=>{const option=document.createElement('option');option.value=item.value;option.textContent=item.caption || item.value;return option;}));
-  $('modeSelect').dataset.options=optionSignature;
+ if($('modeChoices').dataset.options!==optionSignature){
+  $('modeChoices').replaceChildren(...options.map(item=>{const button=document.createElement('button');button.type='button';button.dataset.value=item.value;button.textContent=item.caption || item.value;button.addEventListener('click',()=>sendControl('ChangeMode',item.value));return button;}));
+  $('modeChoices').dataset.options=optionSignature;
  }
- $('modeSelect').hidden=!options.length;$('modeInput').hidden=!!options.length;
- const field=options.length?$('modeSelect'):$('modeInput');
- if(document.activeElement!==field)field.value=data.values.mode.value ?? '';
- field.disabled=!mode?.enabled;$('applyMode').disabled=!mode?.enabled;
+ $('modeChoices').hidden=!options.length;$('modeInput').hidden=!!options.length;$('applyMode').hidden=!!options.length;
+ for(const button of $('modeChoices').querySelectorAll('button')){
+  button.disabled=!mode?.enabled;button.setAttribute('aria-pressed',String(button.dataset.value===data.values.mode.value));
+ }
+ if(document.activeElement!==$('modeInput'))$('modeInput').value=data.values.mode.value ?? '';
+ $('modeInput').disabled=!mode?.enabled;$('applyMode').disabled=!mode?.enabled;
  $('modeReason').textContent=mode?.reason || (!options.length?'Exakten Betriebsartwert der Quellvariable eingeben.':'');
  for(const key of ['roomTarget','waterTarget']){
   const control=data.controls?.[key],input=$(key+'Input');
@@ -107,7 +109,7 @@ function sendControl(action,value){
  catch(e){$('feedback').textContent='Befehl konnte nicht übergeben werden.';}
  scheduleTileFit();
 }
-$('applyMode').addEventListener('click',()=>sendControl('ChangeMode',($('modeSelect').hidden?$('modeInput'):$('modeSelect')).value));
+$('applyMode').addEventListener('click',()=>sendControl('ChangeMode',$('modeInput').value));
 for(const [button,key,action] of [['applyRoomTarget','roomTarget','SetRoomTarget'],['applyWaterTarget','waterTarget','SetWaterTarget']])$(button).addEventListener('click',()=>{const input=$(key+'Input');if(input.value!=='' && input.reportValidity())sendControl(action,Number(input.value));});
 function handleMessage(message){
  try{const data=typeof message==='string'?JSON.parse(message):message;if(data.kind==='history')receiveHistory(data);else if(data.kind==='control'){$('feedback').textContent=data.error || 'Befehl an Symcon übergeben. Rückmeldung der Anlage abwarten.';scheduleTileFit();}else render(data);}

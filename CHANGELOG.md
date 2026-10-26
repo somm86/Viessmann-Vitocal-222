@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.8
+
+- Heizungsbetriebsart mit direkt sichtbaren Auswahlbuttons statt Dropdown. Klick sendet die Quellaktion; die aktive Markierung folgt dem tatsächlichen Quellwert.
+
 ## 2.7
 
 - Raum- und Warmwasser-Solltemperatur als Dropdown-Menüs in 1-°C-Schritten, mit Quellprofilgrenzen und serverseitiger Prüfung auf ganze Gradwerte.

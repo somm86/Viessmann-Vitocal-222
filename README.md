@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.7.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.8.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der verfügbaren Kachelbreite und -höhe an. Bei geringer Höhe wird die komplette Übersicht proportional verkleinert, einschließlich Kopfbereich und Fußzeile. Wird die Kachel wieder größer, kehrt sie bis zur ursprünglichen Darstellungsgröße zurück. Die Übersicht benötigt keine vertikale Bildlaufleiste; der Verlaufsdialog besitzt bei Bedarf einen eigenen Scrollbereich. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -101,9 +101,9 @@ Die Datenübertragung läuft über die HTML-SDK-Brücke und den Visualisierungsn
 
 ## Heizung bedienen
 
-Die Betriebsart (41758), Raumsolltemperatur (55945) und Warmwasser-Solltemperatur (10078) besitzen eigene Bedienelemente mit Übernehmen-Schaltflächen. Befehle laufen ausschließlich über `RequestAction()` der jeweiligen Quellvariable. Es werden keine Quellwerte mit `SetValue()` überschrieben. Ohne vorhandene Variablenaktion bzw. bei falschem Variablentyp ist das betreffende Bedienelement deaktiviert.
+Die Betriebsart (41758), Raumsolltemperatur (55945) und Warmwasser-Solltemperatur (10078) besitzen eigene Bedienelemente. Betriebsarten werden direkt ausgewählt; Solltemperaturen werden mit Übernehmen-Schaltflächen gesendet. Befehle laufen ausschließlich über `RequestAction()` der jeweiligen Quellvariable. Es werden keine Quellwerte mit `SetValue()` überschrieben. Ohne vorhandene Variablenaktion bzw. bei falschem Variablentyp ist das betreffende Bedienelement deaktiviert.
 
-Für die Betriebsart verwendet die Auswahl vorhandene String-Assoziationen des Quellprofils bzw. der Darstellung. Ohne Auswahlliste wird ein Textfeld für den exakten Betriebsartwert angeboten; die Geräteintegration muss den Wert unterstützen. Es werden keine Betriebsartcodes geraten.
+Die Betriebsart wird über direkt sichtbare Auswahlbuttons geschaltet; die aktuelle Betriebsart ist hervorgehoben. Ein Klick übergibt den Befehl, die Hervorhebung folgt erst der Quellrückmeldung. Die Auswahl verwendet vorhandene String-Assoziationen des Quellprofils bzw. der Darstellung. Ohne Auswahlliste wird ein Textfeld für den exakten Betriebsartwert angeboten; die Geräteintegration muss den Wert unterstützen. Es werden keine Betriebsartcodes geraten.
 
 Die beiden Solltemperaturen werden über Dropdown-Menüs in ganzen 1-°C-Schritten ausgewählt. Temperaturgrenzen werden aus dem wirksamen Quellprofil bzw. der Darstellung übernommen und serverseitig geprüft. Ohne gültigen Profilbereich gelten 10–30 °C für den Raum und 10–60 °C für Warmwasser bei 1 °C Schrittweite. Nichtnumerische Werte, unzulässige Schritte und Werte außerhalb des Bereichs werden abgewiesen. Die Kachel zeigt nach Befehlsübergabe weiterhin den tatsächlichen Quellwert; erst die Rückmeldung der Geräteintegration bestätigt eine Änderung. Fehler der Quellaktion erscheinen in der Kachel.
 

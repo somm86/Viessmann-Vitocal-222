@@ -31,7 +31,8 @@ with sync_playwright() as p:
     check(page.locator('#power').inner_text()=='2,60 kW','normalized power displayed')
     check(page.locator('#total').inner_text()=='1.250 kWh','total energy displayed')
     check(page.locator('#month').inner_text()=='50,0 kWh','calendar month consumption displayed')
-    check(page.locator('#modeSelect').is_visible(),'operating mode selection present')
+    check(page.locator('#modeChoices button').count()==2,'operating mode selection present')
+    check(page.locator('#modeChoices button[data-value="heating"]').get_attribute('aria-pressed')=='true','current source mode highlighted')
     check(page.locator('#modeBadge').inner_text()=='Heizen + Warmwasser','read-only operating-mode status')
     page.locator('[data-history="water"]').click()
     check(page.locator('#historyDialog').is_visible(),'history dialog opens')
@@ -153,8 +154,9 @@ with sync_playwright() as p:
     check(frame.evaluate("document.querySelector('main').getBoundingClientRect().bottom<=innerHeight"),'parent iframe grows without stale small scale')
     host.close()
     page.set_viewport_size({'width':1200,'height':1100});page.clock.run_for(120)
-    page.locator('#modeSelect').select_option('water');page.locator('#applyMode').click()
+    page.locator('#modeChoices button[data-value="water"]').click()
     check(page.evaluate('calls[calls.length-1]')=={'ident':'ChangeMode','value':'water'},'mode control dispatches selected source value')
+    check(page.locator('#modeChoices button[data-value="heating"]').get_attribute('aria-pressed')=='true','mode selection waits for device acknowledgement')
     for key in ['roomTarget','waterTarget']:
         values=page.locator('#'+key+'Input option').evaluate_all('(options)=>options.filter(o=>o.value!=="").map(o=>Number(o.value))')
         check(len(values)>1 and all(values[i+1]-values[i]==1 for i in range(len(values)-1)),'temperature dropdown uses one degree steps '+key)
@@ -169,7 +171,7 @@ with sync_playwright() as p:
     check(page.locator('#waterTargetInput').is_disabled() and page.locator('#applyWaterTarget').is_disabled(),'missing source action disables water control')
     no_options=copy.deepcopy(snapshot);no_options['controls']['mode']['options']=[]
     page.evaluate('handleMessage',no_options)
-    check(page.locator('#modeInput').is_visible() and page.locator('#modeSelect').is_hidden(),'mode without source options uses exact-value input')
+    check(page.locator('#modeInput').is_visible() and page.locator('#modeChoices').is_hidden(),'mode without source options uses exact-value input')
     page.evaluate('handleMessage',snapshot)
     for key,unit,values in [('power','kW',[2.0,2.6]),('total','kWh',[1248.0,1250.0]),('month','kWh',[48.0,50.0])]:
         page.locator(f'[data-history="{key}"]').click();energy_request=request()
