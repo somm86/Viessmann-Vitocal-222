@@ -173,15 +173,16 @@ with sync_playwright() as p:
     page.evaluate('handleMessage',no_options)
     check(page.locator('#modeInput').is_visible() and page.locator('#modeChoices').is_hidden(),'mode without source options uses exact-value input')
     page.evaluate('handleMessage',snapshot)
-    for key,unit,values in [('power','kW',[2.0,2.6]),('total','kWh',[1248.0,1250.0]),('month','kWh',[48.0,50.0])]:
+    for key,unit,values in [('power','kW',[2.0,2.6]),('total','kWh',[2.0,3.0]),('month','kWh',[.5,1.5])]:
         page.locator(f'[data-history="{key}"]').click();energy_request=request()
         check(energy_request['key']==key,'correct electrical history target '+key)
         points=[{'time':energy_request['start']+100,'value':values[0]},{'time':energy_request['end']-1,'value':values[1]}]
-        reply(energy_request,points,resolution='monthly' if key=='month' else 'raw')
+        reply(energy_request,points,resolution='consumptionDaily' if key=='month' else 'consumptionHourly' if key=='total' else 'raw')
         if not page.locator('#historyDialog details').evaluate('(el)=>el.open'):
             page.locator('#historyDialog details summary').click()
         check(unit in page.locator('#historyUnitHeading').inner_text(),'energy table unit '+key)
         check(unit in page.locator('#historySummary').inner_text() and '°C' not in page.locator('#historySummary').inner_text(),'energy graph units '+key)
+        if key!='power': check(('Tagesverbrauch' if key=='month' else 'Stundenverbrauch') in page.locator('#historySummary').inner_text() and 'je Archivintervall' in page.locator('#historySummary').inner_text(),'counter interval consumption labelled '+key)
         page.locator('#historyChart').hover(position={'x':300,'y':120})
         check(unit in page.locator('#chartTooltip').inner_text(),'energy tooltip unit '+key)
         if key=='month':

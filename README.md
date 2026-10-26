@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.8.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.9.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der verfügbaren Kachelbreite und -höhe an. Bei geringer Höhe wird die komplette Übersicht proportional verkleinert, einschließlich Kopfbereich und Fußzeile. Wird die Kachel wieder größer, kehrt sie bis zur ursprünglichen Darstellungsgröße zurück. Die Übersicht benötigt keine vertikale Bildlaufleiste; der Verlaufsdialog besitzt bei Bedarf einen eigenen Scrollbereich. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -42,7 +42,7 @@ Temperaturen müssen in °C vorliegen. Pumpen und Umschaltventil verwenden die f
 
 Die Anzeige verwendet 2 Nachkommastellen für die Momentanleistung, 0 für den Gesamtverbrauch und 1 für den Monatsverbrauch, auch in den Verläufen.
 
-Gesamt- und Monatsverbrauch verwenden Balkendiagramme der archivierten Zählerstände. Verdichter (12943) und Ventil (16126) öffnen Statusverläufe als Balkendiagramme mit derselben Zeitnavigation; hierfür ist aktive Archivierung erforderlich. Boolesche Statusarchive werden unabhängig vom Aggregationstyp über ihre Rohwerte gelesen.
+Gesamt- und Monatsverbrauch verwenden bei Zählerarchivierung Balkendiagramme des Verbrauchs je Archivintervall. Verdichter (12943) und Ventil (16126) öffnen Statusverläufe als Balkendiagramme mit derselben Zeitnavigation; hierfür ist aktive Archivierung erforderlich. Boolesche Statusarchive werden unabhängig vom Aggregationstyp über ihre Rohwerte gelesen.
 
 Drei zusätzliche Karten zeigen **elektrische Momentanleistung (kW)**, **kumulierten Gesamtverbrauch (kWh)** und **Verbrauch des laufenden Kalendermonats (kWh)**. Alle Karten öffnen per Klick einen Verlauf mit Zeitbereichswahl und Vor-/Zurücknavigation.
 
@@ -71,8 +71,9 @@ Alle Rohschritte seit Monatsbeginn werden auf rückläufige Zählerstände gepr�
 ### Elektrische Verläufe
 
 - **Momentanleistung:** Einzelwerte für kurze Zeitbereiche; Stundenmittel für mehr als 48 Stunden. Als Standardwert archivieren.
-- **Gesamtverbrauch:** tatsächliche kumulative Zählerstände, keine Mittelwerte oder Summen der Zählerstände. Bei mehr als 48 Stunden wird je Stunde der neueste vorhandene Rohwert als Stützpunkt gezeigt. Archivierung als Standardwert oder Zähler wird unterstützt.
-- **Monatsverbrauch:** bei berechnetem Wert ein laufender Verbrauch seit dem jeweiligen Kalender-Monatsbeginn. Die Monatsanfangswerte und Rohschritte werden auch für historische Monate geprüft. Zwischen unterschiedlichen Monaten wird die Linie unterbrochen. Bei ausgewählter Monatsvariable werden ihre tatsächlichen Archivwerte gezeigt. Der gewählte Zeitbereich bleibt ein rollendes Fenster (z. B. 30 Tage), kein automatisch vollständiger Kalendermonat.
+- **Gesamt- und Monatsverbrauch bei Zählerarchivierung:** Archive Control als **Zähler** konfigurieren. Die Balken zeigen den Verbrauch je Intervall aus `AC_GetAggregatedValues()`; bei Zählerarchiven liefert `Avg` die Verbrauchssumme. Bis 48 Stunden werden Stundenaggregate, bei 7/30 Tagen Tagesaggregate verwendet. Wh werden in kWh umgerechnet. Der berechnete Monatsverlauf verwendet das Archiv des Gesamtzählers; eine zugeordnete Monatsvariable verwendet ihr eigenes Zählerarchiv. Es werden keine kumulierten Zählerstände gemittelt oder addiert. Die Zeiträume sind rollende Fenster; die Balken folgen den verfügbaren Archivintervallen. Fehlende Aggregate bleiben leer; gegebenenfalls im Archive Control neu aggregieren lassen.
+- **Bestehende Standardwertarchive:** Als Rückwärtskompatibilität zeigen sie weiterhin ausdrücklich beschriftete archivierte Zählerstände bzw. den laufenden Monatsverbrauch, bei langen Bereichen mit stündlichen Stützpunkten. Für Verbrauchssummen je Intervall die Quellen als Zähler archivieren und aggregieren lassen.
+- **Aktuelle Karten:** Der Gesamtverbrauch bleibt der aktuelle kumulierte Zählerstand, der Monatsverbrauch der laufende Monatswert. Die Graphenumstellung verändert diese Anzeigen nicht.
 
 Die Achsen-/Tabellenbeschriftung und der Tooltip verwenden kW oder kWh. Historische Graphen zeigen ausschließlich Archivwerte, nicht nachträglich angehängte aktuelle Werte. Ein aktueller Kartenwert kann deshalb neuer sein als der zuletzt archivierte Messpunkt. Die Kachel aktiviert keine Archivierung und schreibt weder Verbrauchsvariablen noch Archivdaten.
 

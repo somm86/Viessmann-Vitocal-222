@@ -156,6 +156,26 @@ class Vitocal222CTile extends IPSModule
         if ($entry['value'] === null) { throw new RuntimeException($entry['reason']); }
         $archive = $this->archiveFor($entry['variableID']);
         $factor = $entry['factor']; $hourly = $end - $start > 172800;
+        if ($key !== 'power' && AC_GetAggregationType($archive, $entry['variableID']) === 1) {
+            // In counter archives Avg contains interval consumption, not the meter level.
+            $span = $hourly ? 1 : 0;
+            $rows = AC_GetAggregatedValues($archive, $entry['variableID'], $span, $start, $end, 10000);
+            if (!is_array($rows)) throw new RuntimeException('Zähler-Verbrauchsdaten konnten nicht gelesen werden.');
+            if (count($rows) >= 10000) throw new RuntimeException('Zu viele Verbrauchsintervalle. Zeitraum verkleinern.');
+            $points = [];
+            foreach ($rows as $row) {
+                $time = $row['TimeStamp'] ?? null; $value = $row['Avg'] ?? null;
+                if (!is_int($time) || (!is_int($value) && !is_float($value)) || !is_finite((float)$value) || $value < 0) {
+                    throw new RuntimeException('Ungültiger archivierter Zählerverbrauch.');
+                }
+                if ($time < $start || $time > $end) continue;
+                $points[] = ['time'=>$time, 'value'=>(float)$value * $factor];
+            }
+            usort($points, function ($a, $b) { return $a['time'] <=> $b['time']; });
+            return ['key'=>$key, 'label'=>self::ENERGY[$key][2], 'unit'=>'kWh', 'variableID'=>$entry['variableID'],
+                'start'=>$start, 'end'=>$end, 'resolution'=>$hourly ? 'consumptionDaily' : 'consumptionHourly', 'points'=>$points];
+        }
+
         $points = []; $buckets = []; $baselines = []; $newer = [];
         if ($key === 'power' && AC_GetAggregationType($archive, $entry['variableID']) !== 0) {
             throw new RuntimeException('Momentanleistung als Standardwert, nicht als Zähler archivieren.');

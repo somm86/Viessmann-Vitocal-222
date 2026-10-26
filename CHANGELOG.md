@@ -1,5 +1,10 @@
 # Änderungen
 
+## 2.9
+
+- Gesamt- und Monatsverbrauch berücksichtigen Zählerarchive: Balken zeigen die Verbrauchssummen aus den Zähleraggregaten, stündlich bis 48 Stunden und täglich bei längeren Zeitbereichen.
+- Karten zeigen weiterhin Gesamtzählerstand und aktuellen Monatsverbrauch. Standardwertarchive behalten den ausdrücklich als Zählerstand beschrifteten Rohwertverlauf.
+
 ## 2.8
 
 - Heizungsbetriebsart mit direkt sichtbaren Auswahlbuttons statt Dropdown. Klick sendet die Quellaktion; die aktive Markierung folgt dem tatsächlichen Quellwert.
