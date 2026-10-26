@@ -71,16 +71,16 @@ $module->RequestAction('ChangeMode','water');
 check($GLOBALS['captured']['VARIABLE']===$ids['ModeID'] && $GLOBALS['captured']['VALUE']==='water','mode routed to source action');
 check(GetValue($ids['ModeID'])==='heating','no fabricated source mode acknowledgement');
 unset($GLOBALS['captured']);
-$module->RequestAction('SetRoomTarget',22.5);
-check($GLOBALS['captured']['VARIABLE']===$ids['RoomTargetID'] && $GLOBALS['captured']['VALUE']===22.5,'room target routed to source action');
+$module->RequestAction('SetRoomTarget',23);
+check($GLOBALS['captured']['VARIABLE']===$ids['RoomTargetID'] && $GLOBALS['captured']['VALUE']===23,'room target routed to source action');
 check(GetValue($ids['RoomTargetID'])===22.0,'no fabricated target acknowledgement');
 unset($GLOBALS['captured']);
-foreach ([-1,31,22.3,'22.5',NAN,INF,null] as $value) {
+foreach ([-1,31,22.5,22.3,'22.5',NAN,INF,null] as $value) {
     $module->RequestAction('SetRoomTarget',$value);
     check(!isset($GLOBALS['captured']),'invalid room target does not dispatch');
 }
 IPS_SetVariableCustomAction($ids['RoomTargetID'],0);
-$module->RequestAction('SetRoomTarget',22.5);
+$module->RequestAction('SetRoomTarget',23);
 check(!isset($GLOBALS['captured']) && !snapshot($module)['controls']['roomTarget']['enabled'],'missing action disables control');
 IPS_SetVariableCustomAction($ids['RoomTargetID'],$action);
 IPS_CreateVariableProfile('Fixture.Room',2);IPS_SetVariableProfileValues('Fixture.Room',15,25,0.5);IPS_SetVariableCustomProfile($ids['RoomTargetID'],'Fixture.Room');

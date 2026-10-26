@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.6.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.7.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der verfügbaren Kachelbreite und -höhe an. Bei geringer Höhe wird die komplette Übersicht proportional verkleinert, einschließlich Kopfbereich und Fußzeile. Wird die Kachel wieder größer, kehrt sie bis zur ursprünglichen Darstellungsgröße zurück. Die Übersicht benötigt keine vertikale Bildlaufleiste; der Verlaufsdialog besitzt bei Bedarf einen eigenen Scrollbereich. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -105,7 +105,7 @@ Die Betriebsart (41758), Raumsolltemperatur (55945) und Warmwasser-Solltemperatu
 
 Für die Betriebsart verwendet die Auswahl vorhandene String-Assoziationen des Quellprofils bzw. der Darstellung. Ohne Auswahlliste wird ein Textfeld für den exakten Betriebsartwert angeboten; die Geräteintegration muss den Wert unterstützen. Es werden keine Betriebsartcodes geraten.
 
-Temperaturgrenzen und Schrittweite werden aus dem wirksamen Quellprofil bzw. der Darstellung übernommen und serverseitig geprüft. Ohne gültigen Profilbereich gelten 10–30 °C für den Raum und 10–60 °C für Warmwasser bei 0,5 °C Schrittweite. Nichtnumerische Werte, unzulässige Schritte und Werte außerhalb des Bereichs werden abgewiesen. Die Kachel zeigt nach Befehlsübergabe weiterhin den tatsächlichen Quellwert; erst die Rückmeldung der Geräteintegration bestätigt eine Änderung. Fehler der Quellaktion erscheinen in der Kachel.
+Die beiden Solltemperaturen werden über Dropdown-Menüs in ganzen 1-°C-Schritten ausgewählt. Temperaturgrenzen werden aus dem wirksamen Quellprofil bzw. der Darstellung übernommen und serverseitig geprüft. Ohne gültigen Profilbereich gelten 10–30 °C für den Raum und 10–60 °C für Warmwasser bei 1 °C Schrittweite. Nichtnumerische Werte, unzulässige Schritte und Werte außerhalb des Bereichs werden abgewiesen. Die Kachel zeigt nach Befehlsübergabe weiterhin den tatsächlichen Quellwert; erst die Rückmeldung der Geräteintegration bestätigt eine Änderung. Fehler der Quellaktion erscheinen in der Kachel.
 
 Die Diagnose ist ausschließlich in der Instanz über **Quellen-Diagnose anzeigen** mit den konfigurierten Quell-IDs und dem Archiv verfügbar. In der Kachel wird keine Quellendiagnose eingeblendet. Die Fußzeile mit Quellenstatus und letztem Quellupdate verwendet 9 px Schriftgröße.
 

@@ -1,5 +1,9 @@
 # Änderungen
 
+## 2.7
+
+- Raum- und Warmwasser-Solltemperatur als Dropdown-Menüs in 1-°C-Schritten, mit Quellprofilgrenzen und serverseitiger Prüfung auf ganze Gradwerte.
+
 ## 2.6
 
 - Neue Heizungs-IDs aus der aktualisierten Anlage; automatische Migration der bisherigen Standardzuordnungen unter Erhalt eigener Quellen.

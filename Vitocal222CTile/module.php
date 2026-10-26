@@ -312,7 +312,7 @@ class Vitocal222CTile extends IPSModule
         $controls = [];
         foreach (['mode', 'roomTarget', 'waterTarget'] as $key) {
             $id = $this->ReadPropertyInteger(self::SOURCES[$key][0]);
-            $entry = ['enabled'=>false, 'reason'=>'Quellvariable fehlt.', 'options'=>[], 'min'=>10.0, 'max'=>30.0, 'step'=>0.5];
+            $entry = ['enabled'=>false, 'reason'=>'Quellvariable fehlt.', 'options'=>[], 'min'=>10.0, 'max'=>30.0, 'step'=>1.0];
             if ($key === 'waterTarget') { $entry['min'] = 10.0; $entry['max'] = 60.0; }
             if ($id > 0 && IPS_VariableExists($id)) {
                 $v = IPS_GetVariable($id);
@@ -324,8 +324,6 @@ class Vitocal222CTile extends IPSModule
                 $max = $profile['MaxValue'] ?? $presentation['MAX'] ?? null;
                 if (is_numeric($min) && is_numeric($max) && $max > $min) {
                     $entry['min'] = (float)$min; $entry['max'] = (float)$max;
-                    $step = $profile['StepSize'] ?? $presentation['STEP_SIZE'] ?? 0.5;
-                    $entry['step'] = is_numeric($step) && $step > 0 ? (float)$step : 0.5;
                 }
                 $action = $v['VariableCustomAction'] ?: $v['VariableAction'];
                 $entry['enabled'] = $action >= 10000 && (IPS_InstanceExists($action) || IPS_ScriptExists($action)) && ($key === 'mode' ? $v['VariableType'] === 3 : in_array($v['VariableType'], [1,2], true));
@@ -350,7 +348,7 @@ class Vitocal222CTile extends IPSModule
                     if ($control['options'] && !in_array($value, array_column($control['options'], 'value'), true)) throw new InvalidArgumentException('Betriebsart ist nicht im Quellprofil freigegeben.');
                 } else {
                     if ((!is_int($value) && !is_float($value)) || !is_finite((float)$value) || $value < $control['min'] || $value > $control['max']) throw new InvalidArgumentException('Solltemperatur außerhalb des erlaubten Bereichs.');
-                    $steps = ($value-$control['min'])/$control['step'];
+                    $steps = $value;
                     if (abs($steps-round($steps))>0.000001) throw new InvalidArgumentException('Ungültige Temperaturschrittweite.');
                 }
                 $source = $this->ReadPropertyInteger(self::SOURCES[$key][0]);
