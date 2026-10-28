@@ -8,7 +8,7 @@ Modul für die **Kachelvisualisierung ab IP-Symcon 7.1**. Zeigt vier gemessene T
 
 In **Module Control** das Repository `https://github.com/somm86/Viessmann-Vitocal-222` mit Branch `main` hinzufügen oder aktualisieren. Instanz **Vitocal 222-C Kachel** erstellen bzw. die vorhandene Instanz öffnen, **Übernehmen** drücken und die Kachel neu öffnen. Bibliotheks- und Modul-GUIDs bleiben beim Update gleich; keine neue Instanz erforderlich.
 
-Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-2.9.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
+Alternativ das mit `python3 tests/build.py` erzeugte `Vitocal222C-Kachel-3.0.zip` entpacken und den enthaltenen Ordner `Vitocal222C_Kachel` vollständig nach `<Symcon-Datenverzeichnis>/modules/` auf dem Symcon-Server kopieren. Direkt darin muss `library.json` liegen. Symcon-Dienst neu starten. Nicht gleichzeitig per Module Control und lokal installieren.
 
 Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung passt sich der verfügbaren Kachelbreite und -höhe an. Bei geringer Höhe wird die komplette Übersicht proportional verkleinert, einschließlich Kopfbereich und Fußzeile. Wird die Kachel wieder größer, kehrt sie bis zur ursprünglichen Darstellungsgröße zurück. Die Übersicht benötigt keine vertikale Bildlaufleiste; der Verlaufsdialog besitzt bei Bedarf einen eigenen Scrollbereich. Die Geräteintegration muss die vorhandenen Variablen aktualisieren; die Kachel verbindet sich nicht selbst mit der Wärmepumpe.
 
@@ -17,6 +17,12 @@ Die Instanz zur Kachelvisualisierung hinzufügen bzw. verlinken. Die Darstellung
 Ein `ResizeObserver` erkennt Änderungen der verfügbaren Fläche, auch beim Vergrößern oder Verkleinern der eingebetteten Symcon-Kachel. Die Übersicht wird unter Beibehaltung der Proportionen in Breite und Höhe eingepasst. Durch die entsprechend angepasste interne Layoutbreite bleibt die sichtbare Kachelbreite ausgenutzt. Live-Updates, längere Statusbeschriftungen und geladene Schriftarten lösen eine erneute Einpassung aus. Bei geringer Höhe werden zunächst Abstände und Innenränder kompakter, bevor die gesamte Ansicht verkleinert wird. In sehr flachen Kacheln wird auch der Text entsprechend kleiner.
 
 Der Temperaturverlauf öffnet außerhalb der skalierten Übersicht als Dialog. Seine Bedienelemente verwenden die normale Schriftgröße; bei geringer Höhe lässt sich der Dialog intern scrollen. Istwerte und Statusanzeigen bleiben schreibgeschützt.
+
+## CPU-Verbrauch
+
+Die erfolgreiche Monatsarchivprüfung wird bei gleichem Gesamtzählerstand höchstens einmal pro Minute durchgeführt. Ein neuer Zählerstand, ein Monatswechsel oder Übernehmen der Instanzkonfiguration löst sofort eine neue Prüfung aus. Nachträgliche Archivkorrekturen bei unverändertem Zählerstand werden spätestens bei der nächsten Prüfung nach 60 Sekunden berücksichtigt. Die aktuellen Quellwerte und Bedienelemente werden weiterhin direkt aktualisiert.
+
+Im Browser bleiben unveränderte Statusfelder erhalten. Die Größenanpassung führt ihre Layoutsuche nur aus, wenn sich die verfügbare Fläche oder die Inhaltsabmessungen ändern; eigene Größenmeldungen lösen keine fortlaufende Neuberechnung aus. Das reduziert unnötige Arbeit bei laufenden Quellenupdates. Eine prozentuale CPU-Einsparung auf der echten Symcon-Anlage wurde hier nicht gemessen.
 
 ## Vorbelegte Quellen
 

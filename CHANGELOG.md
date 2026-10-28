@@ -1,5 +1,11 @@
 # Änderungen
 
+## 3.0
+
+- CPU-Last reduziert: erfolgreiche Monatsarchivprüfung bei identischem Zählerstand für maximal 60 Sekunden wiederverwenden; bei neuem Zählerstand, Monat oder Konfigurationsänderung sofort neu prüfen.
+- Größenanpassung überspringt unveränderte Layouts und vermeidet wiederholte Berechnungen durch eigene ResizeObserver-Meldungen.
+- Unveränderte Statusfelder bleiben als DOM-Elemente erhalten, auch bei Leistungs- und Temperaturupdates.
+
 ## 2.9
 
 - Gesamt- und Monatsverbrauch berücksichtigen Zählerarchive: Balken zeigen die Verbrauchssummen aus den Zähleraggregaten, stündlich bis 48 Stunden und täglich bei längeren Zeitbereichen.

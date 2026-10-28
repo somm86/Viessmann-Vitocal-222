@@ -45,6 +45,7 @@ const statusLabels = {compressor:'Verdichter',heatingPump:'Heizkreispumpe',prima
 const number = new Intl.NumberFormat('de-DE',{maximumFractionDigits:1});
 const energyNumbers = Object.fromEntries(Object.entries({power:2,total:0,month:1}).map(([key,digits])=>[key,new Intl.NumberFormat('de-DE',{minimumFractionDigits:digits,maximumFractionDigits:digits})]));
 function temperature(entry){return entry && typeof entry.value === 'number' ? number.format(entry.value)+' °C' : '—';}
+let lastStatusSignature='';
 function render(data){
  if(!data || !data.values) return;
  for(const key of ['primaryFlow','return','flow','water']) $(key).textContent=temperature(data.values[key]);
@@ -56,6 +57,9 @@ function render(data){
   $(key+'Reason').textContent=entry?.reason || entry?.note || '';
  }
  $('monthCaption').textContent='Monatsverbrauch'+(data.energy?.month?.periodLabel?' · '+data.energy.month.periodLabel:'');
+ const statusSignature=JSON.stringify(Object.keys(statusLabels).map(key=>[data.values[key].value,data.values[key].formatted]));
+ if(statusSignature!==lastStatusSignature){
+ lastStatusSignature=statusSignature;
  $('statuses').replaceChildren();
  for(const [key,label] of Object.entries(statusLabels)){
   const clickable=['compressor','valve'].includes(key);
@@ -64,6 +68,7 @@ function render(data){
   const title=document.createElement('div');title.className='label';title.textContent=label;
   const value=document.createElement('strong');value.textContent=data.values[key].formatted;
   item.append(title,value);$('statuses').append(item);
+ }
  }
  $('sourceState').textContent=data.missing.length?'Nicht verfügbar: '+data.missing.join(', '):'IP-Symcon · '+(data.sourceCount ?? 9)+' Quellvariablen';
  $('sourceState').classList.toggle('unavailable',!!data.missing.length);
@@ -230,7 +235,7 @@ $('closeHistory').onclick=closeHistory;
 $('historyDialog').addEventListener('cancel',event=>{event.preventDefault();closeHistory();});
 
 // Fit the complete overview into the HTML SDK viewport, preserving icon/text proportions.
-let tileFitFrame = 0;
+let tileFitFrame = 0,lastTileFit='';
 function scheduleTileFit(){
  if(tileFitFrame)return;
  tileFitFrame=requestAnimationFrame(()=>{tileFitFrame=0;fitTile();});
@@ -239,6 +244,8 @@ function fitTile(){
  const dashboard=document.querySelector('main');
  const width=document.documentElement.clientWidth,height=document.documentElement.clientHeight;
  if(width<=0 || height<=0)return;
+ const signature=()=>[width,height,dashboard.scrollHeight,dashboard.scrollWidth].join(':');
+ if(signature()===lastTileFit)return;
  const fits=scale=>{
   // More layout width compensates for scaling so the final tile still fills its width.
   dashboard.style.width=(width/scale)+'px';
@@ -255,6 +262,7 @@ function fitTile(){
  }
  dashboard.style.setProperty('--tile-scale',String(scale));
  dashboard.style.removeProperty('width');
+ lastTileFit=signature();
 }
 const tileObserver=new ResizeObserver(scheduleTileFit);
 tileObserver.observe(document.documentElement);

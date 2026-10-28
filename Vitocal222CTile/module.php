@@ -134,14 +134,21 @@ class Vitocal222CTile extends IPSModule
             if ($total['updated'] < $start) { throw new RuntimeException('Kein aktueller Gesamtzählerstand für diesen Monat.'); }
             $entry['variableID'] = $total['variableID'];
             $archive = $this->archiveFor($total['variableID']);
-            $baseline = $this->counterBaseline($archive, $total['variableID'], $start, $total['factor']);
-            $newer = $total['value'];
-            foreach ($this->energyRows($archive, $total['variableID'], $start + 1, time()) as $row) {
-                $value = (float) $row['Value'] * $total['factor'];
-                if ($value > $newer + 0.000000001) { throw new RuntimeException('Zählerrücksetzung oder rückläufiger Zählerstand im Monat. Verbrauch nicht eindeutig berechenbar.'); }
-                $newer = $value;
+            $cacheKey = hash('sha256', $this->encode([$archive, $total['variableID'], $start, $total['factor'], $total['value']]));
+            $cached = json_decode($this->GetBuffer('MonthlyValidation'), true);
+            if (is_array($cached) && ($cached['key'] ?? '') === $cacheKey && time() - ($cached['checked'] ?? 0) < 60 && ($cached['checked'] ?? 0) <= time()) {
+                $baseline = $cached['baseline'];
+            } else {
+                $baseline = $this->counterBaseline($archive, $total['variableID'], $start, $total['factor']);
+                $newer = $total['value'];
+                foreach ($this->energyRows($archive, $total['variableID'], $start + 1, time()) as $row) {
+                    $value = (float) $row['Value'] * $total['factor'];
+                    if ($value > $newer + 0.000000001) { throw new RuntimeException('Zählerrücksetzung oder rückläufiger Zählerstand im Monat. Verbrauch nicht eindeutig berechenbar.'); }
+                    $newer = $value;
+                }
+                if ($baseline['value'] > $newer + 0.000000001) { throw new RuntimeException('Zählerrücksetzung im Monat. Verbrauch nicht eindeutig berechenbar.'); }
+                $this->SetBuffer('MonthlyValidation', $this->encode(['key'=>$cacheKey, 'checked'=>time(), 'baseline'=>$baseline]));
             }
-            if ($baseline['value'] > $newer + 0.000000001) { throw new RuntimeException('Zählerrücksetzung im Monat. Verbrauch nicht eindeutig berechenbar.'); }
             $entry['value'] = max(0.0, $total['value'] - $baseline['value']);
             $entry['note'] = 'Aus Gesamtzähler berechnet';
             $entry['updated'] = $total['updated']; $entry['baselineTime'] = $baseline['time'];
@@ -248,6 +255,7 @@ class Vitocal222CTile extends IPSModule
         }
         if ($migrated) { IPS_ApplyChanges($this->InstanceID); return; }
 
+        $this->SetBuffer('MonthlyValidation', '');
         $this->RegisterMessage(0, IPS_KERNELSTARTED);
         // Only remove subscriptions owned by this module; retain the kernel subscription.
         foreach ($this->GetMessageList() as $sender => $messages) {

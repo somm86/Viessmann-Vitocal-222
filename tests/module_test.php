@@ -270,6 +270,22 @@ $module->MessageSink(time(),$power,VM_UPDATE,[2600.0,true]);
 check(snapshot($module)['energy']['power']['value']===2.6,'live power update refreshes energy cards');
 check(!isset($GLOBALS['captured']),'electrical display never dispatches device actions');
 
+// Repeated non-counter updates reuse the validated month, but expiry and configuration changes recheck it.
+$cachedTotal=IPS_CreateVariable(2);IPS_SetVariableCustomProfile($cachedTotal,'Fixture.Wh');SetValue($cachedTotal,100000.0);
+AC_SetLoggingStatus($archive,$cachedTotal,true);
+AC_AddLoggedValues($archive,$cachedTotal,[['TimeStamp'=>$monthStart-1,'Value'=>90000.0],['TimeStamp'=>$now-120,'Value'=>95000.0]]);
+IPS_SetProperty($id,'TotalEnergyID',$cachedTotal);IPS_ApplyChanges($id);
+check(snapshot($module)['energy']['month']['value']===10,'initial month validation cached');
+AC_AddLoggedValues($archive,$cachedTotal,[['TimeStamp'=>$now-60,'Value'=>105000.0]]);
+check(snapshot($module)['energy']['month']['value']===10,'unchanged total reuses validation within sixty seconds');
+$cacheGetter=new ReflectionMethod(IPSModule::class,'GetBuffer');$cacheSetter=new ReflectionMethod(IPSModule::class,'SetBuffer');
+$cachedValidation=json_decode($cacheGetter->invoke($module,'MonthlyValidation'),true);$cachedValidation['checked']=time()-61;
+$cacheSetter->invoke($module,'MonthlyValidation',json_encode($cachedValidation));
+check(snapshot($module)['energy']['month']['value']===null,'cache expiry detects retroactive archive changes');
+SetValue($cachedTotal,106000.0);
+check(snapshot($module)['energy']['month']['value']===16,'changed total validated immediately');
+IPS_SetProperty($id,'TotalEnergyID',$total);IPS_ApplyChanges($id);
+
 if(!is_dir(__DIR__.'/output')) mkdir(__DIR__.'/output',0777,true);
 file_put_contents(__DIR__.'/output/tile.html',$module->GetVisualizationTile());
 file_put_contents(__DIR__.'/output/snapshot.json',json_encode(snapshot($module),JSON_THROW_ON_ERROR));
